@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Cairo", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-bgwarm: var(--bgwarm);
+  --color-darktext: var(--darktext);
+  --color-worth-cream: #F4FEF6;
+  --color-worth-green: #1E3D34;
+  --color-worth-gold: #B49A5A;
+}
+
+:root, [data-theme="official"] {
+  --primary: #B49A5A;
+  --accent: #C5A059;
+  --bgwarm: #F4FEF6;
+  --darktext: #2C271E;
+}
+
+[data-theme="founding"] {
+  --primary: #5C1D24;
+  --accent: #D2A474;
+  --bgwarm: #FAF5EF;
+  --darktext: #2D1013;
+}
+
+[data-theme="national"] {
+  --primary: #006C35;
+  --accent: #E2E8F0;
+  --bgwarm: #F4FAF6;
+  --darktext: #052915;
+}
+
+[data-theme="ramadan"] {
+  --primary: #2E1E3F;
+  --accent: #ECC94B;
+  --bgwarm: #F6F4FA;
+  --darktext: #1A0D29;
+}
+
+[data-theme="dark"] {
+  --primary: #2C271E;
+  --accent: #D4AF37;
+  --bgwarm: #181510;
+  --darktext: #F8F4EC;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bgwarm);
+  color: var(--darktext);
+  direction: rtl; /* Force RTL globally for native Arabic experience */
+}
+
+/* Custom scrollbars for the beautiful Arabic app */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1EFEA;
+}
+::-webkit-scrollbar-thumb {
+  background: #C5A059;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9E8447;
+}
