@@ -150,7 +150,7 @@ export default function ResetPasswordPage({
         <div className="bg-primary p-6 text-center space-y-3 relative border-b border-accent/20">
           <div className="flex justify-center">{renderWarathLogo('w-12 h-12 text-xl')}</div>
           <h2 className="text-xl font-black text-accent">إعادة تعيين كلمة المرور 🔐</h2>
-          <p className="text-xs text-stone-300">منظومة ورث أجيال • حماية الحساب والبيانات</p>
+          <p className="text-xs text-stone-300">منظومة إرث أجيال • حماية الحساب والبيانات</p>
         </div>
 
         {/* Form Body */}

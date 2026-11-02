@@ -258,7 +258,7 @@ export default function EmailInboxDrawer({
 
         {/* Footer info */}
         <div className="bg-stone-50 p-3 border-t border-stone-200 text-center text-[10px] text-stone-500">
-          محاكاة نظام البريد الإلكتروني الفعلي Transactional Email Engine • ورث أجيال TND
+          محاكاة نظام البريد الإلكتروني الفعلي Transactional Email Engine • إرث أجيال TND
         </div>
       </motion.div>
     </div>

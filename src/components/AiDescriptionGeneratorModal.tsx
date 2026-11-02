@@ -84,7 +84,7 @@ export default function AiDescriptionGeneratorModal({
               <Sparkles className="w-3 h-3 text-amber-700" />
               <span>المولد الذكي لوصف المنتجات (AI Product Description Generator)</span>
             </div>
-            <h3 className="font-extrabold text-[#0B3A60] text-base">
+            <h3 className="font-extrabold text-[#174F3E] text-base">
               صياغة وصف تسويقي وتراثي جذاب للطبق بالذكاء الاصطناعي
             </h3>
           </div>
@@ -99,7 +99,7 @@ export default function AiDescriptionGeneratorModal({
               type="text" 
               value={dishTitle}
               onChange={(e) => setDishTitle(e.target.value)}
-              className="w-full bg-stone-50 border border-stone-200 p-3 rounded-2xl text-xs font-bold text-[#0B3A60] outline-none focus:ring-2 focus:ring-[#003B6F]"
+              className="w-full bg-stone-50 border border-stone-200 p-3 rounded-2xl text-xs font-bold text-[#174F3E] outline-none focus:ring-2 focus:ring-[#174F3E]"
             />
           </div>
 
@@ -114,7 +114,7 @@ export default function AiDescriptionGeneratorModal({
                 type="button"
                 onClick={handleGenerateAI}
                 disabled={isGenerating}
-                className="text-[11px] text-[#003B6F] hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                className="text-[11px] text-[#174F3E] hover:underline font-bold flex items-center gap-1 cursor-pointer"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isGenerating ? 'animate-spin text-amber-600' : ''}`} />
                 <span>إعادة توليد صيغة أخرى</span>
@@ -141,7 +141,7 @@ export default function AiDescriptionGeneratorModal({
               onClose();
             }}
             disabled={isGenerating}
-            className="w-full bg-[#003B6F] hover:bg-[#002D54] text-white font-black py-3.5 rounded-2xl text-xs md:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full bg-[#174F3E] hover:bg-[#0D3B2E] text-white font-black py-3.5 rounded-2xl text-xs md:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <Check className="w-4 h-4 text-amber-300" />
             <span>اعتماد الوصف وإضافته للمنتج</span>

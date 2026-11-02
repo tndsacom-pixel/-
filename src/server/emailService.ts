@@ -1,5 +1,5 @@
 /**
- * Email Notification Service for Warath Ajyal x TND
+ * Email Notification Service for Erth Ajyal x TND
  * Handles transactional emails for:
  * - Password Reset / Auth Verification
  * - Producer Onboarding Status (Approval / Rejection)
@@ -33,21 +33,21 @@ export function buildProductStatusEmail(params: {
 
   if (status === 'approved') {
     return {
-      subject: `🎉 تم اعتماد منتجك (${productName}) في منصة ورث أجيال`,
+      subject: `🎉 تم اعتماد منتجك (${productName}) في منصة إرث أجيال`,
       html: `
         <div dir="rtl" style="font-family: Arial, sans-serif; color: #1f2937; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
           <h2 style="color: #15803d;">مبروك! تم اعتماد المنتج في المتجر</h2>
           <p>أهلاً بك <strong>${producerName}</strong>،</p>
-          <p>يسر إدارة منصة <strong>ورث أجيال × مؤسسة التفكير والنماء TND</strong> إبلاغك بأنه تم اعتماد منتجك <strong>"${productName}"</strong> بنجاح.</p>
+          <p>يسر إدارة منصة <strong>إرث أجيال × مؤسسة التفكير والنماء TND</strong> إبلاغك بأنه تم اعتماد منتجك <strong>"${productName}"</strong> بنجاح.</p>
           <p>المنتج متاح الآن في المتجر العام وعلى صفحة أسرتك الخاصة للعملاء والمعتمرين.</p>
           <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
-          <p style="font-size: 13px; color: #6b7280;">منصة ورث أجيال × مؤسسة التفكير والنماء TND</p>
+          <p style="font-size: 13px; color: #6b7280;">منصة إرث أجيال × مؤسسة التفكير والنماء TND</p>
         </div>
       `,
     };
   } else if (status === 'rejected') {
     return {
-      subject: `🔴 نتيجة مراجعة المنتج (${productName}) - منصة ورث أجيال`,
+      subject: `🔴 نتيجة مراجعة المنتج (${productName}) - منصة إرث أجيال`,
       html: `
         <div dir="rtl" style="font-family: Arial, sans-serif; color: #1f2937; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
           <h2 style="color: #b91c1c;">تنبيه: لم يتم اعتماد المنتج</h2>
@@ -59,13 +59,13 @@ export function buildProductStatusEmail(params: {
           </div>
           <p>يمكنك التعديل وإعادة تقديم طلب منتج جديد وفق الملاحظات الموضحة أعلاه.</p>
           <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
-          <p style="font-size: 13px; color: #6b7280;">منصة ورث أجيال × مؤسسة التفكير والنماء TND</p>
+          <p style="font-size: 13px; color: #6b7280;">منصة إرث أجيال × مؤسسة التفكير والنماء TND</p>
         </div>
       `,
     };
   } else {
     return {
-      subject: `🟡 مطلوب تعديل على المنتج (${productName}) - منصة ورث أجيال`,
+      subject: `🟡 مطلوب تعديل على المنتج (${productName}) - منصة إرث أجيال`,
       html: `
         <div dir="rtl" style="font-family: Arial, sans-serif; color: #1f2937; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
           <h2 style="color: #d97706;">مطلوب إجراء تعديل قبل الاعتماد</h2>
@@ -77,7 +77,7 @@ export function buildProductStatusEmail(params: {
           </div>
           <p>يرجى الدخول إلى لوحة التحكم الخاصة بك وتحديث المنتج ليتم إعادة فحصه فوراً.</p>
           <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
-          <p style="font-size: 13px; color: #6b7280;">منصة ورث أجيال × مؤسسة التفكير والنماء TND</p>
+          <p style="font-size: 13px; color: #6b7280;">منصة إرث أجيال × مؤسسة التفكير والنماء TND</p>
         </div>
       `,
     };

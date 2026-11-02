@@ -77,11 +77,11 @@ export default function InitiativesPage({ onBackToHome, onOpenSupport }: Initiat
       </div>
 
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-[#B49A5A] via-primary to-[#7D6732] text-white p-8 sm:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
+      <div className="bg-gradient-to-r from-[#C8A96B] via-primary to-[#7D6732] text-white p-8 sm:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
         <div className="relative z-10 max-w-3xl space-y-4">
           <span className="text-accent text-xs font-black bg-white/10 border border-accent/30 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-accent animate-spin" />
-            مبادرات نوعية برعاية ورث أجيال والتفكير والنماء 🌟
+            مبادرات نوعية برعاية إرث أجيال والتفكير والنماء 🌟
           </span>
 
           <h1 className="text-2xl sm:text-4xl font-black text-white leading-tight">
@@ -148,7 +148,7 @@ export default function InitiativesPage({ onBackToHome, onOpenSupport }: Initiat
               <button
                 type="button"
                 onClick={() => setRegisteredInitiative(init.title)}
-                className="bg-[#0B3A60] hover:bg-[#0B3A60]/90 text-white font-extrabold py-2.5 px-6 rounded-xl text-xs transition-all shadow-xs cursor-pointer hover:scale-105"
+                className="bg-[#174F3E] hover:bg-[#174F3E]/90 text-white font-extrabold py-2.5 px-6 rounded-xl text-xs transition-all shadow-xs cursor-pointer hover:scale-105"
               >
                 طلب التسجيل والمشاركة بالمبادرة ✍️
               </button>

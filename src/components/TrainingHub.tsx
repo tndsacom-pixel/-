@@ -417,12 +417,12 @@ export default function TrainingHub({ profile, courses, onUpdateCourses }: Train
                 <div className="absolute top-2 left-2 right-2 bottom-2 border border-amber-200 pointer-events-none"></div>
 
                 <div className="space-y-1">
-                  <span className="text-[10px] text-stone-400 font-serif tracking-widest uppercase block">مؤسسة ورث أجيال للتمكين والتدريب الأكاديمي</span>
+                  <span className="text-[10px] text-stone-400 font-serif tracking-widest uppercase block">مؤسسة إرث أجيال للتمكين والتدريب الأكاديمي</span>
                   <h3 className="font-serif font-extrabold text-primary text-sm md:text-base">شهادة جدارة وإتمام مسار تأهيلي معتمد</h3>
                 </div>
 
                 <div className="space-y-2">
-                  <p className="text-stone-500 text-[10px] font-light">تشهد منصة ورث أجيال بالشراكة مع هيئة الموروث السعودي بأن مستفيدة المنصة:</p>
+                  <p className="text-stone-500 text-[10px] font-light">تشهد منصة إرث أجيال بالشراكة مع هيئة الموروث السعودي بأن مستفيدة المنصة:</p>
                   <h4 className="text-primary font-black text-sm md:text-base tracking-wide border-b border-dashed border-stone-300 pb-1.5 max-w-xs mx-auto">
                     {certName}
                   </h4>
@@ -720,7 +720,7 @@ export default function TrainingHub({ profile, courses, onUpdateCourses }: Train
                                 <Award className="w-16 h-16" />
                               </div>
                               <h5 className="font-mono text-[10px] text-[#C5A85A] font-bold uppercase tracking-wider mb-2">شهادة تأهيل مهني معتمدة</h5>
-                              <h4 className="text-[#1C3A27] text-lg font-black tracking-tight mb-4">منصة ورث أجيال لتمكين الأسر المنتجة</h4>
+                              <h4 className="text-[#1C3A27] text-lg font-black tracking-tight mb-4">منصة إرث أجيال لتمكين الأسر المنتجة</h4>
                               
                               <p className="text-xs text-stone-400 font-light mb-1">تشهد المنصة بأن المستفيد / المستفيدة:</p>
                               <p className="text-base md:text-lg font-black text-stone-800 border-b border-stone-200 w-max mx-auto px-6 pb-1 mb-4">{profile.name || '[ لم تقم بملء اسمك في الملف الرقمي ]'}</p>

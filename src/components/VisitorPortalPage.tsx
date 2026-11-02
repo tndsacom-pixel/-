@@ -1,5 +1,6 @@
 import { useState, ReactNode } from 'react';
 import { motion } from 'motion/react';
+import { useLanguage } from '../context/LanguageContext';
 import { 
   Compass, 
   MapPin, 
@@ -36,6 +37,7 @@ export default function VisitorPortalPage({
   renderThinkingLogo,
   onChangeTrack
 }: VisitorPortalPageProps) {
+  const { t, isEn } = useLanguage();
   const experiences = [
     {
       id: 'exp-1',
@@ -67,51 +69,42 @@ export default function VisitorPortalPage({
   ];
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900 dir-rtl" id="portal-visitors">
-      {/* 🕌 Visitor & Tourist Portal Header */}
-      <header className="bg-primary text-white border-b border-accent/20 sticky top-0 z-40 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            {renderWarathLogo('w-10 h-10 text-lg')}
-            {renderThinkingLogo('w-10 h-10 text-[10px]')}
-            <div className="text-right hidden sm:block border-r border-accent/20 pr-3 mr-1">
-              <h1 className="font-extrabold text-sm leading-tight text-accent">بوابة الزائر والسائح 🕌🇸🇦</h1>
-              <p className="text-[10px] text-stone-300">التجارب التراثية والجولات والحرف اليدوية</p>
+    <div className="min-h-screen bg-[#FAF9F6] text-stone-900 w-full max-w-full overflow-x-hidden" id="portal-visitors">
+      {/* 🕌 Visitor Portal Context Sub-Bar */}
+      <div className="bg-[#174F3E] text-white border-b border-[#C8A96B]/20 py-2.5 px-3 sm:px-6 shadow-sm w-full" id="portal-visitors-bar">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 w-full">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-base shrink-0">🕌</span>
+            <div className={`min-w-0 ${isEn ? 'text-left' : 'text-right'}`}>
+              <h1 className="font-extrabold text-xs sm:text-sm text-[#C8A96B] truncate">{t('portal.visitorTitle')}</h1>
+              <p className="text-[10px] text-stone-300 hidden md:block truncate">{t('portal.visitorDesc')}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center flex-wrap gap-1.5 sm:gap-2">
             {onChangeTrack && (
               <button
                 onClick={onChangeTrack}
-                className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/40 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/40 px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer"
               >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>تغيير المسار</span>
+                <Sparkles className="w-3 h-3 shrink-0" />
+                <span>{t('portal.changeTrack')}</span>
               </button>
             )}
 
             <button
               onClick={onNavigateHome}
-              className="bg-white/10 hover:bg-white/20 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+              className="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer"
             >
-              <ArrowRight className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">الرئيسية</span>
-            </button>
-
-            <button
-              onClick={onNavigateLogin}
-              className="bg-accent text-primary hover:bg-amber-400 font-black px-4 py-1.5 rounded-xl text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>تسجيل دخول الزائر</span>
+              <ArrowRight className="w-3 h-3 shrink-0" />
+              <span>الرئيسية</span>
             </button>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Hero Banner */}
-      <section className="relative bg-gradient-to-b from-stone-900 via-emerald-950 to-stone-900 text-white py-16 px-4 sm:px-8 overflow-hidden">
+      <section className="relative bg-gradient-to-b from-stone-900 via-emerald-950 to-stone-900 text-white py-10 sm:py-16 px-4 sm:px-8 overflow-hidden w-full">
         <div className="max-w-5xl mx-auto text-center space-y-5 relative z-10">
           <span className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 text-xs font-black px-4 py-1.5 rounded-full border border-emerald-400/30">
             ✨ اكتشف التراث السعودي الأصيل وروافد الثقافة المحلية
@@ -123,7 +116,7 @@ export default function VisitorPortalPage({
           </h2>
 
           <p className="text-stone-300 text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed">
-            احجز تذكرتك لحضور ورش عمل حياكة السدو، صناعة البخور الدوسري، وحفلات التذوق التراثي برفقة الحرفيين المعتمدين لدى منصة ورث أجيال.
+            احجز تذكرتك لحضور ورش عمل حياكة السدو، صناعة البخور الدوسري، وحفلات التذوق التراثي برفقة الحرفيين المعتمدين لدى منصة إرث أجيال.
           </p>
         </div>
       </section>

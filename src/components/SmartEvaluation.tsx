@@ -235,7 +235,7 @@ export default function SmartEvaluation({ profile, assessment, onSaveAssessment 
             <div>
               <h3 className="text-xl font-extrabold text-stone-800">مرحباً بك في أداة التقييم الذكي لمشروعك</h3>
               <p className="text-stone-500 text-sm mt-2 leading-relaxed">
-                في منصة <strong>ورث أجيال</strong>، لا نقدم تمويلاً عشوائياً، بل نهيئ مشروعك للنمو الفعلي. سنقوم بطرح بعض الأسئلة التشخيصية السريعة المرتبطة بنشاطك 
+                في منصة <strong>إرث أجيال</strong>، لا نقدم تمويلاً عشوائياً، بل نهيئ مشروعك للنمو الفعلي. سنقوم بطرح بعض الأسئلة التشخيصية السريعة المرتبطة بنشاطك 
                 (<span className="text-primary font-semibold">
                   {profile.projectType === 'hospitality' ? 'الضيافة' :
                    profile.projectType === 'culinary' ? 'الطهي' :

@@ -25,6 +25,7 @@ import {
   Phone,
   Globe,
   FileText,
+  Layers,
   MapPin,
   Trash2,
   Server,
@@ -36,14 +37,23 @@ import {
   Zap,
   Check,
   X,
-  PlusCircle
+  PlusCircle,
+  Stethoscope
 } from 'lucide-react';
 import { BeneficiaryProfile, Course, Assessment } from '../types';
 import SystemInfrastructurePanel from './SystemInfrastructurePanel';
 import { ExtendedPackageItem, getStoredPackages, saveStoredPackages, INITIAL_DYNAMIC_PACKAGES } from '../packagesData';
+import ProjectStudyAdminEditor from './ProjectStudyAdminEditor';
+import AdminGoldenGuaranteeManager from './AdminGoldenGuaranteeManager';
 import { getEmailLogs, getUserAccounts, updateUserAccountEmail } from '../services/emailService';
 import { EmailLog, UserAccount, Product } from '../types';
 import { getAllProducts, updateProductStatus } from '../services/productService';
+import { 
+  ConsultationRequest, 
+  getConsultationRequests, 
+  adminCompleteConsultationRequest, 
+  adminCancelConsultationRequest 
+} from '../services/consultationService';
 import { SUGGESTIONS_LOGIN, SUGGESTIONS_FEATURES } from './LandingPage';
 
 interface AdminPanelProps {
@@ -72,14 +82,61 @@ export default function AdminPanel({
   setThinkingLogo,
   activeTheme,
   setActiveTheme,
-  mainPrimaryColor = '#B49A5A',
+  mainPrimaryColor = '#C8A96B',
   setMainPrimaryColor
 }: AdminPanelProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDomain, setFilterDomain] = useState('all');
 
   // Subtab for Admin Panel sections
-  const [adminSubTab, setAdminSubTab] = useState<'families' | 'product_requests' | 'pilgrims' | 'tourists' | 'orders' | 'tickets' | 'packages' | 'branding' | 'infra' | 'emails' | 'testing_center'>('families');
+  const [adminSubTab, setAdminSubTab] = useState<'families' | 'consultations' | 'product_requests' | 'golden_guarantee' | 'pilgrims' | 'tourists' | 'orders' | 'tickets' | 'packages' | 'project_study' | 'branding' | 'infra' | 'emails' | 'testing_center'>('families');
+
+  // 🩺 Consultation Requests Management State
+  const [adminConsultations, setAdminConsultations] = useState<ConsultationRequest[]>(() => getConsultationRequests());
+  const [consultFilter, setConsultFilter] = useState<'all' | 'pending' | 'completed' | 'free' | 'paid'>('all');
+  const [consultSearch, setConsultSearch] = useState('');
+  const [selectedConsultForComplete, setSelectedConsultForComplete] = useState<ConsultationRequest | null>(null);
+  const [consultNotesInput, setConsultNotesInput] = useState('');
+  const [consultSuccessMsg, setConsultSuccessMsg] = useState('');
+
+  const refreshConsultationsList = () => {
+    setAdminConsultations(getConsultationRequests());
+  };
+
+  useEffect(() => {
+    refreshConsultationsList();
+    window.addEventListener('warath_consultations_updated', refreshConsultationsList);
+    return () => window.removeEventListener('warath_consultations_updated', refreshConsultationsList);
+  }, []);
+
+  const handleOpenCompleteConsultModal = (req: ConsultationRequest) => {
+    const defaultNotes = req.isFreeSession 
+      ? 'تم عقد الجلسة الاستشارية المجانية (ساعة واحدة) بنجاح، ومراجعة جاهزية الأسرة واعتماد خطة التمكين والتسعير.'
+      : 'تم عقد الجلسة الاستشارية المتقدمة بنجاح، ومناقشة تفاصيل التوسع والتعاقدات الفندقية.';
+    setSelectedConsultForComplete(req);
+    setConsultNotesInput(defaultNotes);
+  };
+
+  const handleConfirmCompleteConsultation = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedConsultForComplete) return;
+
+    const result = adminCompleteConsultationRequest(
+      selectedConsultForComplete.id, 
+      consultNotesInput.trim() || 'تمت الاستشارة بنجاح.'
+    );
+
+    if (result) {
+      setConsultSuccessMsg(
+        result.isFreeSession 
+          ? `✅ تم اعتماد إنجاز الاستشارة بنجاح وإرسال الإشعار للأسرة (${result.clientName}): "تم استشارتكم المجانية بنجاح"`
+          : `✅ تم اعتماد إنجاز الاستشارة بنجاح وإرسال الإشعار للأسرة (${result.clientName}): "تمت استشارتكم بنجاح"`
+      );
+      refreshConsultationsList();
+      setSelectedConsultForComplete(null);
+      setTimeout(() => setConsultSuccessMsg(''), 6000);
+    }
+  };
 
   // 🛍️ Product Approval Management State
   const [adminProducts, setAdminProducts] = useState<Product[]>(() => getAllProducts());
@@ -367,7 +424,7 @@ export default function AdminPanel({
           const defaultTickets = [
             {
               id: 'ST-921827',
-              message: 'أواجه مشكلة في مطابقة الجدوى المالية لمشروعي لدى بنك التنمية الاجتماعية، هل يمكن لمرشد ورث أجيال مراجعة دراسة الجدوى وتصحيحها؟',
+              message: 'أواجه مشكلة في مطابقة الجدوى المالية لمشروعي لدى بنك التنمية الاجتماعية، هل يمكن لمرشد إرث أجيال مراجعة دراسة الجدوى وتصحيحها؟',
               name: 'منيرة العبدالله (عطور الهيل)',
               phone: '0501234567',
               email: 'om-fawaz@example.com',
@@ -713,7 +770,7 @@ export default function AdminPanel({
               onClick={() => setAdminSubTab('families')}
               className={`flex items-center gap-2 py-3 px-4 font-bold text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
                 adminSubTab === 'families'
-                  ? 'border-[#0B3A60] text-[#0B3A60] bg-stone-50'
+                  ? 'border-[#1E3D34] text-[#1E3D34] bg-stone-50'
                   : 'border-transparent text-stone-500 hover:text-stone-800 hover:bg-stone-50/50'
               }`}
             >
@@ -728,22 +785,58 @@ export default function AdminPanel({
               onClick={() => setAdminSubTab('pilgrims')}
               className={`flex items-center gap-2 py-3 px-4 font-bold text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
                 adminSubTab === 'pilgrims'
-                  ? 'border-[#0B3A60] text-[#0B3A60] bg-stone-50'
+                  ? 'border-[#1E3D34] text-[#1E3D34] bg-stone-50'
                   : 'border-transparent text-stone-500 hover:text-stone-800 hover:bg-stone-50/50'
               }`}
             >
               <Activity className="w-4 h-4 text-emerald-600" />
               <span>دليل المعتمرين</span>
-              <span className="bg-[#EBF1FA] text-[#0B3A60] text-[9px] px-1.5 py-0.5 rounded-full font-mono">
+              <span className="bg-[#EBF1FA] text-[#1E3D34] text-[9px] px-1.5 py-0.5 rounded-full font-mono">
                 {mockPilgrims.length}
               </span>
+            </button>
+
+            <button
+              onClick={() => setAdminSubTab('golden_guarantee')}
+              className={`flex items-center gap-2 py-3 px-4 font-bold text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
+                adminSubTab === 'golden_guarantee'
+                  ? 'border-[#174F3E] text-[#174F3E] bg-emerald-50'
+                  : 'border-transparent text-stone-600 hover:text-emerald-900 hover:bg-emerald-50/50'
+              }`}
+            >
+              <Award className="w-4 h-4 text-amber-700" />
+              <span>🏅 البرنامج التأهيلي والضمان الذهبي</span>
+              <span className="bg-amber-100 text-amber-900 text-[9px] px-2 py-0.5 rounded-full font-black border border-amber-300">
+                7 مراحل
+              </span>
+            </button>
+
+            <button
+              onClick={() => setAdminSubTab('consultations')}
+              className={`flex items-center gap-2 py-3 px-4 font-bold text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
+                adminSubTab === 'consultations'
+                  ? 'border-[#174F3E] text-[#174F3E] bg-emerald-50'
+                  : 'border-transparent text-stone-600 hover:text-emerald-900 hover:bg-emerald-50/50'
+              }`}
+            >
+              <Stethoscope className="w-4 h-4 text-emerald-600" />
+              <span>🩺 طلبات الاستشارات (مجانية / 1000 ر.س)</span>
+              {adminConsultations.filter(c => c.status === 'pending').length > 0 ? (
+                <span className="bg-amber-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-black animate-pulse">
+                  {adminConsultations.filter(c => c.status === 'pending').length} جديدة
+                </span>
+              ) : (
+                <span className="bg-stone-100 text-stone-700 text-[9px] px-1.5 py-0.5 rounded-full font-bold font-mono">
+                  {adminConsultations.length}
+                </span>
+              )}
             </button>
 
             <button
               onClick={() => setAdminSubTab('product_requests')}
               className={`flex items-center gap-2 py-3 px-4 font-bold text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
                 adminSubTab === 'product_requests'
-                  ? 'border-[#0B3A60] text-[#0B3A60] bg-amber-50'
+                  ? 'border-[#1E3D34] text-[#1E3D34] bg-amber-50'
                   : 'border-transparent text-stone-600 hover:text-amber-900 hover:bg-amber-50/50'
               }`}
             >
@@ -760,7 +853,7 @@ export default function AdminPanel({
               onClick={() => setAdminSubTab('testing_center')}
               className={`flex items-center gap-2 py-3 px-4 font-bold text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
                 adminSubTab === 'testing_center'
-                  ? 'border-[#0B3A60] text-[#0B3A60] bg-emerald-50'
+                  ? 'border-[#1E3D34] text-[#1E3D34] bg-emerald-50'
                   : 'border-transparent text-stone-600 hover:text-emerald-900 hover:bg-emerald-50/50'
               }`}
             >
@@ -775,7 +868,7 @@ export default function AdminPanel({
               onClick={() => setAdminSubTab('orders')}
               className={`flex items-center gap-2 py-3 px-4 font-bold text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
                 adminSubTab === 'orders'
-                  ? 'border-[#0B3A60] text-[#0B3A60] bg-stone-50'
+                  ? 'border-[#1E3D34] text-[#1E3D34] bg-stone-50'
                   : 'border-transparent text-stone-500 hover:text-stone-800 hover:bg-stone-50/50'
               }`}
             >
@@ -792,7 +885,7 @@ export default function AdminPanel({
               onClick={() => setAdminSubTab('tickets')}
               className={`flex items-center gap-2 py-3 px-4 font-bold text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
                 adminSubTab === 'tickets'
-                  ? 'border-[#0B3A60] text-[#0B3A60] bg-stone-50'
+                  ? 'border-[#1E3D34] text-[#1E3D34] bg-stone-50'
                   : 'border-transparent text-stone-500 hover:text-stone-800 hover:bg-stone-50/50'
               }`}
             >
@@ -809,7 +902,7 @@ export default function AdminPanel({
               onClick={() => setAdminSubTab('packages')}
               className={`flex items-center gap-2 py-3 px-4 font-bold text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
                 adminSubTab === 'packages'
-                  ? 'border-[#0B3A60] text-[#0B3A60] bg-amber-50'
+                  ? 'border-[#1E3D34] text-[#1E3D34] bg-amber-50'
                   : 'border-transparent text-stone-600 hover:text-amber-900 hover:bg-amber-50/50'
               }`}
             >
@@ -821,10 +914,25 @@ export default function AdminPanel({
             </button>
 
             <button
+              onClick={() => setAdminSubTab('project_study')}
+              className={`flex items-center gap-2 py-3 px-4 font-bold text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
+                adminSubTab === 'project_study'
+                  ? 'border-[#1E3D34] text-[#1E3D34] bg-emerald-50'
+                  : 'border-transparent text-stone-600 hover:text-emerald-900 hover:bg-emerald-50/50'
+              }`}
+            >
+              <Layers className="w-4 h-4 text-[#174F3E]" />
+              <span>📐 دراسة المشروع والجدوى</span>
+              <span className="bg-emerald-100 text-emerald-800 text-[9px] px-1.5 py-0.5 rounded-full font-black">
+                630 م²
+              </span>
+            </button>
+
+            <button
               onClick={() => setAdminSubTab('emails')}
               className={`flex items-center gap-2 py-3 px-4 font-bold text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
                 adminSubTab === 'emails'
-                  ? 'border-[#0B3A60] text-[#0B3A60] bg-emerald-50'
+                  ? 'border-[#1E3D34] text-[#1E3D34] bg-emerald-50'
                   : 'border-transparent text-stone-600 hover:text-emerald-900 hover:bg-emerald-50/50'
               }`}
             >
@@ -839,7 +947,7 @@ export default function AdminPanel({
               onClick={() => setAdminSubTab('branding')}
               className={`flex items-center gap-2 py-3 px-4 font-bold text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
                 adminSubTab === 'branding'
-                  ? 'border-[#0B3A60] text-[#0B3A60] bg-stone-50'
+                  ? 'border-[#1E3D34] text-[#1E3D34] bg-stone-50'
                   : 'border-transparent text-stone-500 hover:text-stone-800 hover:bg-stone-50/50'
               }`}
             >
@@ -851,7 +959,7 @@ export default function AdminPanel({
               onClick={() => setAdminSubTab('infra')}
               className={`flex items-center gap-2 py-3 px-4 font-bold text-xs md:text-sm border-b-2 transition-all cursor-pointer ${
                 adminSubTab === 'infra'
-                  ? 'border-[#0B3A60] text-[#0B3A60] bg-amber-50'
+                  ? 'border-[#1E3D34] text-[#1E3D34] bg-amber-50'
                   : 'border-transparent text-amber-700 hover:text-amber-900 hover:bg-amber-50/50'
               }`}
             >
@@ -1058,7 +1166,7 @@ export default function AdminPanel({
                         </td>
                         <td className="p-4">
                           <div className="space-y-0.5">
-                            <span className="bg-[#EBF1FA] text-[#0B3A60] px-2 py-0.5 rounded-full text-[9px] font-black">{pilgrim.activePackage}</span>
+                            <span className="bg-[#EBF1FA] text-[#1E3D34] px-2 py-0.5 rounded-full text-[9px] font-black">{pilgrim.activePackage}</span>
                             <div className="text-[9px] text-stone-400 font-light mt-0.5">{pilgrim.mealPlan}</div>
                           </div>
                         </td>
@@ -1425,10 +1533,10 @@ export default function AdminPanel({
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-2 text-right">
               <div>
-                <h4 className="font-extrabold text-[#0B3A60] text-sm md:text-base">طلبات الشراء والمبيعات الحرة المباشرة 🛍️</h4>
+                <h4 className="font-extrabold text-[#1E3D34] text-sm md:text-base">طلبات الشراء والمبيعات الحرة المباشرة 🛍️</h4>
                 <p className="text-stone-400 text-[10px]">متابعة مبيعات الأسر الفورية لعامة المعتمرين والزوار والسياح دون اشتراط أي باقة.</p>
               </div>
-              <span className="bg-[#0B3A60]/10 text-[#0B3A60] text-xs px-2.5 py-1 rounded-full font-black self-start">
+              <span className="bg-[#1E3D34]/10 text-[#1E3D34] text-xs px-2.5 py-1 rounded-full font-black self-start">
                 إجمالي الطلبات: {orders.length} مبيعة حرة
               </span>
             </div>
@@ -1441,7 +1549,7 @@ export default function AdminPanel({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {orders.map((order) => (
                   <div key={order.id} className="bg-white border border-stone-200 rounded-2xl p-4 space-y-3 text-right relative overflow-hidden flex flex-col justify-between">
-                    <div className="absolute top-0 right-0 left-0 h-1 bg-[#0B3A60]/80" />
+                    <div className="absolute top-0 right-0 left-0 h-1 bg-[#1E3D34]/80" />
                     
                     <div className="space-y-1.5 pt-1">
                       <div className="flex items-center justify-between">
@@ -1471,7 +1579,7 @@ export default function AdminPanel({
                       </div>
                       <div className="flex justify-between items-center pt-1 border-t border-dashed border-stone-200">
                         <span>طريقة الدفع: <strong className="font-bold">{order.paymentMethod === 'cod' ? '💵 كاش عند الاستلام' : '💳 دفع رقمي'}</strong></span>
-                        <span className="font-mono text-xs font-black text-[#0B3A60]">{order.totalAmount} ر.س</span>
+                        <span className="font-mono text-xs font-black text-[#1E3D34]">{order.totalAmount} ر.س</span>
                       </div>
                     </div>
 
@@ -1480,7 +1588,7 @@ export default function AdminPanel({
                       <div className="flex gap-1">
                         <button
                           onClick={() => handleToggleOrderStatus(order.id, order.status)}
-                          className="bg-stone-100 hover:bg-[#0B3A60]/5 text-stone-700 hover:text-[#0B3A60] text-[9px] font-bold px-2 py-1 rounded-lg transition-all border border-stone-200 cursor-pointer"
+                          className="bg-stone-100 hover:bg-[#1E3D34]/5 text-stone-700 hover:text-[#1E3D34] text-[9px] font-bold px-2 py-1 rounded-lg transition-all border border-stone-200 cursor-pointer"
                         >
                           {order.status === 'new' ? 'بدء التجهيز ⚙' : order.status === 'processing' ? 'توصيل الطلب ✓' : 'إعادة الطلب لجديد'}
                         </button>
@@ -1505,7 +1613,7 @@ export default function AdminPanel({
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-2 text-right">
               <div>
-                <h4 className="font-extrabold text-[#0B3A60] text-sm md:text-base flex items-center gap-1.5">
+                <h4 className="font-extrabold text-[#1E3D34] text-sm md:text-base flex items-center gap-1.5">
                   <Headphones className="w-5 h-5 text-accent" />
                   <span>مركز الدعم الفني وتذاكر مساعدة المستفيدين</span>
                 </h4>
@@ -1649,7 +1757,7 @@ export default function AdminPanel({
                             value={ticketReplyText}
                             onChange={(e) => setTicketReplyText(e.target.value)}
                             placeholder="اكتب رد الدعم الفني الفوري الذي سيظهر للعميل..."
-                            className="w-full p-2 rounded-xl border border-[#0B3A60]/30 text-xs focus:ring-1 focus:ring-[#0B3A60] outline-none text-right"
+                            className="w-full p-2 rounded-xl border border-[#1E3D34]/30 text-xs focus:ring-1 focus:ring-[#1E3D34] outline-none text-right"
                           />
                           <div className="flex justify-end gap-1">
                             <button
@@ -1663,7 +1771,7 @@ export default function AdminPanel({
                             </button>
                             <button
                               onClick={() => handleSendReply(ticket.id)}
-                              className="bg-[#0B3A60] text-white text-[10px] font-bold px-4 py-1.5 rounded-lg shadow-sm cursor-pointer"
+                              className="bg-[#1E3D34] text-white text-[10px] font-bold px-4 py-1.5 rounded-lg shadow-sm cursor-pointer"
                             >
                               إرسال الرد الفوري 💬
                             </button>
@@ -1676,7 +1784,7 @@ export default function AdminPanel({
                               setActiveTicketId(ticket.id);
                               setTicketReplyText(ticket.reply || '');
                             }}
-                            className="text-[#0B3A60] hover:text-[#0B3A60]/80 text-[11px] font-bold flex items-center gap-1 cursor-pointer"
+                            className="text-[#1E3D34] hover:text-[#1E3D34]/80 text-[11px] font-bold flex items-center gap-1 cursor-pointer"
                           >
                             <MessageSquare className="w-3.5 h-3.5" />
                             <span>{ticket.reply ? 'تعديل الرد الحالي' : 'إرسال رد رسمي مسجّل'}</span>
@@ -1708,7 +1816,7 @@ export default function AdminPanel({
                   <span>مركز إدارة الهوية البصرية والشعارات الرسمية</span>
                 </h3>
                 <p className="text-stone-500 text-[11px] font-light">
-                  ورث أجيال هي مبادرة وطنية تابعة لمبادرات <strong className="font-semibold text-stone-800">مؤسسة التفكير والنماء</strong>. يمكنك تحميل صور الشعارات وتعديل هوية وموسم الموقع فورياً من خيار واحد.
+                  إرث أجيال هي مبادرة وطنية تابعة لمبادرات <strong className="font-semibold text-stone-800">مؤسسة التفكير والنماء</strong>. يمكنك تحميل صور الشعارات وتعديل هوية وموسم الموقع فورياً من خيار واحد.
                 </p>
               </div>
               <span className="text-[10px] font-bold text-accent bg-accent/10 px-3 py-1 rounded-full self-start sm:self-center">بوابة التحكم بالهوية 🛡️</span>
@@ -1731,23 +1839,23 @@ export default function AdminPanel({
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                {/* Option 1: #B49A5A Warm Gold / Brown */}
+                {/* Option 1: #C8A96B Warm Gold / Brown */}
                 <button
                   type="button"
-                  onClick={() => setMainPrimaryColor && setMainPrimaryColor('#B49A5A')}
+                  onClick={() => setMainPrimaryColor && setMainPrimaryColor('#C8A96B')}
                   className={`p-4 rounded-2xl border-2 text-right transition-all flex items-start gap-3.5 cursor-pointer ${
-                    mainPrimaryColor === '#B49A5A'
-                      ? 'border-[#B49A5A] bg-[#B49A5A]/5 shadow-sm'
+                    mainPrimaryColor === '#C8A96B'
+                      ? 'border-[#C8A96B] bg-[#C8A96B]/5 shadow-sm'
                       : 'border-stone-200 hover:border-stone-300 bg-stone-50/50'
                   }`}
                 >
-                  <div className="w-10 h-10 rounded-xl bg-[#B49A5A] border-2 border-white shadow-md flex-shrink-0 flex items-center justify-center text-white font-black text-sm">
-                    {mainPrimaryColor === '#B49A5A' ? '✓' : ''}
+                  <div className="w-10 h-10 rounded-xl bg-[#C8A96B] border-2 border-white shadow-md flex-shrink-0 flex items-center justify-center text-white font-black text-sm">
+                    {mainPrimaryColor === '#C8A96B' ? '✓' : ''}
                   </div>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <span className="font-black text-stone-800 text-xs md:text-sm">الذهبي / البني الدافئ</span>
-                      <span className="font-mono text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-bold">#B49A5A</span>
+                      <span className="font-mono text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-bold">#C8A96B</span>
                     </div>
                     <p className="text-[10px] text-stone-500 font-light leading-normal">
                       اللون الأساسي الافتراضي للمنصة والصفحة الرئيسية، مظهر دافئ وفاخر يعبر عن الأصالة التراثية.
@@ -1786,7 +1894,7 @@ export default function AdminPanel({
                   <div className="w-4 h-4 rounded-full border border-stone-300 shadow-xs flex-shrink-0" style={{ backgroundColor: mainPrimaryColor }}></div>
                   <span className="font-bold text-stone-800">اللون الأساسي المطبق حالياً:</span>
                   <span className="font-mono font-extrabold text-stone-900 px-2.5 py-0.5 rounded-md bg-white border border-stone-200">
-                    {mainPrimaryColor} {mainPrimaryColor === '#B49A5A' ? '🟤 (الذهبي/البني الدافئ)' : '🟢 (الأخضر الداكن)'}
+                    {mainPrimaryColor} {mainPrimaryColor === '#C8A96B' ? '🟤 (الذهبي/البني الدافئ)' : '🟢 (الأخضر الداكن)'}
                   </span>
                 </div>
                 <span className="text-[10px] text-emerald-800 font-bold bg-white px-2.5 py-1 rounded-lg border border-emerald-200 shadow-2xs">
@@ -1866,9 +1974,9 @@ export default function AdminPanel({
                 <div className="flex items-center justify-between">
                   <h4 className="font-bold text-stone-800 text-xs flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-accent"></span>
-                    <span>تعديل شعار مبادرة ورث أجيال</span>
+                    <span>تعديل شعار مبادرة إرث أجيال</span>
                   </h4>
-                  <span className="text-[10px] text-stone-400 font-mono">شعار ورث أجيال الرسمي</span>
+                  <span className="text-[10px] text-stone-400 font-mono">شعار إرث أجيال الرسمي</span>
                 </div>
 
                 {/* Preview */}
@@ -2097,7 +2205,7 @@ export default function AdminPanel({
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-3 rounded-xl text-xs font-bold text-center"
               >
-                🎉 تم تحديث شعار "ورث أجيال" وشعار "مؤسسة التفكير والنماء" بنجاح وتطبيق الهوية البصرية الجديدة في كافة أنحاء المنصة!
+                🎉 تم تحديث شعار "إرث أجيال" وشعار "مؤسسة التفكير والنماء" بنجاح وتطبيق الهوية البصرية الجديدة في كافة أنحاء المنصة!
               </motion.div>
             )}
           </div>
@@ -2107,7 +2215,7 @@ export default function AdminPanel({
         {adminSubTab === 'packages' && (
           <div className="space-y-6 text-right dir-rtl" id="admin-packages-management">
             {/* Header & Stats Banner */}
-            <div className="bg-gradient-to-r from-[#0B3A60] via-[#0D4470] to-[#0B3A60] text-white p-5 rounded-2xl border border-white/10 shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="bg-gradient-to-r from-[#1E3D34] via-[#0D4470] to-[#1E3D34] text-white p-5 rounded-2xl border border-white/10 shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-2xl bg-amber-400/20 border border-amber-400/30 flex items-center justify-center text-amber-300 shadow-inner">
                   <Gift className="w-6 h-6 text-amber-300" />
@@ -2146,7 +2254,7 @@ export default function AdminPanel({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="bg-stone-50 border border-stone-200 p-3.5 rounded-xl text-right">
                 <span className="text-[11px] text-stone-500 font-bold block">إجمالي الباقات</span>
-                <span className="text-lg font-black text-[#0B3A60]">{packagesList.length} باقة</span>
+                <span className="text-lg font-black text-[#1E3D34]">{packagesList.length} باقة</span>
               </div>
               <div className="bg-emerald-50/60 border border-emerald-200 p-3.5 rounded-xl text-right">
                 <span className="text-[11px] text-emerald-700 font-bold block">الباقات النشطة 🟢</span>
@@ -2177,7 +2285,7 @@ export default function AdminPanel({
                   onClick={() => setPkgCategoryFilter('all')}
                   className={`px-3 py-1.5 rounded-xl text-xs font-extrabold cursor-pointer transition-all ${
                     pkgCategoryFilter === 'all'
-                      ? 'bg-[#0B3A60] text-white shadow-xs'
+                      ? 'bg-[#1E3D34] text-white shadow-xs'
                       : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
                   }`}
                 >
@@ -2237,7 +2345,7 @@ export default function AdminPanel({
                   placeholder="بحث باسم الباقة..."
                   value={pkgSearchTerm}
                   onChange={(e) => setPkgSearchTerm(e.target.value)}
-                  className="w-full bg-stone-50 border border-stone-200 rounded-xl pr-9 pl-3 py-1.5 text-xs text-stone-800 focus:outline-none focus:bg-white focus:border-[#0B3A60]"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl pr-9 pl-3 py-1.5 text-xs text-stone-800 focus:outline-none focus:bg-white focus:border-[#1E3D34]"
                 />
               </div>
             </div>
@@ -2314,7 +2422,7 @@ export default function AdminPanel({
 
                         {/* Price Display */}
                         <div className="bg-stone-50 p-2.5 rounded-xl border border-stone-200 mt-3 text-center">
-                          <span className="text-base font-black text-[#0B3A60]">{pkg.price}</span>
+                          <span className="text-base font-black text-[#1E3D34]">{pkg.price}</span>
                           {pkg.period && (
                             <span className="text-[10px] text-stone-500 block font-bold mt-0.5">
                               المدة: {pkg.period}
@@ -2429,7 +2537,7 @@ export default function AdminPanel({
                           <select
                             value={pkgFormCategoryId}
                             onChange={(e) => setPkgFormCategoryId(e.target.value as any)}
-                            className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-900 focus:ring-2 focus:ring-[#0B3A60]"
+                            className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-900 focus:ring-2 focus:ring-[#1E3D34]"
                           >
                             <option value="productive_family">👩‍🍳 أسرة منتجة (دعم وتمكين حرفي)</option>
                             <option value="pilgrim">🕋 معتمر (ضيافة وجبات وتوصيل فندقي)</option>
@@ -2445,7 +2553,7 @@ export default function AdminPanel({
                           <select
                             value={pkgFormStatus}
                             onChange={(e) => setPkgFormStatus(e.target.value as any)}
-                            className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-900 focus:ring-2 focus:ring-[#0B3A60]"
+                            className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-900 focus:ring-2 focus:ring-[#1E3D34]"
                           >
                             <option value="active">🟢 نشطة وبارزة للعملاء</option>
                             <option value="hidden">🔴 مخفية مؤقتاً من القائمة</option>
@@ -2465,7 +2573,7 @@ export default function AdminPanel({
                             placeholder="مثال: باقة النماء والتوسع..."
                             value={pkgFormName}
                             onChange={(e) => setPkgFormName(e.target.value)}
-                            className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-900 focus:ring-2 focus:ring-[#0B3A60]"
+                            className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-900 focus:ring-2 focus:ring-[#1E3D34]"
                           />
                         </div>
 
@@ -2478,7 +2586,7 @@ export default function AdminPanel({
                             placeholder="مثال: مجانية 100%، الأكثر طلباً، مُدعمة..."
                             value={pkgFormBadge}
                             onChange={(e) => setPkgFormBadge(e.target.value)}
-                            className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-900 focus:ring-2 focus:ring-[#0B3A60]"
+                            className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-900 focus:ring-2 focus:ring-[#1E3D34]"
                           />
                         </div>
                       </div>
@@ -2535,7 +2643,7 @@ export default function AdminPanel({
                           placeholder="اكتب وصفاً معبراً ومختصراً عن هدف الباقة وفائدتها..."
                           value={pkgFormShortDesc}
                           onChange={(e) => setPkgFormShortDesc(e.target.value)}
-                          className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-900 focus:ring-2 focus:ring-[#0B3A60]"
+                          className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2 text-xs text-stone-900 focus:ring-2 focus:ring-[#1E3D34]"
                         />
                       </div>
 
@@ -2607,7 +2715,7 @@ export default function AdminPanel({
                         </button>
                         <button
                           type="submit"
-                          className="bg-[#0B3A60] hover:bg-[#0B3A60]/90 text-white px-6 py-2.5 rounded-xl text-xs font-extrabold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                          className="bg-[#1E3D34] hover:bg-[#1E3D34]/90 text-white px-6 py-2.5 rounded-xl text-xs font-extrabold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
                         >
                           <Check className="w-4 h-4" />
                           <span>حفظ الباقة وتأكيد النشر</span>
@@ -2824,6 +2932,339 @@ export default function AdminPanel({
               </div>
             </div>
           </div>
+        )}
+
+        {/* 🩺 CONSULTATION REQUESTS MANAGEMENT TAB */}
+        {adminSubTab === 'consultations' && (
+          <div className="space-y-6">
+            {/* Notification alert */}
+            {consultSuccessMsg && (
+              <div className="bg-emerald-600 text-white p-4 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-between shadow-md animate-fade-in">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-200" />
+                  <span>{consultSuccessMsg}</span>
+                </div>
+                <button
+                  onClick={() => setConsultSuccessMsg('')}
+                  className="text-white hover:text-emerald-200 text-xs font-mono"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
+            {/* KPI Overview Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              <div className="bg-white border border-stone-200 p-4 rounded-2xl shadow-xs text-right">
+                <span className="text-[11px] text-stone-500 font-bold block">إجمالي طلبات الاستشارات</span>
+                <span className="text-2xl font-black text-stone-900 font-mono">{adminConsultations.length}</span>
+              </div>
+              <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl shadow-xs text-right">
+                <span className="text-[11px] text-emerald-800 font-bold block">استشارات مجانية (1 ساعة)</span>
+                <span className="text-2xl font-black text-emerald-900 font-mono">
+                  {adminConsultations.filter(c => c.isFreeSession).length}
+                </span>
+              </div>
+              <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl shadow-xs text-right">
+                <span className="text-[11px] text-amber-800 font-bold block">استشارات مدفوعة (1000 ر.س)</span>
+                <span className="text-2xl font-black text-amber-900 font-mono">
+                  {adminConsultations.filter(c => !c.isFreeSession).length}
+                </span>
+              </div>
+              <div className="bg-blue-50 border border-blue-200 p-4 rounded-2xl shadow-xs text-right">
+                <span className="text-[11px] text-blue-800 font-bold block">بانتظار الانعقاد والاعتماد</span>
+                <span className="text-2xl font-black text-blue-900 font-mono">
+                  {adminConsultations.filter(c => c.status === 'pending').length}
+                </span>
+              </div>
+              <div className="bg-purple-50 border border-purple-200 p-4 rounded-2xl shadow-xs text-right">
+                <span className="text-[11px] text-purple-800 font-bold block">استشارات مكتملة بنجاح</span>
+                <span className="text-2xl font-black text-purple-900 font-mono">
+                  {adminConsultations.filter(c => c.status === 'completed').length}
+                </span>
+              </div>
+            </div>
+
+            {/* Main Table Card */}
+            <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-100 pb-4">
+                <div>
+                  <h3 className="font-black text-stone-900 text-base">سجل طلبات الاستشارات للأسر المنتجة والحرفيين</h3>
+                  <p className="text-xs text-stone-500 mt-0.5">
+                    الاستشارة الأولى لكل أسرة مجانية لمدة ساعة كاملة، والاستشارات الإضافية بقيمة 1,000 ريال / ساعة.
+                  </p>
+                </div>
+
+                {/* Filters & Search */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="بحث بالاسم أو الجوال أو رقم الحجز..."
+                      value={consultSearch}
+                      onChange={(e) => setConsultSearch(e.target.value)}
+                      className="p-2 pr-8 rounded-xl border border-stone-200 text-xs bg-stone-50 outline-none focus:ring-1 focus:ring-primary w-56"
+                    />
+                    <Search className="w-3.5 h-3.5 text-stone-400 absolute right-2.5 top-3" />
+                  </div>
+
+                  <div className="flex bg-stone-100 p-1 rounded-xl gap-1 text-[11px]">
+                    <button
+                      onClick={() => setConsultFilter('all')}
+                      className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                        consultFilter === 'all' ? 'bg-[#174F3E] text-white shadow-xs' : 'text-stone-600'
+                      }`}
+                    >
+                      الكل ({adminConsultations.length})
+                    </button>
+                    <button
+                      onClick={() => setConsultFilter('pending')}
+                      className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                        consultFilter === 'pending' ? 'bg-[#174F3E] text-white shadow-xs' : 'text-stone-600'
+                      }`}
+                    >
+                      بانتظار الإنجاز ({adminConsultations.filter(c => c.status === 'pending').length})
+                    </button>
+                    <button
+                      onClick={() => setConsultFilter('completed')}
+                      className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                        consultFilter === 'completed' ? 'bg-[#174F3E] text-white shadow-xs' : 'text-stone-600'
+                      }`}
+                    >
+                      تمت الاستشارة ({adminConsultations.filter(c => c.status === 'completed').length})
+                    </button>
+                    <button
+                      onClick={() => setConsultFilter('free')}
+                      className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                        consultFilter === 'free' ? 'bg-[#174F3E] text-white shadow-xs' : 'text-stone-600'
+                      }`}
+                    >
+                      مجانية 1 ساعة ({adminConsultations.filter(c => c.isFreeSession).length})
+                    </button>
+                    <button
+                      onClick={() => setConsultFilter('paid')}
+                      className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                        consultFilter === 'paid' ? 'bg-[#174F3E] text-white shadow-xs' : 'text-stone-600'
+                      }`}
+                    >
+                      1000 ر.س ({adminConsultations.filter(c => !c.isFreeSession).length})
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Consultation List Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-right text-xs">
+                  <thead className="bg-stone-50 border-b border-stone-200 text-stone-600 font-bold">
+                    <tr>
+                      <th className="p-3.5">رقم الحجز</th>
+                      <th className="p-3.5">الأسرة / صاحب الطلب</th>
+                      <th className="p-3.5">نوع الاستشارة والمستشار</th>
+                      <th className="p-3.5">الموعد والصيغة</th>
+                      <th className="p-3.5">الباقة والرسوم</th>
+                      <th className="p-3.5">الحالة</th>
+                      <th className="p-3.5 text-center">الإجراء الإداري</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-100">
+                    {adminConsultations
+                      .filter(c => {
+                        const matchSearch = 
+                          (c.clientName || '').toLowerCase().includes(consultSearch.toLowerCase()) ||
+                          (c.clientPhone || '').includes(consultSearch) ||
+                          (c.id || '').toLowerCase().includes(consultSearch.toLowerCase());
+                        
+                        if (!matchSearch) return false;
+
+                        if (consultFilter === 'pending') return c.status === 'pending';
+                        if (consultFilter === 'completed') return c.status === 'completed';
+                        if (consultFilter === 'free') return c.isFreeSession;
+                        if (consultFilter === 'paid') return !c.isFreeSession;
+                        return true;
+                      })
+                      .map((req) => (
+                        <tr key={req.id} className="hover:bg-stone-50/70 transition-all">
+                          <td className="p-3.5 font-mono font-bold text-stone-800">
+                            {req.id}
+                            <span className="block text-[10px] text-stone-400 font-normal">
+                              {new Date(req.createdAt).toLocaleDateString('ar-SA')}
+                            </span>
+                          </td>
+
+                          <td className="p-3.5">
+                            <span className="font-bold text-stone-900 block">{req.clientName}</span>
+                            <span className="text-[11px] text-stone-500 font-mono">{req.clientPhone}</span>
+                          </td>
+
+                          <td className="p-3.5">
+                            <span className="font-bold text-stone-800 block">{req.consultationTypeLabel}</span>
+                            <span className="text-[11px] text-emerald-800 font-medium">{req.consultantName}</span>
+                            {req.bookingNotes && (
+                              <span className="block text-[10px] text-stone-500 mt-1 max-w-xs truncate" title={req.bookingNotes}>
+                                📝 {req.bookingNotes}
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="p-3.5">
+                            <span className="font-bold text-stone-800 block">
+                              {req.bookingDate} ({req.bookingTime})
+                            </span>
+                            <span className="text-[10px] bg-stone-100 text-stone-700 px-2 py-0.5 rounded-md inline-block mt-0.5">
+                              {req.sessionFormatLabel} • مدة ساعة
+                            </span>
+                          </td>
+
+                          <td className="p-3.5">
+                            {req.isFreeSession ? (
+                              <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-1 rounded-xl font-bold text-[11px]">
+                                🎁 مجانية (1 ساعة - 0 ر.س)
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-1 rounded-xl font-bold text-[11px]">
+                                💳 1,000 ريال / ساعة
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="p-3.5">
+                            {req.status === 'completed' ? (
+                              <div className="space-y-1">
+                                <span className="inline-flex items-center gap-1 bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold text-[10px]">
+                                  <CheckCircle2 className="w-3 h-3" />
+                                  تمت الاستشارة بنجاح ✓
+                                </span>
+                                {req.adminNotes && (
+                                  <p className="text-[10px] text-stone-600 max-w-xs italic" title={req.adminNotes}>
+                                    "{req.adminNotes}"
+                                  </p>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-900 px-2.5 py-1 rounded-full font-bold text-[10px]">
+                                ⏳ بانتظار الانعقاد
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="p-3.5 text-center">
+                            {req.status !== 'completed' ? (
+                              <button
+                                onClick={() => handleOpenCompleteConsultModal(req)}
+                                className="bg-[#174F3E] hover:bg-[#123e31] text-white font-extrabold px-3.5 py-2 rounded-xl text-xs transition-all shadow-xs flex items-center justify-center gap-1.5 mx-auto cursor-pointer hover:scale-105"
+                                title="اضغط هنا بعد إتمام الجلسة الاستشارية لإشعار الأسرة"
+                              >
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-300" />
+                                <span>تم الاستشارة ✓</span>
+                              </button>
+                            ) : (
+                              <div className="flex items-center justify-center gap-1">
+                                <span className="text-[11px] text-emerald-700 font-bold">معتمدة ومكتملة ✓</span>
+                                <button
+                                  onClick={() => handleOpenCompleteConsultModal(req)}
+                                  className="text-[10px] text-stone-500 hover:text-stone-800 underline mr-1 cursor-pointer"
+                                >
+                                  تعديل الإفادة
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Modal for Marking Consultation as Completed */}
+            {selectedConsultForComplete && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-white border border-stone-200 rounded-3xl p-6 sm:p-8 max-w-lg w-full text-right shadow-2xl space-y-5"
+                >
+                  <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-black">
+                        ✓
+                      </div>
+                      <h3 className="font-black text-stone-900 text-base">اعتماد إنجاز الاستشارة وتأكيد التنفيذ</h3>
+                    </div>
+                    <button
+                      onClick={() => setSelectedConsultForComplete(null)}
+                      className="text-stone-400 hover:text-stone-700 text-xs font-mono p-1"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <div className="bg-emerald-50 border border-emerald-200 p-3.5 rounded-2xl text-xs space-y-1 text-emerald-950">
+                    <p className="font-bold">
+                      صاحب الاستشارة: <span className="font-black">{selectedConsultForComplete.clientName}</span> ({selectedConsultForComplete.clientPhone})
+                    </p>
+                    <p>
+                      النوع: <span className="font-semibold">{selectedConsultForComplete.consultationTypeLabel}</span> • 
+                      الباقة: <span className="font-bold">{selectedConsultForComplete.isFreeSession ? 'استشارة مجانية (1 ساعة)' : 'استشارة مدفوعة (1000 ر.س)'}</span>
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleConfirmCompleteConsultation} className="space-y-4">
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold text-stone-700">
+                        ملاحظات وتوصيات المستشار بعد إنهاء الجلسة (ستظهر للأسرة فوراً):
+                      </label>
+                      <textarea
+                        rows={4}
+                        value={consultNotesInput}
+                        onChange={(e) => setConsultNotesInput(e.target.value)}
+                        placeholder="أدخل ملخص النصائح والتوجيهات المقدمة للأسرة في الجلسة الاستشارية..."
+                        className="w-full p-3 rounded-xl border border-stone-200 text-xs bg-stone-50 font-medium text-right outline-none focus:ring-1 focus:ring-primary"
+                        required
+                      />
+                    </div>
+
+                    <div className="bg-stone-50 p-3 rounded-xl border border-stone-200 text-[11px] text-stone-600">
+                      💡 عند الضغط على زر الاعتماد بالأسفل، ستتحول حالة الطلب إلى "مكتمل" وسيظهر للأسرة إشعار فوري بعنوان:
+                      <strong className="text-emerald-800 block mt-1">
+                        {selectedConsultForComplete.isFreeSession 
+                          ? '« تم استشارتكم المجانية بنجاح ✅ »' 
+                          : '« تم إنهاء جلستكم الاستشارية بنجاح ✅ »'}
+                      </strong>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedConsultForComplete(null)}
+                        className="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer"
+                      >
+                        إلغاء
+                      </button>
+                      <button
+                        type="submit"
+                        className="bg-[#174F3E] hover:bg-[#123e31] text-white font-black px-6 py-2.5 rounded-xl text-xs transition-all shadow-md cursor-pointer flex items-center gap-1.5"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                        <span>تأكيد اعتماد: تم الاستشارة بنجاح ✓</span>
+                      </button>
+                    </div>
+                  </form>
+                </motion.div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* GOLDEN GUARANTEE & QUALIFICATION PROGRAM TAB */}
+        {adminSubTab === 'golden_guarantee' && (
+          <AdminGoldenGuaranteeManager />
+        )}
+
+        {/* PROJECT STUDY & FEASIBILITY EDITOR TAB */}
+        {adminSubTab === 'project_study' && (
+          <ProjectStudyAdminEditor />
         )}
 
         {/* 7. INFRASTRUCTURE & HIGH CONCURRENCY TAB */}

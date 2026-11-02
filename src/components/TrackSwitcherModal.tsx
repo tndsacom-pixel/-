@@ -21,9 +21,9 @@ export default function TrackSwitcherModal({
     {
       id: 'family' as const,
       icon: '👩‍🍳',
-      title: 'مسار الأسرة المنتجة والحرفيين',
+      title: 'مسار رائدات العمل الحر والحرفيين',
       badge: 'المرتكز الأساسي',
-      desc: 'التأهيل، التقييم الذكي، التدريب، الاعتماد، المتجر الخاص، التمويل التمكيني، وحاسبة الأرباح.',
+      desc: 'التأهيل، التقييم الذكي، التدريب، الاعتماد، المتجر الخاص، والتمكين الاقتصادي.',
       color: 'bg-amber-50 border-amber-300 text-stone-900 hover:border-amber-500',
       btnColor: 'bg-primary text-accent hover:bg-primary/90'
     },
@@ -50,7 +50,7 @@ export default function TrackSwitcherModal({
       icon: '🤝',
       title: 'مسار الجهات والشركاء والداعمين',
       badge: 'الاستدامة والأثر',
-      desc: 'فرص الشراكة الاستراتيجية، كفالة الأسر، عقود التوريد المؤسسي، وتقارير الأثر التنموي.',
+      desc: 'فرص الشراكة الاستراتيجية، كفالة رائدات العمل الحر، عقود التوريد المؤسسي، وتقارير الأثر التنموي.',
       color: 'bg-stone-50 border-stone-300 text-stone-900 hover:border-stone-500',
       btnColor: 'bg-stone-900 text-white hover:bg-stone-800'
     }

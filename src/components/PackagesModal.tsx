@@ -116,7 +116,7 @@ export default function PackagesModal({ onClose, onSelectPackage, activeTrack }:
         id="packages-modal-container"
       >
         {/* Modal Header Bar */}
-        <div className="bg-gradient-to-r from-[#0B3A60] via-[#0D4470] to-[#0B3A60] text-white p-4 sm:p-5 flex items-center justify-between border-b border-white/10 flex-shrink-0 shadow-md">
+        <div className="bg-gradient-to-r from-[#174F3E] via-[#0D4470] to-[#174F3E] text-white p-4 sm:p-5 flex items-center justify-between border-b border-white/10 flex-shrink-0 shadow-md">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-amber-400/20 border border-amber-400/30 flex items-center justify-center text-amber-300 shadow-inner">
               <Gift className="w-5 h-5 text-amber-300" />
@@ -205,7 +205,7 @@ export default function PackagesModal({ onClose, onSelectPackage, activeTrack }:
                       </div>
 
                       {/* Title & Description */}
-                      <h3 className="text-lg font-black text-stone-900 group-hover:text-[#0B3A60] transition-colors mb-1">
+                      <h3 className="text-lg font-black text-stone-900 group-hover:text-[#174F3E] transition-colors mb-1">
                         {cat.title}
                       </h3>
                       <p className="text-xs text-stone-500 font-medium leading-relaxed mb-4">
@@ -214,7 +214,7 @@ export default function PackagesModal({ onClose, onSelectPackage, activeTrack }:
                     </div>
 
                     {/* Action Prompt */}
-                    <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs font-bold text-[#0B3A60]">
+                    <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs font-bold text-[#174F3E]">
                       <span>استعرض الباقات</span>
                       <ChevronLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" />
                     </div>
@@ -309,7 +309,7 @@ export default function PackagesModal({ onClose, onSelectPackage, activeTrack }:
                       {/* Price & Period Section */}
                       <div className="bg-stone-50 p-3 rounded-xl border border-stone-200/80 text-center">
                         <div className="flex items-baseline justify-center gap-1">
-                          <span className="text-2xl font-black text-[#0B3A60]">
+                          <span className="text-2xl font-black text-[#174F3E]">
                             {pkg.price}
                           </span>
                         </div>
@@ -344,7 +344,7 @@ export default function PackagesModal({ onClose, onSelectPackage, activeTrack }:
                         className={`w-full py-2.5 px-4 rounded-xl font-extrabold text-xs transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer ${
                           pkg.isPopular
                             ? 'bg-amber-500 hover:bg-amber-600 text-stone-950'
-                            : 'bg-[#0B3A60] hover:bg-[#0B3A60]/90 text-white'
+                            : 'bg-[#174F3E] hover:bg-[#174F3E]/90 text-white'
                         }`}
                       >
                         <Zap className="w-4 h-4" />
@@ -372,14 +372,14 @@ export default function PackagesModal({ onClose, onSelectPackage, activeTrack }:
         <div className="bg-stone-100 p-3 sm:p-4 border-t border-stone-200 text-stone-500 text-xs flex flex-col sm:flex-row items-center justify-between gap-2 flex-shrink-0">
           <div className="flex items-center gap-2 text-[11px] font-medium text-stone-600">
             <Sparkles className="w-4 h-4 text-amber-600" />
-            <span>جميع الباقات خاضعة لمعايير وتوجيهات تمكين الأسر المنتجة بمنصة ورث أجيال</span>
+            <span>جميع الباقات خاضعة لمعايير وتوجيهات تمكين الأسر المنتجة بمنصة إرث أجيال</span>
           </div>
 
           {selectedCategory && (
             <button
               type="button"
               onClick={() => setSelectedCategory(null)}
-              className="text-xs font-black text-[#0B3A60] hover:underline cursor-pointer"
+              className="text-xs font-black text-[#174F3E] hover:underline cursor-pointer"
             >
               ↩ العودة لاختيار فئة أخرى
             </button>
@@ -431,7 +431,7 @@ export default function PackagesModal({ onClose, onSelectPackage, activeTrack }:
               <div className="grid grid-cols-2 gap-3 bg-amber-50/50 p-3 rounded-xl border border-amber-200 text-xs">
                 <div>
                   <span className="text-stone-500 block font-bold">السعر:</span>
-                  <span className="text-base font-black text-[#0B3A60]">{detailedPackage.pkg.price}</span>
+                  <span className="text-base font-black text-[#174F3E]">{detailedPackage.pkg.price}</span>
                 </div>
                 <div>
                   <span className="text-stone-500 block font-bold">المدة / الصلاحية:</span>
@@ -533,7 +533,7 @@ export default function PackagesModal({ onClose, onSelectPackage, activeTrack }:
                       placeholder="أدخل اسمك الكريم..."
                       value={subscriberName}
                       onChange={(e) => setSubscriberName(e.target.value)}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0B3A60] focus:bg-white text-right"
+                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#174F3E] focus:bg-white text-right"
                     />
                   </div>
 
@@ -548,7 +548,7 @@ export default function PackagesModal({ onClose, onSelectPackage, activeTrack }:
                       placeholder="05XXXXXXXX"
                       value={subscriberPhone}
                       onChange={(e) => setSubscriberPhone(e.target.value)}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0B3A60] focus:bg-white text-right dir-ltr"
+                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#174F3E] focus:bg-white text-right dir-ltr"
                     />
                   </div>
 
@@ -562,7 +562,7 @@ export default function PackagesModal({ onClose, onSelectPackage, activeTrack }:
                       placeholder="example@domain.com"
                       value={subscriberEmail}
                       onChange={(e) => setSubscriberEmail(e.target.value)}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0B3A60] focus:bg-white text-right dir-ltr"
+                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#174F3E] focus:bg-white text-right dir-ltr"
                     />
                   </div>
 
@@ -576,7 +576,7 @@ export default function PackagesModal({ onClose, onSelectPackage, activeTrack }:
                       placeholder="أي استفسار أو تفاصيل إضافية تريد مشاركتها مع الفريق..."
                       value={subscriberNotes}
                       onChange={(e) => setSubscriberNotes(e.target.value)}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0B3A60] focus:bg-white text-right"
+                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#174F3E] focus:bg-white text-right"
                     />
                   </div>
 
@@ -597,7 +597,7 @@ export default function PackagesModal({ onClose, onSelectPackage, activeTrack }:
                     </button>
                     <button
                       type="submit"
-                      className="bg-[#0B3A60] hover:bg-[#0B3A60]/90 text-white px-6 py-2.5 rounded-xl text-xs font-black transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                      className="bg-[#174F3E] hover:bg-[#174F3E]/90 text-white px-6 py-2.5 rounded-xl text-xs font-black transition-all shadow-md flex items-center gap-2 cursor-pointer"
                     >
                       <Send className="w-4 h-4" />
                       <span>تأكيد طلب الاشتراك</span>
@@ -628,7 +628,7 @@ export default function PackagesModal({ onClose, onSelectPackage, activeTrack }:
                   <button
                     type="button"
                     onClick={handleResetForm}
-                    className="bg-[#0B3A60] text-white text-xs font-extrabold px-6 py-2.5 rounded-xl transition-all hover:bg-[#0B3A60]/90 cursor-pointer shadow-md inline-block"
+                    className="bg-[#174F3E] text-white text-xs font-extrabold px-6 py-2.5 rounded-xl transition-all hover:bg-[#174F3E]/90 cursor-pointer shadow-md inline-block"
                   >
                     تم، عودة للرئيسية
                   </button>

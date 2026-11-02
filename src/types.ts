@@ -24,6 +24,7 @@ export interface Product {
 
 export interface ProducerFamily {
   id: string;
+  familyCode?: string; // e.g. 'ERG-0001'
   brandName: string;
   ownerName: string;
   phone: string;
@@ -229,6 +230,7 @@ export interface SupportTicket {
 
 export interface PlatformOrder {
   id: string;
+  orderNumber?: string;
   userEmail: string;
   userName: string;
   userPhone?: string;
@@ -244,8 +246,31 @@ export interface PlatformOrder {
   deliveryAddress: string;
   city: string;
   status: 'received' | 'paid' | 'processing' | 'delivering' | 'delivered' | 'cancelled';
+  assignedProducerId?: string;
+  assignedFamilyCode?: string;
+  assignedProducerName?: string;
+  dispatchStatus?: 'pending_dispatch' | 'dispatched_to_families' | 'assigned' | 'rejected_by_families' | 'completed';
+  eligibleFamilyIds?: string[];
+  dispatchedAt?: string;
   createdAt: string;
   updatedAt: string;
   notes?: string;
 }
+
+export interface PlatformDynamicContent {
+  mainTitle: string;
+  mainSubtitle: string;
+  heroTagline: string;
+  announcementBanner: string;
+  stats: {
+    totalFamilies: string;
+    totalOrders: string;
+    totalExperiences: string;
+    totalPartners: string;
+  };
+  profitCalculatorNotice: string;
+  supportPhone: string;
+  whatsappNumber: string;
+}
+
 

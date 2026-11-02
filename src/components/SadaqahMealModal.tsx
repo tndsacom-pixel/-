@@ -69,7 +69,7 @@ export default function SadaqahMealModal({
               <Sparkles className="w-3 h-3 text-rose-700" />
               <span>خدمة وجبة البر والصدقة بالحرم (Sadaqah & Goodness Meal Flow)</span>
             </div>
-            <h3 className="font-extrabold text-[#0B3A60] text-base">
+            <h3 className="font-extrabold text-[#174F3E] text-base">
               شراء وإهداء وجبات إطعام لضيوف الرحمن بمكة
             </h3>
           </div>
@@ -82,7 +82,7 @@ export default function SadaqahMealModal({
             <div className="bg-amber-50/60 p-3.5 rounded-2xl border border-amber-200/80 flex items-center justify-between">
               <div>
                 <span className="text-[10px] text-amber-900 font-bold block">الوجبة المختارة:</span>
-                <strong className="text-xs font-black text-[#0B3A60]">{dishName}</strong>
+                <strong className="text-xs font-black text-[#174F3E]">{dishName}</strong>
                 <span className="text-[10px] text-stone-500 block">من إعداد: {familyName}</span>
               </div>
               <div className="text-left font-mono font-black text-amber-900 text-sm">
@@ -101,7 +101,7 @@ export default function SadaqahMealModal({
                     onClick={() => setQuantity(num)}
                     className={`py-2 rounded-xl text-xs font-black font-mono border transition-all cursor-pointer ${
                       quantity === num
-                        ? 'bg-[#003B6F] text-white border-[#003B6F]'
+                        ? 'bg-[#174F3E] text-white border-[#174F3E]'
                         : 'bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100'
                     }`}
                   >
@@ -124,7 +124,7 @@ export default function SadaqahMealModal({
                     key={dest.id}
                     className={`flex items-start gap-2.5 p-3 rounded-2xl border transition-all cursor-pointer ${
                       destination === dest.id
-                        ? 'bg-[#EBF1FA] border-[#003B6F] text-[#0B3A60]'
+                        ? 'bg-[#EBF1FA] border-[#174F3E] text-[#174F3E]'
                         : 'bg-stone-50/60 border-stone-200 text-stone-700 hover:bg-stone-100'
                     }`}
                   >
@@ -133,7 +133,7 @@ export default function SadaqahMealModal({
                       name="dest" 
                       checked={destination === dest.id} 
                       onChange={() => setDestination(dest.id as any)}
-                      className="mt-1 accent-[#003B6F]" 
+                      className="mt-1 accent-[#174F3E]" 
                     />
                     <div>
                       <span className="font-extrabold text-xs block">{dest.label}</span>
@@ -152,12 +152,12 @@ export default function SadaqahMealModal({
                 value={dedicationMsg}
                 onChange={(e) => setDedicationMsg(e.target.value)}
                 placeholder="اكتب دعاءً أو إهداءً سيتم إرفاقه بطاقة التوزيع..."
-                className="w-full bg-stone-50 border border-stone-200 p-2.5 rounded-xl text-xs outline-none focus:ring-1 focus:ring-[#003B6F]"
+                className="w-full bg-stone-50 border border-stone-200 p-2.5 rounded-xl text-xs outline-none focus:ring-1 focus:ring-[#174F3E]"
               />
             </div>
 
             {/* Total summary */}
-            <div className="bg-[#003B6F] text-white p-4 rounded-2xl flex items-center justify-between">
+            <div className="bg-[#174F3E] text-white p-4 rounded-2xl flex items-center justify-between">
               <div>
                 <span className="text-[10px] text-amber-300 font-bold block">إجمالي قيمة المساهمة:</span>
                 <span className="text-xs font-extrabold text-stone-200">{quantity} وجبة × {pricePerMeal} ر.س</span>

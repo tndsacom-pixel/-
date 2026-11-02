@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { useLanguage } from '../context/LanguageContext';
 import { 
   Newspaper, 
   ArrowRight, 
@@ -15,14 +16,15 @@ interface NewsPageProps {
 }
 
 export default function NewsPage({ onBackToHome, onOpenSupport }: NewsPageProps) {
+  const { t, isEn } = useLanguage();
   const newsItems = [
     {
       id: '1',
-      title: 'إطلاق منصة "ورث أجيال" بحضور نخبة من قيادات قطاع التمكين التنموي والضيافة',
+      title: 'إطلاق منصة "إرث أجيال" بحضور نخبة من قيادات قطاع التمكين التنموي والضيافة',
       date: '01 أغسطس 2026',
       category: 'أخبار المنصة 🗞️',
       image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800',
-      summary: 'تم بحمد الله إشهار وتدشين منصة ورث أجيال المستقلة بدعم مؤسسة التفكير والنماء للاستشارات الإدارية TND.SA لتمكين وتأهيل الأسر الوطنية المنتجة وربط مخرجاتها بالمتجر المستقل.',
+      summary: 'تم بحمد الله إشهار وتدشين منصة إرث أجيال المستقلة بدعم مؤسسة التفكير والنماء للاستشارات الإدارية TND.SA لتمكين وتأهيل الأسر الوطنية المنتجة وربط مخرجاتها بالمتجر المستقل.',
       readTime: '3 دقائق قراءة'
     },
     {
@@ -46,7 +48,7 @@ export default function NewsPage({ onBackToHome, onOpenSupport }: NewsPageProps)
   ];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 text-right p-4 sm:p-6 font-sans" id="standalone-news-page">
+    <div className={`max-w-7xl mx-auto space-y-8 p-4 sm:p-6 font-sans ${isEn ? 'text-left' : 'text-right'}`} id="standalone-news-page">
       {/* Navigation Top Bar */}
       <div className="flex items-center justify-between bg-white border border-stone-200 p-4 rounded-2xl shadow-xs">
         <button
@@ -54,8 +56,8 @@ export default function NewsPage({ onBackToHome, onOpenSupport }: NewsPageProps)
           onClick={onBackToHome}
           className="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer"
         >
-          <ArrowRight className="w-4 h-4" />
-          <span>العودة إلى الرئيسية</span>
+          <ArrowRight className={`w-4 h-4 ${isEn ? 'rotate-180' : ''}`} />
+          <span>{t('portal.backToHome')}</span>
         </button>
 
         <div className="flex items-center gap-2">
@@ -65,11 +67,11 @@ export default function NewsPage({ onBackToHome, onOpenSupport }: NewsPageProps)
       </div>
 
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-[#0B3A60] via-primary to-emerald-950 text-white p-8 sm:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
+      <div className="bg-gradient-to-r from-[#174F3E] via-primary to-emerald-950 text-white p-8 sm:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
         <div className="relative z-10 max-w-3xl space-y-4">
           <span className="text-accent text-xs font-black bg-white/10 border border-accent/30 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-accent animate-spin" />
-            تغطيات ومستجدات منصة ورث أجيال 📰
+            تغطيات ومستجدات منصة إرث أجيال 📰
           </span>
 
           <h1 className="text-2xl sm:text-4xl font-black text-white leading-tight">
@@ -96,7 +98,7 @@ export default function NewsPage({ onBackToHome, onOpenSupport }: NewsPageProps)
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 referrerPolicy="no-referrer"
               />
-              <span className="absolute top-3 right-3 bg-[#0B3A60] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-xs">
+              <span className="absolute top-3 right-3 bg-[#1E3D34] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-xs">
                 {item.category}
               </span>
             </div>
@@ -110,7 +112,7 @@ export default function NewsPage({ onBackToHome, onOpenSupport }: NewsPageProps)
                   <span>{item.readTime}</span>
                 </div>
 
-                <h3 className="font-black text-stone-800 text-sm leading-snug group-hover:text-[#0B3A60] transition-colors">
+                <h3 className="font-black text-stone-800 text-sm leading-snug group-hover:text-[#174F3E] transition-colors">
                   {item.title}
                 </h3>
 

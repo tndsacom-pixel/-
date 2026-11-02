@@ -48,7 +48,7 @@ export default function MealQrCodeModal({
         {/* Modal Header */}
         <div className="flex items-center gap-2 border-b border-stone-100 pb-3">
           <QrCode className="w-5 h-5 text-amber-600" />
-          <h3 className="font-extrabold text-[#0B3A60] text-base">
+          <h3 className="font-extrabold text-[#1E3D34] text-base">
             بطاقة الوجبة والتصريح التراثي (Meal Heritage Story Card)
           </h3>
         </div>
@@ -56,7 +56,7 @@ export default function MealQrCodeModal({
         {/* Card Body */}
         <div className="space-y-4">
           
-          <div className="bg-gradient-to-br from-[#003B6F] to-[#0B3A60] text-white p-5 rounded-2.5xl space-y-3 relative overflow-hidden">
+          <div className="bg-gradient-to-br from-[#1E3D34] to-[#1E3D34] text-white p-5 rounded-2.5xl space-y-3 relative overflow-hidden">
             <div className="inline-flex items-center gap-1.5 bg-amber-400/20 text-amber-300 border border-amber-400/30 px-3 py-1 rounded-full text-[10px] font-bold">
               <Sparkles className="w-3 h-3 text-amber-300" />
               <span>رمز التوثيق التراثي للوجبة</span>
@@ -116,14 +116,14 @@ export default function MealQrCodeModal({
             onClick={handleShare}
             className="px-4 py-3 rounded-2xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs flex items-center gap-1.5 cursor-pointer"
           >
-            <Share2 className="w-4 h-4 text-[#003B6F]" />
+            <Share2 className="w-4 h-4 text-[#1E3D34]" />
             <span>{copied ? 'تم نسخ الرابط!' : 'مشاركة قصة الوجبة'}</span>
           </button>
 
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 bg-[#003B6F] hover:bg-[#002D54] text-white font-black py-3.5 px-4 rounded-2xl text-xs shadow-md transition-all cursor-pointer"
+            className="flex-1 bg-[#1E3D34] hover:bg-[#132E25] text-white font-black py-3.5 px-4 rounded-2xl text-xs shadow-md transition-all cursor-pointer"
           >
             إغلاق
           </button>

@@ -297,6 +297,11 @@ export default function GrowthTracker({ profile, courses, assessment }: GrowthTr
                   </div>
                 );
               })()}
+
+              <div className="bg-amber-50/80 border border-amber-200/90 p-2.5 rounded-xl text-[10px] text-amber-900 font-medium leading-normal flex items-start gap-1.5">
+                <AlertCircle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <span>تنبه: النتائج تقديرية وليست ضمانًا للأرباح أو التمويل، وتعتمد على البيانات المدخلة وظروف السوق والتكاليف الفعلية.</span>
+              </div>
             </div>
           </div>
 
@@ -345,7 +350,7 @@ export default function GrowthTracker({ profile, courses, assessment }: GrowthTr
             <div>
               <span className="text-[10px] bg-primary/10 text-primary font-bold px-2.5 py-0.5 rounded-full border border-primary/10 inline-block">التنبؤ المالي للمبيعات</span>
               <h4 className="font-extrabold text-stone-800 text-xs md:text-sm">رسم بياني: توقعات النمو والمبيعات المتضاعفة 6 أشهر</h4>
-              <p className="text-stone-500 text-[10px] font-light mt-0.5">مقارنة بصرية بين نموذج مبيعاتك الفردية القديم مقابل نموذج "ورث أجيال" المرتبط بالفنادق.</p>
+              <p className="text-stone-500 text-[10px] font-light mt-0.5">مقارنة بصرية بين نموذج مبيعاتك الفردية القديم مقابل نموذج "إرث أجيال" المرتبط بالفنادق.</p>
             </div>
 
             <div className="flex bg-stone-200 p-1 rounded-xl gap-1 text-[10px] font-bold self-start sm:self-auto">
@@ -416,8 +421,8 @@ export default function GrowthTracker({ profile, courses, assessment }: GrowthTr
                                 </span>
                               </div>
                               <div className="flex items-center gap-2 justify-between border-t border-stone-100 pt-1.5 mt-1.5">
-                                <span className="text-[#0B3A60] font-bold">تمكين ورث أجيال:</span>
-                                <span className="font-extrabold text-[#0B3A60] flex items-center gap-1">
+                                <span className="text-[#174F3E] font-bold">تمكين إرث أجيال:</span>
+                                <span className="font-extrabold text-[#174F3E] flex items-center gap-1">
                                   ✨ {newVal.toLocaleString()} {isRevenue ? 'ر.س' : 'طلب'}
                                 </span>
                               </div>
@@ -432,7 +437,7 @@ export default function GrowthTracker({ profile, courses, assessment }: GrowthTr
                     }}
                   />
                   <Bar dataKey="targetVal" fill="#d6d3d1" radius={[4, 4, 0, 0]} barSize={14} />
-                  <Bar dataKey="currentVal" fill="#0B3A60" radius={[4, 4, 0, 0]} barSize={14} />
+                  <Bar dataKey="currentVal" fill="#174F3E" radius={[4, 4, 0, 0]} barSize={14} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -440,8 +445,8 @@ export default function GrowthTracker({ profile, courses, assessment }: GrowthTr
             {/* Legend */}
             <div className="flex justify-center gap-5 text-[10px] font-bold pt-3 border-t border-stone-100">
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 bg-[#0B3A60] rounded"></span>
-                <span className="text-stone-700">النموذج الموحد لـ "ورث أجيال" للوفود</span>
+                <span className="w-3 h-3 bg-[#174F3E] rounded"></span>
+                <span className="text-stone-700">النموذج الموحد لـ "إرث أجيال" للوفود</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-3 h-3 bg-stone-300 rounded"></span>

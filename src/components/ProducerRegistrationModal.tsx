@@ -97,7 +97,7 @@ export default function ProducerRegistrationModal({ isOpen, onClose, onRegisterS
             </div>
             <div className="text-right">
               <h3 className="font-black text-base md:text-lg">تسجيل أسرة منتجة وحرفية جديدة 📝</h3>
-              <p className="text-[10px] text-accent font-light">مبادرة التمكين الاقتصادي ورث أجيال × التفكير والنماء</p>
+              <p className="text-[10px] text-accent font-light">مبادرة التمكين الاقتصادي إرث أجيال × التفكير والنماء</p>
             </div>
           </div>
           <button onClick={onClose} className="p-2 text-white/70 hover:text-white bg-white/10 rounded-xl transition-all cursor-pointer">
@@ -264,7 +264,7 @@ export default function ProducerRegistrationModal({ isOpen, onClose, onRegisterS
                 onChange={(e) => setAgreed(e.target.checked)}
                 className="w-4 h-4 text-primary rounded-md border-stone-300 focus:ring-primary"
               />
-              <span>أتعهد بصحة البيانات المدخلة والموافقة على معايير الجودة والالتزام بلوائح منصة ورث أجيال.</span>
+              <span>أتعهد بصحة البيانات المدخلة والموافقة على معايير الجودة والالتزام بلوائح منصة إرث أجيال.</span>
             </label>
 
             {/* Submit button */}

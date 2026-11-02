@@ -38,10 +38,10 @@ export default function StoryLens({ challenges, onStartJourney }: StoryLensProps
         </motion.div>
         
         <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 text-stone-100">
-          ورث أجيال: من التأهيل إلى التمكين
+          إرث أجيال: من التأهيل إلى التمكين
         </h1>
         <p className="text-stone-300 max-w-2xl mx-auto text-sm md:text-base font-light leading-relaxed">
-          انضم إلينا في رحلة بصرية تهدف إلى كشف وإزالة تحديات الأسر المنتجة، وتحويل أعمالهم المنزلية البسيطة إلى مشاريع ريادية مستدامة تلبي تطلعات المستقبل.
+          انضم إلينا في رحلة بصرية تهدف إلى كشف وإزالة تحديات رائدات العمل الحر، وتحويل أعمالهن المنزلية والحرفية إلى مشاريع ريادية مستدامة تلبي تطلعات المستقبل.
         </p>
       </div>
 
@@ -195,7 +195,7 @@ export default function StoryLens({ challenges, onStartJourney }: StoryLensProps
                     </div>
                     <button
                       onClick={onStartJourney}
-                      className="flex items-center gap-2 bg-[#0B3A60] hover:bg-[#0B3A60]/95 text-accent px-6 py-3 rounded-xl text-sm font-bold shadow-lg transition-all transform hover:-translate-y-0.5 w-full sm:w-auto justify-center cursor-pointer"
+                      className="flex items-center gap-2 bg-[#174F3E] hover:bg-[#174F3E]/95 text-accent px-6 py-3 rounded-xl text-sm font-bold shadow-lg transition-all transform hover:-translate-y-0.5 w-full sm:w-auto justify-center cursor-pointer"
                     >
                       <span>ابدأ رحلة التمكين</span>
                       <ArrowLeft className="w-4 h-4" />
@@ -261,7 +261,7 @@ export default function StoryLens({ challenges, onStartJourney }: StoryLensProps
                       <button
                         type="button"
                         onClick={() => setIsQrOpen(true)}
-                        className="bg-[#003B6F] hover:bg-[#002D54] text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-xs"
+                        className="bg-[#174F3E] hover:bg-[#0D3B2E] text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-xs"
                       >
                         <QrCode className="w-4 h-4 text-amber-300" />
                         <span>رمز الـ QR والقصة 📱</span>
@@ -270,7 +270,7 @@ export default function StoryLens({ challenges, onStartJourney }: StoryLensProps
 
                     <button
                       onClick={onStartJourney}
-                      className="flex items-center gap-2 bg-[#0B3A60] hover:bg-[#0B3A60]/95 text-accent px-6 py-3 rounded-xl text-sm font-bold shadow-lg transition-all transform hover:-translate-y-0.5 w-full sm:w-auto justify-center cursor-pointer"
+                      className="flex items-center gap-2 bg-[#174F3E] hover:bg-[#174F3E]/95 text-accent px-6 py-3 rounded-xl text-sm font-bold shadow-lg transition-all transform hover:-translate-y-0.5 w-full sm:w-auto justify-center cursor-pointer"
                     >
                       <span>ابدأ رحلة التمكين</span>
                       <ArrowLeft className="w-4 h-4" />
@@ -324,7 +324,7 @@ export default function StoryLens({ challenges, onStartJourney }: StoryLensProps
             </div>
             <div>
               <h5 className="font-bold text-stone-800 text-sm">شراكة نحو الاستدامة</h5>
-              <p className="text-xs text-stone-500">تمكين مستدام ينقل الأسر المنتجة من العوز إلى الاكتفاء والنمو.</p>
+              <p className="text-xs text-stone-500">تمكين مستدام ينقل رائدات العمل الحر من العوز إلى الاكتفاء والنمو.</p>
             </div>
           </div>
         </div>

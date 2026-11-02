@@ -58,10 +58,15 @@ import FamilyPortalPage from './components/FamilyPortalPage';
 import PilgrimPortalPage from './components/PilgrimPortalPage';
 import VisitorPortalPage from './components/VisitorPortalPage';
 import BuyerPortalPage from './components/BuyerPortalPage';
+import CustomerPortalPage, { CustomerTab } from './components/CustomerPortalPage';
 import PartnerPortalPage from './components/PartnerPortalPage';
 import TrackSwitcherModal from './components/TrackSwitcherModal';
+import EntryIdentityGateModal from './components/EntryIdentityGateModal';
 import ProducerPublicProfile from './components/ProducerPublicProfile';
 import ProducerRegistrationModal from './components/ProducerRegistrationModal';
+import QualificationJourneyPage from './components/QualificationJourneyPage';
+import Footer from './components/Footer';
+import { useLanguage } from './context/LanguageContext';
 
 export default function App() {
   // Authentication State
@@ -81,40 +86,13 @@ export default function App() {
     return localStorage.getItem('warth_active_theme') || 'official';
   });
 
-  // Main Page Primary Color Setting (#B49A5A Warm Gold/Brown default vs #1E3D34 Dark Green)
+  // Main Page Primary Color Setting (#174F3E Heritage Dark Green default)
   const [mainPrimaryColor, setMainPrimaryColor] = useState<string>(() => {
-    return localStorage.getItem('warth_main_primary_color') || '#B49A5A';
+    return localStorage.getItem('warth_main_primary_color') || '#174F3E';
   });
 
-  // Language State (Arabic / English)
-  const [lang, setLang] = useState<'ar' | 'en'>(() => {
-    return (localStorage.getItem('warth_lang') as 'ar' | 'en') || 'ar';
-  });
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', activeTheme);
-    localStorage.setItem('warth_active_theme', activeTheme);
-  }, [activeTheme]);
-
-  useEffect(() => {
-    document.documentElement.style.setProperty('--primary', mainPrimaryColor);
-    if (mainPrimaryColor === '#1E3D34') {
-      document.documentElement.style.setProperty('--accent', '#B49A5A');
-    } else {
-      document.documentElement.style.setProperty('--accent', '#C5A059');
-    }
-    localStorage.setItem('warth_main_primary_color', mainPrimaryColor);
-  }, [mainPrimaryColor]);
-
-  useEffect(() => {
-    document.documentElement.setAttribute('dir', lang === 'en' ? 'ltr' : 'rtl');
-    document.documentElement.setAttribute('lang', lang);
-    localStorage.setItem('warth_lang', lang);
-  }, [lang]);
-
-  const toggleLanguage = () => {
-    setLang(prev => (prev === 'ar' ? 'en' : 'ar'));
-  };
+  // Language Context (Arabic / English)
+  const { lang, setLang, toggleLanguage, t, isEn } = useLanguage();
 
   const setWarathLogo = (val: string) => {
     setWarathLogoState(val);
@@ -132,7 +110,7 @@ export default function App() {
       return (
         <img 
           src={warathLogo} 
-          alt="شعار ورث أجيال" 
+          alt="شعار إرث أجيال" 
           className={`${sizeClass.split(' ')[0]} ${sizeClass.split(' ')[1]} object-contain rounded-xl shadow-sm border border-accent/30 bg-white`} 
           referrerPolicy="no-referrer" 
         />
@@ -157,7 +135,7 @@ export default function App() {
       );
     }
     return (
-      <div className={`bg-[#B49A5A] text-white rounded-xl flex items-center justify-center shadow-md font-bold font-mono text-center px-1 leading-tight ${sizeClass}`}>
+      <div className={`bg-[#C8A96B] text-white rounded-xl flex items-center justify-center shadow-md font-bold font-mono text-center px-1 leading-tight ${sizeClass}`}>
         {thinkingLogo ? thinkingLogo.substring(0, 8) : 'تفكير ونماء'}
       </div>
     );
@@ -197,11 +175,53 @@ export default function App() {
     const hash = window.location.hash.replace('#', '');
     if (hash.includes('family') || hash.includes('families')) return 'family';
     if (hash.includes('pilgrim') || hash.includes('pilgrims')) return 'pilgrim';
-    if (hash.includes('visitor') || hash.includes('visitors')) return 'visitor';
+    if (hash.includes('visitor') || hash.includes('visitors') || hash.includes('customer') || hash.includes('client') || hash.includes('buyer')) return 'visitor';
     if (hash.includes('partner') || hash.includes('partners') || hash.includes('supporter')) return 'partner';
     return 'general';
   });
   const [isTrackSwitcherOpen, setIsTrackSwitcherOpen] = useState<boolean>(false);
+  const [isIdentityGateOpen, setIsIdentityGateOpen] = useState<boolean>(() => {
+    const savedRole = localStorage.getItem('warath_selected_role_track');
+    const hash = window.location.hash.replace('#', '');
+    if (hash && hash !== '/' && hash !== '' && hash !== 'home') return false;
+    return !savedRole;
+  });
+  const [customerInitialTab, setCustomerInitialTab] = useState<CustomerTab>('buyer');
+
+  const handleIdentitySelectRole = (
+    role: 'family' | 'customer', 
+    customerSubTab?: 'buyer' | 'pilgrim' | 'visitor',
+    contactInfo?: { type: 'phone' | 'email'; value: string; name?: string }
+  ) => {
+    localStorage.setItem('warath_selected_role_track', role);
+    if (contactInfo) {
+      localStorage.setItem('warath_user_contact', JSON.stringify({
+        ...contactInfo,
+        role,
+        savedAt: new Date().toISOString()
+      }));
+      setProfile(prev => ({
+        ...prev,
+        name: contactInfo.name || prev.name,
+        phone: contactInfo.type === 'phone' ? contactInfo.value : prev.phone,
+        email: contactInfo.type === 'email' ? contactInfo.value : prev.email
+      }));
+    }
+    setIsIdentityGateOpen(false);
+    if (role === 'family') {
+      setActiveTrack('family');
+      setCurrentPath('/portal/families');
+      window.location.hash = '#/portal/families';
+    } else {
+      setActiveTrack('visitor');
+      if (customerSubTab) {
+        setCustomerInitialTab(customerSubTab);
+      }
+      setCurrentPath('/portal/customer');
+      window.location.hash = '#/portal/customer';
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleSelectTrack = (track: 'family' | 'pilgrim' | 'visitor' | 'partner') => {
     setActiveTrack(track);
@@ -209,11 +229,13 @@ export default function App() {
       window.location.hash = '#/portal/families';
       setCurrentPath('/portal/families');
     } else if (track === 'pilgrim') {
-      window.location.hash = '#/portal/pilgrims';
-      setCurrentPath('/portal/pilgrims');
+      setCustomerInitialTab('pilgrim');
+      window.location.hash = '#/portal/customer';
+      setCurrentPath('/portal/customer');
     } else if (track === 'visitor') {
-      window.location.hash = '#/portal/visitors';
-      setCurrentPath('/portal/visitors');
+      setCustomerInitialTab('visitor');
+      window.location.hash = '#/portal/customer';
+      setCurrentPath('/portal/customer');
     } else if (track === 'partner') {
       window.location.hash = '#/portal/partners';
       setCurrentPath('/portal/partners');
@@ -229,11 +251,12 @@ export default function App() {
     if (hash === '/smart-journey' || hash === 'smart-journey') return '/smart-journey';
     if (hash === '/support' || hash === 'support') return '/support';
     if (hash === '/admin' || hash === 'admin') return '/admin';
-    if (hash === '/portal/families' || hash === 'portal/families' || hash.includes('journey/family')) return '/portal/families';
+    if (hash === '/journey' || hash === 'journey' || hash === '/qualification' || hash === 'qualification' || hash === '/golden-guarantee' || hash === 'golden-guarantee') return '/journey';
+    if (hash === '/portal/families' || hash === 'portal/families' || hash === '/family' || hash === 'family' || hash === '/families' || hash === 'families' || hash.includes('journey/family')) return '/portal/families';
+    if (hash === '/portal/customer' || hash === 'portal/customer' || hash === '/customer' || hash === 'customer' || hash === '/client' || hash === 'client' || hash === '/portal/buyers' || hash === 'portal/buyers') return '/portal/customer';
     if (hash === '/portal/pilgrims' || hash === 'portal/pilgrims' || hash.includes('journey/pilgrim')) return '/portal/pilgrims';
     if (hash === '/portal/visitors' || hash === 'portal/visitors' || hash.includes('journey/visitor')) return '/portal/visitors';
     if (hash === '/portal/partners' || hash === 'portal/partners' || hash.includes('journey/partner')) return '/portal/partners';
-    if (hash === '/portal/buyers' || hash === 'portal/buyers') return '/portal/buyers';
     if (hash.startsWith('/producer/') || hash.startsWith('producer/')) return '/producer';
     return '/';
   });
@@ -251,33 +274,36 @@ export default function App() {
         return;
       }
 
-      if (raw === '/portal/families' || raw === 'portal/families' || raw.includes('journey/family')) {
+      if (raw === '/portal/families' || raw === 'portal/families' || raw === '/family' || raw === 'family' || raw === '/families' || raw === 'families' || raw.includes('journey/family')) {
         setSelectedProducerForView(null);
         setActiveTrack('family');
         setCurrentPath('/portal/families');
         return;
       }
+      if (raw === '/portal/customer' || raw === 'portal/customer' || raw === '/customer' || raw === 'customer' || raw === '/client' || raw === 'client' || raw === '/portal/buyers' || raw === 'portal/buyers') {
+        setSelectedProducerForView(null);
+        setActiveTrack('visitor');
+        setCurrentPath('/portal/customer');
+        return;
+      }
       if (raw === '/portal/pilgrims' || raw === 'portal/pilgrims' || raw.includes('journey/pilgrim')) {
         setSelectedProducerForView(null);
         setActiveTrack('pilgrim');
-        setCurrentPath('/portal/pilgrims');
+        setCustomerInitialTab('pilgrim');
+        setCurrentPath('/portal/customer');
         return;
       }
       if (raw === '/portal/visitors' || raw === 'portal/visitors' || raw.includes('journey/visitor')) {
         setSelectedProducerForView(null);
         setActiveTrack('visitor');
-        setCurrentPath('/portal/visitors');
+        setCustomerInitialTab('visitor');
+        setCurrentPath('/portal/customer');
         return;
       }
       if (raw === '/portal/partners' || raw === 'portal/partners' || raw.includes('journey/partner')) {
         setSelectedProducerForView(null);
         setActiveTrack('partner');
         setCurrentPath('/portal/partners');
-        return;
-      }
-      if (raw === '/portal/buyers' || raw === 'portal/buyers') {
-        setSelectedProducerForView(null);
-        setCurrentPath('/portal/buyers');
         return;
       }
 
@@ -301,6 +327,9 @@ export default function App() {
       } else if (raw === '/admin' || raw === 'admin') {
         setSelectedProducerForView(null);
         setCurrentPath('/admin');
+      } else if (raw === '/journey' || raw === 'journey' || raw === '/qualification' || raw === 'qualification' || raw === '/golden-guarantee' || raw === 'golden-guarantee') {
+        setSelectedProducerForView(null);
+        setCurrentPath('/journey');
       } else if (!raw || raw === '/' || raw === 'home') {
         setSelectedProducerForView(null);
         setActiveTrack('general');
@@ -315,7 +344,7 @@ export default function App() {
 
   // Global Interactive Support WhatsApp-style Chat State
   const [globalSupportChats, setGlobalSupportChats] = useState([
-    { id: 1, sender: 'agent', text: 'أهلاً بك في الدعم المباشر لمنصة ورث أجيال الموحدة. كيف يمكنني مساعدتك اليوم؟ 🌴', time: '12:00 م' }
+    { id: 1, sender: 'agent', text: 'أهلاً بك في الدعم المباشر لمنصة إرث أجيال الموحدة. كيف يمكنني مساعدتك اليوم؟ 🌴', time: '12:00 م' }
   ]);
   const [isSupportTyping, setIsSupportTyping] = useState<boolean>(false);
   const [supportInput, setSupportInput] = useState<string>('');
@@ -335,12 +364,12 @@ export default function App() {
         let replyText = 'يسعدني خدمتك! نحن هنا لتوجيهك في مسيرة التمكين والتمويل المستدام لدى مؤسسة التفكير والنماء.';
         const cleanText = text.toLowerCase();
         
-        if (cleanText.includes('أرباح') || cleanText.includes('أرباحي') || cleanText.includes('حساب') || cleanText.includes('احسب')) {
-          replyText = 'حاسبة الأرباح التقديرية (بوابة الأسر) تمكنك من تقدير عوائد وجباتك اليومية وعمل دراسة جدوى مبدئية لمشروعك! يمكنك استخدام شريط الحاسبة في أسفل الرئيسية لتحديد أسعار وجباتك وحساب دخل مبيعاتك الشهري المتوقع بسهولة. 🧮';
+        if (cleanText.includes('أرباح') || cleanText.includes('أرباحي') || cleanText.includes('عوائد') || cleanText.includes('مبيعات')) {
+          replyText = 'منصة إرث أجيال تتيح لك إدارة مبيعاتك وتتبع طلباتك عبر المتجر الإلكتروني المخصص لمشروعك بكل سهولة وشفافية! 📈';
         } else if (cleanText.includes('سجل') || cleanText.includes('تسجيل') || cleanText.includes('انضم') || cleanText.includes('تمكين')) {
           replyText = 'يسعدنا انضمامك! اضغط على زر "ابدأ استبيان التمكين" في أعلى الرئيسية لتعبئة الاستبيان الذكي للجاهزية، وسيقوم مستشارو التفكير والنماء بتقييم دراسة مشروعك وبدء تدريبك فوراً. 📋';
         } else if (cleanText.includes('كفيل') || cleanText.includes('تمويل') || cleanText.includes('بدون كفيل')) {
-          replyText = 'نعم! نركز في منصة ورث أجيال ومؤسسة التفكير والنماء على تمكين العمل الحر للأسر والشباب الحرفيين، ونقدم حلول تمويل تمكينية ميسرة لخدمتكم لبناء مشاريعكم بدون كفيل غارم معقد. 🛡️';
+          replyText = 'نعم! نركز في منصة إرث أجيال ومؤسسة التفكير والنماء على تمكين العمل الحر للأسر والشباب الحرفيين، ونقدم حلول تمويل تمكينية ميسرة لخدمتكم لبناء مشاريعكم بدون كفيل غارم معقد. 🛡️';
         } else if (cleanText.includes('شروط') || cleanText.includes('أهلية') || cleanText.includes('الضيافة') || cleanText.includes('حرفية')) {
           replyText = 'شروطنا بسيطة: الشغف بالتراث، الجدية في الاستدامة، واجتياز اختبار التقييم الذكي وحضور 3 دورات تأهيلية على الأقل في المهارات الصحية والتسويقية على منصتنا! ☕';
         }
@@ -465,7 +494,7 @@ export default function App() {
       ],
       recommendations: [
         'البدء في توريد وجبات وضيافة للوفود السياحية والفنادق الفاخرة الشريكة.',
-        'المشاركة الفعالة في الجناح الموسمي لمعارض الأسر المنتجة المدعومة.'
+        'المشاركة الفعالة في الجناح الموسمي لمعارض رائدات العمل الحر المدعومة.'
       ],
       answers: [],
       reportDate: new Date().toLocaleDateString('ar-SA')
@@ -485,8 +514,8 @@ export default function App() {
 
   // Pre-configured tab metadata
   const tabs = [
-    { id: 'story', label: lang === 'en' ? 'Warath Ajyal Story' : 'قصة ورث أجيال', icon: Compass, desc: lang === 'en' ? 'Vision & Empowerment' : 'الرؤية وفلسفة التمكين' },
-    { id: 'profile', label: lang === 'en' ? 'Digital Profile' : 'إنشاء الملف الرقمي', icon: User, desc: lang === 'en' ? 'Catalog & Products' : 'كتالوج ومنتجات الأسر' },
+    { id: 'story', label: lang === 'en' ? 'Erth Ajyal Story' : 'قصة إرث أجيال', icon: Compass, desc: lang === 'en' ? 'Vision & Empowerment' : 'الرؤية وفلسفة التمكين' },
+    { id: 'profile', label: lang === 'en' ? 'Digital Profile' : 'إنشاء الملف الرقمي', icon: User, desc: lang === 'en' ? 'Catalog & Products' : 'كتالوج ومنتجات رائدات العمل الحر' },
     { id: 'evaluation', label: lang === 'en' ? 'Smart Readiness' : 'التقييم الذكي للجاهزية', icon: Brain, desc: lang === 'en' ? 'Project Diagnostic' : 'تحليل وتشخيص المشروع' },
     { id: 'training', label: lang === 'en' ? 'Training Hub' : 'مسار التأهيل والتدريب', icon: GraduationCap, desc: lang === 'en' ? 'Courses & Certificates' : 'الدروس والكويزات والشهادات' },
     { id: 'store', label: lang === 'en' ? 'Store & Subscriptions' : 'المتجر والاشتراكات', icon: ShoppingBag, desc: lang === 'en' ? 'Pilgrim Packages' : 'باقات المعتمرين والمتاجر' },
@@ -517,15 +546,112 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-bgwarm text-darktext flex flex-col font-sans selection:bg-primary selection:text-accent pb-20 lg:pb-0" dir="rtl" id="app-root-container">
+    <div className="min-h-screen bg-bgwarm text-darktext flex flex-col font-sans selection:bg-primary selection:text-accent pb-20 lg:pb-0 w-full max-w-full overflow-x-hidden" dir={isEn ? "ltr" : "rtl"} id="app-root-container">
       
       {/* Single, Elegant, Responsive Top Navigation Bar */}
-      <header className="bg-primary border-b border-accent/30 sticky top-0 z-50 shadow-md dir-rtl" id="main-header">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between relative">
+      <header className="bg-white/95 backdrop-blur-md border-b border-stone-200/80 sticky top-0 z-50 shadow-xs" id="main-header">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between gap-4 relative">
           
-          {/* 1. الجهة اليمنى: أيقونة الحساب 👤 + الإعدادات السريعة */}
-          <div className="flex items-center gap-2">
-            {/* Account Icon Button */}
+          {/* 1. الجهة اليمنى/اليُسرى: شعار إرث أجيال الرسمي والوصف المعتمد */}
+          <a 
+            href="#/" 
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.hash = '#/';
+              setCurrentPath('/');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="flex items-center gap-2.5 cursor-pointer group shrink-0"
+            id="header-brand-logo"
+          >
+            {renderWarathLogo("w-9 h-9 sm:w-11 sm:h-11 text-base sm:text-xl")}
+            <div className={isEn ? 'text-left' : 'text-right'}>
+              <h1 className="text-sm sm:text-lg font-black text-[#174F3E] tracking-tight leading-none group-hover:text-[#0D3B2E] transition-colors">
+                {t('brand.name')}
+              </h1>
+              <p className="text-[10px] text-[#6B756F] font-bold leading-tight mt-0.5">
+                {t('brand.tagline')}
+              </p>
+            </div>
+          </a>
+
+          {/* 2. المنتصف: القائمة الرئيسية النظيفة (على الشاشات الكبيرة) */}
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-xs font-bold text-[#19352D]">
+            <button 
+              onClick={() => { window.location.hash = '#/'; setCurrentPath('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+              className="px-3 py-1.5 rounded-xl hover:bg-[#DDE9E1]/50 hover:text-[#174F3E] transition-all cursor-pointer"
+            >
+              {t('nav.home')}
+            </button>
+            <button 
+              onClick={() => { window.location.hash = '#/?view=standalone_about'; setCurrentPath('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+              className="px-3 py-1.5 rounded-xl hover:bg-[#DDE9E1]/50 hover:text-[#174F3E] transition-all cursor-pointer"
+            >
+              {t('nav.about')}
+            </button>
+            <button 
+              onClick={() => { window.location.hash = '#/?view=standalone_services'; setCurrentPath('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+              className="px-3 py-1.5 rounded-xl hover:bg-[#DDE9E1]/50 hover:text-[#174F3E] transition-all cursor-pointer"
+            >
+              {t('nav.services')}
+            </button>
+            <button 
+              onClick={() => { window.location.hash = '#/portal/families'; setCurrentPath('/portal/families'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+              className="px-3 py-1.5 rounded-xl hover:bg-[#DDE9E1]/50 hover:text-[#174F3E] transition-all cursor-pointer"
+            >
+              {t('nav.producers')}
+            </button>
+            <button 
+              onClick={() => { window.location.hash = '#/portal/partners'; setCurrentPath('/portal/partners'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+              className="px-3 py-1.5 rounded-xl hover:bg-[#DDE9E1]/50 hover:text-[#174F3E] transition-all cursor-pointer"
+            >
+              {t('nav.partners')}
+            </button>
+            <button 
+              onClick={() => { window.location.hash = '#/?view=standalone_news'; setCurrentPath('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+              className="px-3 py-1.5 rounded-xl hover:bg-[#DDE9E1]/50 hover:text-[#174F3E] transition-all cursor-pointer"
+            >
+              {t('nav.blog')}
+            </button>
+            <button 
+              onClick={() => { window.location.hash = '#/?view=standalone_contact'; setCurrentPath('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+              className="px-3 py-1.5 rounded-xl hover:bg-[#DDE9E1]/50 hover:text-[#174F3E] transition-all cursor-pointer"
+            >
+              {t('nav.contact')}
+            </button>
+          </nav>
+
+          {/* 3. الجهة الأخرى: تحويل اللغة + زر تحديد الهوية والمسار + زر تسجيل الدخول */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Quick Role / Persona Gateway Switcher */}
+            <button
+              onClick={() => setIsIdentityGateOpen(true)}
+              className="flex items-center gap-1.5 bg-[#FAF9F6] hover:bg-[#EBF1FA] text-[#174F3E] border border-[#C8A96B]/60 hover:border-[#174F3E] px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl text-xs font-black transition-all cursor-pointer shadow-2xs"
+              title="تحديد أو تبديل الهوية: العمل الحر أو العميل"
+              id="top-role-selector-btn"
+            >
+              <span className="text-sm shrink-0">
+                {currentPath.includes('families') || currentPath.includes('family') ? '👩‍🍳' : '🛍️'}
+              </span>
+              <span className="text-xs font-black whitespace-nowrap">
+                {currentPath.includes('families') || currentPath.includes('family') ? 'العمل الحر' : 'العميل'}
+              </span>
+              <span className="text-[10px] bg-[#174F3E] text-amber-300 px-1.5 py-0.5 rounded-md sm:rounded-lg font-bold shrink-0">
+                ⇄
+              </span>
+            </button>
+
+            {/* Language Switcher */}
+            <button
+              onClick={() => toggleLanguage()}
+              className="hidden sm:flex items-center gap-1.5 bg-[#F5F4EE] hover:bg-[#DDE9E1] text-[#174F3E] border border-stone-200/80 px-3 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer"
+              title={isEn ? "Switch to Arabic" : "تغيير للإنجليزية"}
+            >
+              <Globe className="w-4 h-4 text-[#174F3E]" />
+              <span>{isEn ? 'العربية 🇸🇦' : 'English 🇬🇧'}</span>
+            </button>
+
+            {/* Login / Account Button with Heritage Green Theme & Rounded Corners */}
             <div className="relative">
               <button
                 onClick={() => {
@@ -536,24 +662,16 @@ export default function App() {
                     setIsAccountMenuOpen(!isAccountMenuOpen);
                   }
                 }}
-                className="bg-white/10 hover:bg-white/20 text-white border border-white/20 py-2 px-3 sm:px-3.5 rounded-2xl transition-all flex items-center gap-2 cursor-pointer shadow-sm hover:scale-[1.02]"
+                className="bg-[#174F3E] hover:bg-[#0D3B2E] text-white border border-[#174F3E] py-2 px-3.5 sm:px-4 rounded-2xl transition-all flex items-center gap-2 cursor-pointer shadow-xs hover:scale-[1.02]"
                 id="top-account-btn"
-                title={isLoggedIn ? "حسابي والخيارات" : "تسجيل الدخول / الحساب"}
+                title={isLoggedIn ? (isEn ? "My Account" : "حسابي والخيارات") : t('nav.login')}
               >
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-accent text-primary font-black flex items-center justify-center text-xs shadow-inner">
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-xl bg-[#C8A96B] text-white font-black flex items-center justify-center text-xs shadow-inner">
                   {isLoggedIn ? (profile.name ? profile.name.charAt(0) : '👤') : '👤'}
                 </div>
-                <div className="text-right hidden sm:block">
-                  <span className="text-xs font-black block text-white leading-tight">
-                    {isLoggedIn ? profile.name || 'حسابي' : 'تسجيل الدخول'}
-                  </span>
-                  <span className="text-[10px] font-light text-accent block leading-tight">
-                    {isLoggedIn ? (
-                      userRole === 'admin' ? 'مدير المنصة 👑' :
-                      userRole === 'pilgrim' ? 'معتمر / مشتري 📍' : 'أسر منتجة 👩‍🍳'
-                    ) : 'حساب موحد ✨'}
-                  </span>
-                </div>
+                <span className="text-xs font-bold text-white">
+                  {isLoggedIn ? profile.name || t('nav.myAccount') : t('nav.login')}
+                </span>
               </button>
 
               {/* Account Dropdown Menu (When Logged In) */}
@@ -563,13 +681,13 @@ export default function App() {
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 mt-2 w-64 bg-white border border-stone-200 rounded-3xl shadow-2xl p-3 z-50 text-stone-800 text-right space-y-1"
+                    className="absolute left-0 mt-2 w-64 bg-white border border-stone-200 rounded-3xl shadow-2xl p-3 z-50 text-stone-800 text-right space-y-1"
                   >
                     <div className="p-3 bg-stone-50 rounded-2xl border border-stone-100 mb-2">
                       <p className="text-xs font-black text-primary">{profile.name || 'مستخدم المنصة'}</p>
                       <p className="text-[10px] text-stone-500 font-bold">
                         {userRole === 'admin' ? 'مدير المنصة 👑' :
-                         userRole === 'pilgrim' ? 'زائر / معتمر كريم 📍' : 'أسرة منتجة وحرفية 👩‍🍳'}
+                         userRole === 'pilgrim' ? 'زائر / معتمر كريم 📍' : 'رائدة عمل حر وحرفية 👩‍🍳'}
                       </p>
                     </div>
 
@@ -637,17 +755,6 @@ export default function App() {
                       <span>التذاكر والدعم 💬</span>
                     </button>
 
-                    <button
-                      onClick={() => {
-                        setIsAccountMenuOpen(false);
-                        alert('لا توجد إشعارات جديدة حتى الآن.');
-                      }}
-                      className="w-full text-right p-2.5 rounded-xl hover:bg-stone-100 text-xs font-bold text-stone-700 flex items-center gap-2 cursor-pointer transition-colors"
-                    >
-                      <Bell className="w-4 h-4 text-primary" />
-                      <span>الإشعارات 🔔</span>
-                    </button>
-
                     <div className="border-t border-stone-100 pt-1 mt-1">
                       <button
                         onClick={() => {
@@ -669,10 +776,10 @@ export default function App() {
             <div className="relative">
               <button
                 onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                className="bg-accent/15 hover:bg-accent/25 text-accent border border-accent/30 p-2 rounded-xl transition-all flex items-center justify-center cursor-pointer"
-                title="إعدادات اللغة والمظهر"
+                className="bg-[#F5F4EE] hover:bg-[#DDE9E1] text-[#174F3E] border border-stone-200/80 p-2 rounded-2xl transition-all flex items-center justify-center cursor-pointer"
+                title="إعدادات المنصة"
               >
-                <Settings className={`w-4 h-4 text-accent transition-transform duration-300 ${isSettingsOpen ? 'rotate-90' : ''}`} />
+                <Settings className={`w-4 h-4 text-[#174F3E] transition-transform duration-300 ${isSettingsOpen ? 'rotate-90' : ''}`} />
               </button>
 
               <AnimatePresence>
@@ -681,10 +788,10 @@ export default function App() {
                     initial={{ opacity: 0, y: 8, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                    className="absolute right-0 mt-2 w-52 bg-primary border border-accent/30 rounded-2xl shadow-2xl p-3 z-50 text-white text-right"
+                    className="absolute left-0 mt-2 w-52 bg-white border border-stone-200 rounded-2xl shadow-xl p-3 z-50 text-[#19352D] text-right"
                   >
-                    <div className="text-[10px] font-bold text-accent/80 uppercase tracking-wider mb-2 px-2 border-b border-white/10 pb-1 flex items-center gap-1">
-                      <Settings className="w-3 h-3" />
+                    <div className="text-[10px] font-bold text-[#174F3E] uppercase tracking-wider mb-2 px-2 border-b border-stone-100 pb-1 flex items-center gap-1">
+                      <Settings className="w-3 h-3 text-[#174F3E]" />
                       <span>إعدادات المنصة</span>
                     </div>
 
@@ -693,70 +800,31 @@ export default function App() {
                         toggleLanguage();
                         setIsSettingsOpen(false);
                       }}
-                      className="w-full text-right flex items-center justify-between p-2 rounded-xl hover:bg-white/10 text-xs font-bold cursor-pointer mb-1"
+                      className="w-full text-right flex items-center justify-between p-2 rounded-xl hover:bg-[#DDE9E1]/40 text-xs font-bold cursor-pointer mb-1"
                     >
                       <span className="flex items-center gap-2">
-                        <Globe className="w-4 h-4 text-accent" />
+                        <Globe className="w-4 h-4 text-[#174F3E]" />
                         <span>لغة الواجهة</span>
                       </span>
-                      <span className="bg-accent/20 text-accent text-[10px] px-2 py-0.5 rounded-lg border border-accent/30 font-black">
+                      <span className="bg-[#DDE9E1] text-[#174F3E] text-[10px] px-2 py-0.5 rounded-lg border border-[#174F3E]/20 font-black">
                         {lang === 'ar' ? 'English 🇬🇧' : 'العربية 🇸🇦'}
-                      </span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setActiveTheme(prev => prev === 'dark' ? 'official' : 'dark');
-                        setIsSettingsOpen(false);
-                      }}
-                      className="w-full text-right flex items-center justify-between p-2 rounded-xl hover:bg-white/10 text-xs font-bold cursor-pointer"
-                    >
-                      <span className="flex items-center gap-2">
-                        {activeTheme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-accent" />}
-                        <span>مظهر الشاشة</span>
-                      </span>
-                      <span className="bg-white/10 text-white text-[10px] px-2 py-0.5 rounded-lg border border-white/20 font-extrabold">
-                        {activeTheme === 'dark' ? 'مضيء ☀️' : 'ليلي 🌙'}
                       </span>
                     </button>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
+
+            {/* Mobile Drawer Hamburger Button */}
+            <button
+              onClick={() => setIsDrawerOpen(true)}
+              className="lg:hidden bg-[#F5F4EE] hover:bg-[#DDE9E1] text-[#174F3E] border border-stone-200/80 p-2 rounded-2xl transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+              id="top-drawer-hamburger-btn"
+              title="القائمة الرئيسية ☰"
+            >
+              <Menu className="w-5 h-5 text-[#174F3E]" />
+            </button>
           </div>
-
-          {/* 2. المنتصف: شعار ورث أجيال + الاسم */}
-          <a 
-            href="#/" 
-            onClick={(e) => {
-              e.preventDefault();
-              window.location.hash = '#/';
-              setCurrentPath('/');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="flex items-center gap-2 cursor-pointer group"
-          >
-            {renderWarathLogo("w-9 h-9 sm:w-11 sm:h-11 text-base sm:text-xl")}
-            <div className="text-right">
-              <h1 className="text-sm sm:text-lg md:text-xl font-black text-white tracking-tight leading-none group-hover:text-accent transition-colors">
-                ورث أجيال
-              </h1>
-              <p className="text-[8px] sm:text-[9px] text-accent font-light leading-tight">
-                منصة التمكين المستدام TND
-              </p>
-            </div>
-          </a>
-
-          {/* 3. الجهة اليسرى: ☰ زر القائمة */}
-          <button
-            onClick={() => setIsDrawerOpen(true)}
-            className="bg-white/10 hover:bg-white/20 text-white border border-white/20 p-2 sm:px-3.5 sm:py-2 rounded-2xl transition-all flex items-center gap-2 cursor-pointer shadow-sm hover:scale-105"
-            id="top-drawer-hamburger-btn"
-            title="القائمة الرئيسية ☰"
-          >
-            <Menu className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-            <span className="text-xs font-black hidden md:inline-block">القائمة ☰</span>
-          </button>
         </div>
       </header>
 
@@ -787,7 +855,7 @@ export default function App() {
                 <div className="flex items-center gap-2.5">
                   {renderWarathLogo("w-10 h-10 text-lg")}
                   <div className="text-right">
-                    <h3 className="font-black text-base leading-tight">ورث أجيال</h3>
+                    <h3 className="font-black text-base leading-tight">إرث أجيال</h3>
                     <p className="text-[10px] text-accent font-light">دليل جميع أقسام المنصة 🌴</p>
                   </div>
                 </div>
@@ -802,71 +870,115 @@ export default function App() {
 
               {/* Drawer Content Items */}
               <div className="flex-1 overflow-y-auto p-4 space-y-1 text-right divide-y divide-stone-100">
-                <div className="space-y-1 pb-2">
-                  <p className="text-[10px] font-bold text-accent bg-primary/90 px-3 py-1 rounded-lg mb-2">
-                    📌 البوابات المستقلة لكل فئة
-                  </p>
+                <div className="space-y-2 pb-3">
+                  <div className="flex items-center justify-between px-1">
+                    <p className="text-[10px] font-bold text-accent bg-primary/90 px-3 py-1 rounded-lg">
+                      📌 اختر بوابتك المستقلة
+                    </p>
+                    <button
+                      onClick={() => {
+                        setIsDrawerOpen(false);
+                        setIsIdentityGateOpen(true);
+                      }}
+                      className="text-[11px] text-amber-700 font-bold hover:underline cursor-pointer"
+                    >
+                      شاشة الاختيار 🌟
+                    </button>
+                  </div>
 
-                  {/* بوابة الأسر المنتجة والحرفيين */}
+                  {/* 1. بوابة رائدات العمل الحر */}
                   <button
                     onClick={() => {
                       setIsDrawerOpen(false);
+                      setActiveTrack('family');
                       window.location.hash = '#/portal/families';
                       setCurrentPath('/portal/families');
                     }}
-                    className="w-full text-right p-3 rounded-2xl hover:bg-amber-50 text-stone-900 text-xs md:text-sm font-black flex items-center justify-between group transition-all border border-amber-200/60 bg-amber-50/40"
+                    className="w-full text-right p-2.5 sm:p-3 rounded-2xl hover:bg-amber-50 text-stone-900 text-xs sm:text-sm font-black flex items-center justify-between group transition-all border-2 border-amber-300 bg-amber-50/60 shadow-xs cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="text-lg sm:text-xl shrink-0">👩‍🍳</span>
+                      <div className="min-w-0">
+                        <span className="block text-stone-900 font-black truncate text-xs sm:text-sm">بوابة رائدات العمل الحر</span>
+                        <span className="text-[10px] text-stone-500 font-normal truncate block">التأهيل والتمكين والمتجر</span>
+                      </div>
+                    </div>
+                    <span className="bg-[#174F3E] text-amber-300 text-[10px] font-black px-2 py-1 rounded-xl shrink-0 whitespace-nowrap">تبديل ⇄</span>
+                  </button>
+
+                  {/* 2. بوابة العميل الشاملة */}
+                  <button
+                    onClick={() => {
+                      setIsDrawerOpen(false);
+                      setActiveTrack('visitor');
+                      window.location.hash = '#/portal/customer';
+                      setCurrentPath('/portal/customer');
+                    }}
+                    className="w-full text-right p-3 rounded-2xl hover:bg-emerald-50 text-stone-900 text-xs md:text-sm font-black flex items-center justify-between group transition-all border-2 border-emerald-300/80 bg-emerald-50/50 shadow-xs cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
-                      <User className="w-5 h-5 text-amber-700 group-hover:scale-110 transition-transform" />
-                      <span>👩‍🍳 بوابة الأسر المنتجة والحرفيين</span>
+                      <span className="text-xl">🛍️</span>
+                      <div>
+                        <span className="block text-stone-900">بوابة العميل الشاملة</span>
+                        <span className="text-[10px] text-stone-500 font-normal">المشتري • السائح • المعتمر</span>
+                      </div>
                     </div>
-                    <span className="bg-amber-400 text-primary text-[10px] font-black px-2 py-0.5 rounded-full">بوابة خاصة</span>
+                    <span className="bg-emerald-700 text-white text-[10px] font-black px-2 py-0.5 rounded-full">دخول ←</span>
                   </button>
+                </div>
+
+                <div className="space-y-1 pb-2 pt-2">
+                  <p className="text-[10px] font-bold text-stone-400 uppercase tracking-wider px-3 mb-1">
+                    أقسام تجربة العميل
+                  </p>
 
                   {/* بوابة المعتمرين */}
                   <button
                     onClick={() => {
                       setIsDrawerOpen(false);
-                      window.location.hash = '#/portal/pilgrims';
-                      setCurrentPath('/portal/pilgrims');
+                      setCustomerInitialTab('pilgrim');
+                      window.location.hash = '#/portal/customer';
+                      setCurrentPath('/portal/customer');
                     }}
-                    className="w-full text-right p-3 rounded-2xl hover:bg-amber-50 text-stone-900 text-xs md:text-sm font-black flex items-center justify-between group transition-all border border-amber-200/60 bg-amber-50/40"
+                    className="w-full text-right p-3 rounded-2xl hover:bg-amber-50 text-stone-900 text-xs md:text-sm font-black flex items-center justify-between group transition-all border border-amber-200/60 bg-amber-50/40 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <Compass className="w-5 h-5 text-amber-800 group-hover:scale-110 transition-transform" />
-                      <span>🕋 بوابة المعتمرين وزوار الحرمين</span>
+                      <span>🕋 خدمات المعتمرين وزوار الحرمين</span>
                     </div>
-                    <span className="bg-[#B49A5A] text-white text-[10px] font-black px-2 py-0.5 rounded-full">ضيافة الحرم</span>
+                    <span className="bg-[#C8A96B] text-white text-[10px] font-black px-2 py-0.5 rounded-full">ضيافة الحرم</span>
                   </button>
 
                   {/* بوابة الزائر والسائح */}
                   <button
                     onClick={() => {
                       setIsDrawerOpen(false);
-                      window.location.hash = '#/portal/visitors';
-                      setCurrentPath('/portal/visitors');
+                      setCustomerInitialTab('visitor');
+                      window.location.hash = '#/portal/customer';
+                      setCurrentPath('/portal/customer');
                     }}
-                    className="w-full text-right p-3 rounded-2xl hover:bg-blue-50 text-stone-900 text-xs md:text-sm font-black flex items-center justify-between group transition-all border border-blue-200/60 bg-blue-50/40"
+                    className="w-full text-right p-3 rounded-2xl hover:bg-blue-50 text-stone-900 text-xs md:text-sm font-black flex items-center justify-between group transition-all border border-blue-200/60 bg-blue-50/40 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <Globe className="w-5 h-5 text-blue-700 group-hover:scale-110 transition-transform" />
-                      <span>🕌 بوابة الزائر والسائح</span>
+                      <span>🕌 تجارب الزوار والسياح</span>
                     </div>
                     <span className="bg-blue-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full">تجارب حية</span>
                   </button>
 
-                  {/* بوابة المشتري والعميل */}
+                  {/* متجر المشتري */}
                   <button
                     onClick={() => {
                       setIsDrawerOpen(false);
-                      window.location.hash = '#/portal/buyers';
-                      setCurrentPath('/portal/buyers');
+                      setCustomerInitialTab('buyer');
+                      window.location.hash = '#/portal/customer';
+                      setCurrentPath('/portal/customer');
                     }}
-                    className="w-full text-right p-3 rounded-2xl hover:bg-stone-100 text-stone-900 text-xs md:text-sm font-black flex items-center justify-between group transition-all border border-stone-200"
+                    className="w-full text-right p-3 rounded-2xl hover:bg-stone-100 text-stone-900 text-xs md:text-sm font-black flex items-center justify-between group transition-all border border-stone-200 cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <ShoppingBag className="w-5 h-5 text-primary group-hover:scale-110 transition-transform" />
-                      <span>🛒 بوابة المشتري والتسوق</span>
+                      <span>🛒 متجر المأكولات والتسوق الفوري</span>
                     </div>
                     <ChevronLeft className="w-4 h-4 text-stone-400" />
                   </button>
@@ -939,6 +1051,24 @@ export default function App() {
                     <span className="bg-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs">جديد 👑</span>
                   </button>
 
+                  {/* 4.5 البرنامج التأهيلي واعتماد الضمان الذهبي */}
+                  <button
+                    onClick={() => {
+                      setIsDrawerOpen(false);
+                      window.location.hash = '#/journey';
+                      setCurrentPath('/journey');
+                    }}
+                    className="w-full text-right p-3 rounded-2xl bg-amber-50/80 hover:bg-amber-100/90 text-[#174F3E] text-xs md:text-sm font-black flex items-center justify-between group transition-all border border-amber-300 shadow-2xs my-1"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Award className="w-5 h-5 text-amber-700 group-hover:scale-110 transition-transform" />
+                      <span>🏅 رحلة التأهيل والضمان الذهبي</span>
+                    </div>
+                    <span className="bg-[#174F3E] text-amber-300 text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs">
+                      7 مراحل 🌟
+                    </span>
+                  </button>
+
                   {/* 5. الدعم الفني الذكي */}
                   <button
                     onClick={() => {
@@ -951,14 +1081,14 @@ export default function App() {
                       <Sparkles className="w-5 h-5 text-amber-700 group-hover:scale-110 transition-transform" />
                       <span>💬 الدعم الفني الذكي</span>
                     </div>
-                    <span className="bg-[#B49A5A] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">مباشر 🟢</span>
+                    <span className="bg-[#C8A96B] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">مباشر 🟢</span>
                   </button>
                 </div>
 
                 <div className="space-y-1 py-2">
                   <p className="text-[10px] font-bold text-stone-400 uppercase tracking-wider px-3 mb-1">خدمات التمكين والمشاريع</p>
 
-                  {/* 6. الأسر المنتجة والحرفيين */}
+                  {/* 6. رائدات ورواد العمل الحر والمشاريع الصغيرة */}
                   <button
                     onClick={() => {
                       setIsDrawerOpen(false);
@@ -973,7 +1103,7 @@ export default function App() {
                   >
                     <div className="flex items-center gap-3">
                       <User className="w-5 h-5 text-stone-500" />
-                      <span>👩‍🍳 الأسر المنتجة والحرفيين</span>
+                      <span>👩‍🍳 رائدات ورواد العمل الحر والمشاريع الصغيرة</span>
                     </div>
                     <ChevronLeft className="w-4 h-4 text-stone-300" />
                   </button>
@@ -1018,7 +1148,7 @@ export default function App() {
                     <ChevronLeft className="w-4 h-4 text-stone-300" />
                   </button>
 
-                  {/* 9. مبادرات ورث أجيال */}
+                  {/* 9. مبادرات إرث أجيال */}
                   <button
                     onClick={() => {
                       setIsDrawerOpen(false);
@@ -1028,7 +1158,7 @@ export default function App() {
                   >
                     <div className="flex items-center gap-3">
                       <Landmark className="w-5 h-5 text-stone-500" />
-                      <span>🏛️ مبادرات ورث أجيال</span>
+                      <span>🏛️ مبادرات إرث أجيال</span>
                     </div>
                     <ChevronLeft className="w-4 h-4 text-stone-300" />
                   </button>
@@ -1151,7 +1281,7 @@ export default function App() {
 
               {/* Drawer Footer */}
               <div className="bg-stone-50 p-4 border-t border-stone-200 text-center space-y-1">
-                <p className="text-[11px] font-bold text-stone-700">منصة ورث أجيال × التفكير والنماء TND</p>
+                <p className="text-[11px] font-bold text-stone-700">منصة إرث أجيال × التفكير والنماء TND</p>
                 <p className="text-[9px] text-stone-400 font-light">تمكين اقتصادي مستدام وتنمية التراث الأصيل</p>
               </div>
             </motion.div>
@@ -1217,6 +1347,30 @@ export default function App() {
             }}
           />
         </>
+      ) : currentPath === '/portal/customer' ? (
+        <CustomerPortalPage
+          initialTab={customerInitialTab}
+          producers={producers}
+          onSelectProducer={(prod) => {
+            setSelectedProducerForView(prod);
+            window.location.hash = `#/producer/${prod.id}`;
+          }}
+          onNavigateHome={() => {
+            setCurrentPath('/');
+            window.location.hash = '#/';
+          }}
+          onNavigateLogin={() => {
+            setCurrentPath('/login');
+            window.location.hash = '#/login';
+          }}
+          onSwitchToFamilyPortal={() => {
+            setActiveTrack('family');
+            setCurrentPath('/portal/families');
+            window.location.hash = '#/portal/families';
+          }}
+          renderWarathLogo={renderWarathLogo}
+          renderThinkingLogo={renderThinkingLogo}
+        />
       ) : currentPath === '/portal/pilgrims' ? (
         <PilgrimPortalPage
           producers={producers}
@@ -1286,6 +1440,13 @@ export default function App() {
           }}
           renderWarathLogo={renderWarathLogo}
           renderThinkingLogo={renderThinkingLogo}
+        />
+      ) : currentPath === '/journey' || currentPath === '/qualification' ? (
+        <QualificationJourneyPage
+          onBackHome={() => {
+            setCurrentPath('/');
+            window.location.hash = '#/';
+          }}
         />
       ) : !isLoggedIn ? (
         <LandingPage 
@@ -1534,14 +1695,8 @@ export default function App() {
       </div>
       )}
 
-      {/* Modern, Simple, Heritage-aligned Footer */}
-      <footer className="bg-white border-t border-stone-200 mt-16 py-8 text-center text-xs text-stone-400" id="app-footer">
-        <div className="max-w-7xl mx-auto px-4 space-y-2">
-          <p className="font-semibold text-stone-500 text-xs md:text-sm">ورث أجيال لتمكين الأسر المنتجة ورائدات ورعاة الأعمال الحرفية والطهي</p>
-          <p className="font-light">رؤية وطنية لتمكين الطاقات السعودية وتحويل المهارات التراثية إلى قطاعات إنتاجية واعدة مستدامة.</p>
-          <p className="font-mono text-[10px] text-stone-300 pt-4">© 2026 ورث أجيال. جميع الحقوق محفوظة.</p>
-        </div>
-      </footer>
+      {/* Single Global Platform Footer */}
+      <Footer />
 
       {/* Dynamic Bottom Navigation Bar (Sleek Mobile Bottom Nav) */}
       <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-stone-200/80 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] py-3 px-4 flex justify-around items-center lg:hidden z-50">
@@ -1652,7 +1807,7 @@ export default function App() {
         <button
           type="button"
           onClick={() => setIsGlobalSupportOpen(true)}
-          className="bg-[#0B3A60] hover:bg-[#0B3A60]/95 text-white p-3.5 sm:px-5 sm:py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 transition-all hover:scale-105 cursor-pointer border border-white/20 group"
+          className="bg-[#174F3E] hover:bg-[#174F3E]/95 text-white p-3.5 sm:px-5 sm:py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 transition-all hover:scale-105 cursor-pointer border border-white/20 group"
           id="floating-smart-support-btn"
         >
           <div className="relative">
@@ -1682,6 +1837,13 @@ export default function App() {
         onClose={() => setIsTrackSwitcherOpen(false)}
         activeTrack={activeTrack}
         onSelectTrack={handleSelectTrack}
+      />
+
+      {/* Entry Identity Gate Modal (أسر منتجة أو عميل) */}
+      <EntryIdentityGateModal
+        isOpen={isIdentityGateOpen}
+        onClose={() => setIsIdentityGateOpen(false)}
+        onSelectRole={handleIdentitySelectRole}
       />
 
       {/* Packages Modal */}

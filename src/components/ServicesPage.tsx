@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { useLanguage } from '../context/LanguageContext';
 import { 
   Briefcase, 
   ArrowRight, 
@@ -27,6 +28,7 @@ export default function ServicesPage({
   onNavigateToConsulting,
   onOpenSupport 
 }: ServicesPageProps) {
+  const { t, isEn } = useLanguage();
   
   const services = [
     {
@@ -50,9 +52,10 @@ export default function ServicesPage({
       subtitle: 'توجيه احترافي مع خبراء التفكير والنماء',
       desc: 'جلسات استشارية فردية في حوكمة المشاريع، دراسات الجدوى المالي، تطوير وصفات الطهي، ومعايير الجودة والسلامة الغذائية.',
       features: [
-        'جلسة أولى مجانية بالكامل للجميع',
-        'صيغ متعددة (زووم، هاتف، حضوري)',
-        'خطة عمل تنفيذية مخصصة'
+        'جلسة استشارية أولى مجانية (لمدة 1 ساعة / 60 دقيقة)',
+        'استشارات تخصصية لاحقة (1,000 ريال / ساعة)',
+        'صيغ متعددة (زووم عن بعد، هاتف مباشر، حضوري)',
+        'خطة عمل تنفيذية وتوصيات معتمدة'
       ],
       actionLabel: 'حجز استشارة مهنية 🩺',
       action: onNavigateToConsulting
@@ -122,7 +125,7 @@ export default function ServicesPage({
   ];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 text-right p-4 sm:p-6 font-sans" id="standalone-services-page">
+    <div className={`max-w-7xl mx-auto space-y-8 p-4 sm:p-6 font-sans ${isEn ? 'text-left' : 'text-right'}`} id="standalone-services-page">
       {/* Navigation Top Bar */}
       <div className="flex items-center justify-between bg-white border border-stone-200 p-4 rounded-2xl shadow-xs">
         <button
@@ -130,8 +133,8 @@ export default function ServicesPage({
           onClick={onBackToHome}
           className="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer"
         >
-          <ArrowRight className="w-4 h-4" />
-          <span>العودة إلى الرئيسية</span>
+          <ArrowRight className={`w-4 h-4 ${isEn ? 'rotate-180' : ''}`} />
+          <span>{t('portal.backToHome')}</span>
         </button>
 
         <div className="flex items-center gap-2">
@@ -141,7 +144,7 @@ export default function ServicesPage({
       </div>
 
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-[#0B3A60] via-primary to-emerald-900 text-white p-8 sm:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
+      <div className="bg-gradient-to-r from-[#174F3E] via-primary to-emerald-900 text-white p-8 sm:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
         <div className="relative z-10 max-w-3xl space-y-4">
           <span className="text-accent text-xs font-black bg-white/10 border border-accent/30 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-accent animate-spin" />
@@ -149,7 +152,7 @@ export default function ServicesPage({
           </span>
 
           <h1 className="text-2xl sm:text-4xl font-black text-white leading-tight">
-            دليل خدمات ورث أجيال ومؤسسة التفكير والنماء
+            دليل خدمات إرث أجيال ومؤسسة التفكير والنماء
           </h1>
 
           <p className="text-stone-200 text-xs sm:text-sm font-light leading-relaxed">
@@ -163,14 +166,14 @@ export default function ServicesPage({
         {services.map((srv) => (
           <div 
             key={srv.id}
-            className="bg-white border border-stone-200 hover:border-[#0B3A60] rounded-3xl p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4 group"
+            className="bg-white border border-stone-200 hover:border-[#174F3E] rounded-3xl p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4 group"
           >
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-stone-50 border border-stone-200 flex items-center justify-center font-black text-2xl group-hover:scale-110 transition-transform">
                 {srv.icon}
               </div>
               <div>
-                <h3 className="font-black text-stone-800 text-base group-hover:text-[#0B3A60] transition-colors">
+                <h3 className="font-black text-stone-800 text-base group-hover:text-[#174F3E] transition-colors">
                   {srv.title}
                 </h3>
                 <span className="text-[11px] text-accent font-bold bg-primary/10 px-2.5 py-0.5 rounded-full inline-block mt-1">
@@ -196,7 +199,7 @@ export default function ServicesPage({
                 <button
                   type="button"
                   onClick={srv.action}
-                  className="w-full bg-[#0B3A60] hover:bg-[#0B3A60]/90 text-white font-extrabold py-2.5 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                  className="w-full bg-[#174F3E] hover:bg-[#174F3E]/90 text-white font-extrabold py-2.5 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                 >
                   <span>{srv.actionLabel}</span>
                 </button>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
+import { useLanguage } from '../context/LanguageContext';
 import { 
   Phone, 
   Mail, 
@@ -18,6 +19,7 @@ interface ContactPageProps {
 }
 
 export default function ContactPage({ onBackToHome, onOpenSupport }: ContactPageProps) {
+  const { t, isEn } = useLanguage();
   const [senderName, setSenderName] = useState<string>('');
   const [senderPhone, setSenderPhone] = useState<string>('');
   const [senderEmail, setSenderEmail] = useState<string>('');
@@ -39,7 +41,7 @@ export default function ContactPage({ onBackToHome, onOpenSupport }: ContactPage
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 text-right p-4 sm:p-6 font-sans" id="standalone-contact-page">
+    <div className={`max-w-7xl mx-auto space-y-8 p-4 sm:p-6 font-sans ${isEn ? 'text-left' : 'text-right'}`} id="standalone-contact-page">
       {/* Navigation Top Bar */}
       <div className="flex items-center justify-between bg-white border border-stone-200 p-4 rounded-2xl shadow-xs">
         <button
@@ -47,8 +49,8 @@ export default function ContactPage({ onBackToHome, onOpenSupport }: ContactPage
           onClick={onBackToHome}
           className="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer"
         >
-          <ArrowRight className="w-4 h-4" />
-          <span>العودة إلى الرئيسية</span>
+          <ArrowRight className={`w-4 h-4 ${isEn ? 'rotate-180' : ''}`} />
+          <span>{t('portal.backToHome')}</span>
         </button>
 
         <div className="flex items-center gap-2">
@@ -58,7 +60,7 @@ export default function ContactPage({ onBackToHome, onOpenSupport }: ContactPage
       </div>
 
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-[#0B3A60] via-primary to-emerald-950 text-white p-8 sm:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
+      <div className="bg-gradient-to-r from-[#174F3E] via-primary to-emerald-950 text-white p-8 sm:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
         <div className="relative z-10 max-w-3xl space-y-4">
           <span className="text-accent text-xs font-black bg-white/10 border border-accent/30 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-accent animate-spin" />
@@ -70,7 +72,7 @@ export default function ContactPage({ onBackToHome, onOpenSupport }: ContactPage
           </h1>
 
           <p className="text-stone-200 text-xs sm:text-sm font-light leading-relaxed">
-            فريق خدمة المستفيدين بمؤسسة التفكير والنماء ومنصة ورث أجيال بانتظار استفساراتكم واقتراحاتكم بشأن التسجيل، المتجر المستقل، أو برامج التمويل والاستشارات.
+            فريق خدمة المستفيدين بمؤسسة التفكير والنماء ومنصة إرث أجيال بانتظار استفساراتكم واقتراحاتكم بشأن التسجيل، المتجر المستقل، أو برامج التمويل والاستشارات.
           </p>
         </div>
       </div>
@@ -129,7 +131,7 @@ export default function ContactPage({ onBackToHome, onOpenSupport }: ContactPage
 
           {/* Quick Smart Support Banner */}
           {onOpenSupport && (
-            <div className="bg-[#0B3A60] text-white p-6 rounded-3xl space-y-3 shadow-md">
+            <div className="bg-[#1E3D34] text-white p-6 rounded-3xl space-y-3 shadow-md">
               <h4 className="font-black text-sm text-white">هل تحتاج إجابة فورية بدون انتظار؟ 💬</h4>
               <p className="text-stone-300 text-xs font-light leading-relaxed">
                 استخدم المساعد الفني الذكي للتواصل السريع واكتشاف الحلول التفاعلية مباشرة!
@@ -246,7 +248,7 @@ export default function ContactPage({ onBackToHome, onOpenSupport }: ContactPage
 
               <button
                 type="submit"
-                className="w-full bg-[#0B3A60] hover:bg-[#0B3A60]/90 text-white font-extrabold py-3.5 rounded-2xl text-xs transition-all shadow-md cursor-pointer hover:scale-[1.01] flex items-center justify-center gap-2"
+                className="w-full bg-[#1E3D34] hover:bg-[#1E3D34]/90 text-white font-extrabold py-3.5 rounded-2xl text-xs transition-all shadow-md cursor-pointer hover:scale-[1.01] flex items-center justify-center gap-2"
               >
                 <Send className="w-4 h-4 rotate-180" />
                 <span>إرسال الرسالة وفتح تذكرة متابعة ✉️</span>

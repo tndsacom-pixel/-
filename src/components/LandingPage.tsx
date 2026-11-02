@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import { MainLandingSections } from './MainLandingSections';
 import AboutPlatformIntro from './AboutPlatformIntro';
-import ProfitCalculator from './ProfitCalculator';
 import ConsultingPage from './ConsultingPage';
 import ServicesPage from './ServicesPage';
 import AboutPage from './AboutPage';
@@ -56,6 +56,19 @@ import {
   Globe
 } from 'lucide-react';
 import { DEFAULT_PRODUCTS, HeritageProduct } from '../initialData';
+import { INITIAL_PRODUCERS } from '../producersData';
+import { useLanguage } from '../context/LanguageContext';
+
+const PRODUCTIVE_FAMILIES = INITIAL_PRODUCERS.map(p => ({
+  id: p.id,
+  name: p.brandName,
+  banner: p.coverUrl || p.logoUrl,
+  region: p.city,
+  category: p.projectType === 'culinary' ? 'طعام وتراث' : p.projectType === 'crafts' ? 'حرف يدوية' : p.projectType === 'hospitality' ? 'ضيافة عربية' : 'منتجات منزلية',
+  rating: p.rating,
+  productsCount: p.products ? p.products.length : 0,
+  desc: p.description
+}));
 
 interface LandingPageProps {
   onLogin: (role: 'beneficiary' | 'admin' | 'pilgrim' | 'visitor', name?: string) => void;
@@ -67,8 +80,8 @@ interface LandingPageProps {
   onSelectTrack?: (track: 'family' | 'pilgrim' | 'visitor' | 'partner' | 'supporter') => void;
 }
 
-export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeTheme, lang = 'ar', onToggleLanguage, onSelectTrack }: LandingPageProps) {
-  const isEn = lang === 'en';
+export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeTheme, onToggleLanguage, onSelectTrack }: LandingPageProps) {
+  const { t, isEn } = useLanguage();
   const renderThinkingLogo = (sizeClass = "w-11 h-11 text-xs") => {
     if (thinkingLogo && (thinkingLogo.startsWith('http') || thinkingLogo.startsWith('/') || thinkingLogo.startsWith('data:'))) {
       return (
@@ -81,7 +94,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
       );
     }
     return (
-      <div className={`bg-[#B49A5A] text-white rounded-xl flex items-center justify-center shadow-md font-bold font-mono text-center px-1 leading-tight ${sizeClass}`}>
+      <div className={`bg-[#C8A96B] text-white rounded-xl flex items-center justify-center shadow-md font-bold font-mono text-center px-1 leading-tight ${sizeClass}`}>
         {thinkingLogo ? thinkingLogo.substring(0, 8) : 'تفكير ونماء'}
       </div>
     );
@@ -92,15 +105,15 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
       return (
         <img 
           src={warathLogo} 
-          alt="شعار ورث أجيال" 
+          alt="شعار إرث أجيال" 
           className={`${sizeClass.split(' ')[0]} ${sizeClass.split(' ')[1]} object-contain rounded-2xl shadow-md border border-accent/20 bg-white`} 
           referrerPolicy="no-referrer" 
         />
       );
     }
     return (
-      <div className={`bg-[#0B3A60] text-amber-300 rounded-2xl flex items-center justify-center shadow-md font-extrabold font-mono text-center px-2 leading-tight ${sizeClass}`}>
-        {warathLogo ? warathLogo.substring(0, 10) : 'ورث أجيال'}
+      <div className={`bg-[#174F3E] text-amber-300 rounded-2xl flex items-center justify-center shadow-md font-extrabold font-mono text-center px-2 leading-tight ${sizeClass}`}>
+        {warathLogo ? warathLogo.substring(0, 10) : 'إرث أجيال'}
       </div>
     );
   };
@@ -124,6 +137,8 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
   const [showSupport, setShowSupport] = useState<boolean>(false);
   const [supportMessageSent, setSupportMessageSent] = useState<boolean>(false);
   const [nameInput, setNameInput] = useState<string>('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [supportInitialInfo, setSupportInitialInfo] = useState<{ familyName?: string; familyCode?: string; productName?: string } | undefined>(undefined);
 
   // Handle Hash & URL Route Changes for Navigation and Dedicated Views
   useEffect(() => {
@@ -368,7 +383,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
     {
       id: 'init-1',
       sender: 'support',
-      text: 'مرحباً بك في الدعم الفني والتمكين الموحد لمنصة ورث أجيال (مبادرة مؤسسة التفكير والنماء) 👋',
+      text: 'مرحباً بك في الدعم الفني والتمكين الموحد لمنصة إرث أجيال (مبادرة مؤسسة التفكير والنماء) 👋',
       time: '10:30 ص',
       status: 'read'
     },
@@ -424,7 +439,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
       if (t.includes('تمكين') || t.includes('دعم') || t.includes('مؤسسة') || t.includes('التفكير') || t.includes('نماء')) {
         replyText = 'مرحباً بك! برامج التمكين بمؤسسة التفكير والنماء تقدم حقائب تأهيل متكاملة تشمل: التدريب الحرفي المتخصص، المساعدة في استخراج التراخيص الصحية والبلدية، والربط اللوجستي والتسويقي مع ضيوف الرحمن لزيادة الدخل وتحقيق الاستدامة المالية. هل تود تقييم مشروعك عبر حاسبة التمكين الذكية؟';
       } else if (t.includes('سعر') || t.includes('اسعار') || t.includes('أسعار') || t.includes('باقة') || t.includes('باقات') || t.includes('اشتراك')) {
-        replyText = 'أهلاً بك! تتيح منصة "ورث أجيال" خيارين للوصول للمأكولات والحرف التراثية:\n1️⃣ الشراء المباشر الحر لمنتج فردي دون قيود.\n2️⃣ الباقات المخصصة لضيوف الرحمن (وجبات يومية طازجة للمجموعات مع التوصيل للفنادق) بأسعار تنافسية تبدأ من 35 ريال للوجبة شاملة التوصيل والخدمات اللوجستية.';
+        replyText = 'أهلاً بك! تتيح منصة "إرث أجيال" خيارين للوصول للمأكولات والحرف التراثية:\n1️⃣ الشراء المباشر الحر لمنتج فردي دون قيود.\n2️⃣ الباقات المخصصة لضيوف الرحمن (وجبات يومية طازجة للمجموعات مع التوصيل للفنادق) بأسعار تنافسية تبدأ من 35 ريال للوجبة شاملة التوصيل والخدمات اللوجستية.';
       } else if (t.includes('توصيل') || t.includes('لوجست') || t.includes('فندق') || t.includes('مكة') || t.includes('التوصيل')) {
         replyText = 'نوفر شبكة توصيل لوجستية متكاملة ومجهزة كلياً داخل مكة المكرمة والمشاعر المقدسة. يتم نقل الوجبات بحافظات حرارية متطورة ومطابقة لمعايير الهيئة العامة للغذاء والدواء لضمان وصول الوجبات طازجة وساخنة مباشرة إلى فندقك أو مكان إقامتك.';
       } else if (t.includes('تجرب') || t.includes('يوزر') || t.includes('دخول') || t.includes('حساب') || t.includes('باسورد') || t.includes('كلمة المرور')) {
@@ -432,7 +447,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
       } else if (t.includes('سدو') || t.includes('حرف') || t.includes('تراث') || t.includes('أكل') || t.includes('جريش') || t.includes('هدايا')) {
         replyText = 'تتميز منصتنا بتقديم منتجات تراثية سعودية أصيلة وموثقة:\n🥘 أطعمة شعبية (جريش، كبسة، كليجا) مطبوخة بأيدي أسر سعودية مرخصة صحياً.\n🧶 حرف يدوية وهدايا تذكارية (نسيج السدو، صناعة الخوص، الفخار) المصنوعة يدوياً بالكامل لتعكس أصالة مكة وثقافتنا الوطنية.';
       } else if (t.includes('مرحبا') || t.includes('السلام') || t.includes('اهلين') || t.includes('أهلاً') || t.includes('هلا') || t.includes('صباح') || t.includes('مساء')) {
-        replyText = 'وعليكم السلام ورحمة الله وبركاته! أهلاً بك في دعم "ورث أجيال". يسعدنا مساعدتك! يمكنك الاستفسار عن برامج التمكين، حاسبة الأرباح للأسر المنتجة، تتبع النمو، أو طلبات المأكولات والحرف التراثية لمجموعات ضيوف الرحمن 🌸';
+        replyText = 'وعليكم السلام ورحمة الله وبركاته! أهلاً بك في دعم "إرث أجيال". يسعدنا مساعدتك! يمكنك الاستفسار عن برامج التمكين، تتبع النمو، أو طلبات المأكولات والحرف التراثية لمجموعات ضيوف الرحمن 🌸';
       } else {
         replyText = `شكراً لرسالتك الجيّمة! استفسارك بخصوص "${trimmed}" تم تسجيله وتوجيهه فوراً إلى أحد مستشاري التمكين بمؤسسة التفكير والنماء.\n💡 يمكنك تصفح دليل الأسئلة الشائعة بالأسفل أو الاستفسار عن باقات المأكولات والحرف وسنقوم بمتابعة طلبك حالاً عبر الهاتف المسجل بحسابك.`;
       }
@@ -486,7 +501,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
           password: "123",
           idNumber: "1111111111",
           email: "admin@example.com",
-          name: "إدارة ورث أجيال",
+          name: "إدارة إرث أجيال",
           phone: "0550000000",
           role: "admin"
         }
@@ -610,7 +625,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
       setLoginIdentifier('admin');
       setPasscodeInput('1234');
       setLoginPassword('123');
-      onLogin('admin', 'إدارة ورث أجيال');
+      onLogin('admin', 'إدارة إرث أجيال');
     } else if (id === 5) {
       setLandingView('join_portals');
       setSelectedRole('beneficiary');
@@ -807,7 +822,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
     setSimulationToast({
       show: true,
       title: 'إشعار تأكيد رمز التحقق (SMS) 📩',
-      desc: `[ورث أجيال] رمز التحقق الموحد لمرة واحدة (OTP) الخاص بك هو: ${generatedCode}`
+      desc: `[إرث أجيال] رمز التحقق الموحد لمرة واحدة (OTP) الخاص بك هو: ${generatedCode}`
     });
     
     // Automatically close simulation toast after 15 seconds
@@ -947,7 +962,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
 
     // Fallback for admin if not found in db
     if (loginIdentifier.trim() === 'admin' && (loginPassword === '123' || passcodeInput === '1234' || loginPassword === '1234')) {
-      onLogin('admin', 'إدارة ورث أجيال');
+      onLogin('admin', 'إدارة إرث أجيال');
       return;
     }
 
@@ -1232,13 +1247,13 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
               <span>← العودة إلى الصفحة الرئيسية</span>
             </button>
             <div className="flex items-center gap-2">
-              <span className="text-xs md:text-sm font-black text-stone-800">متجر ورث أجيال التراثي المستقل (/store)</span>
+              <span className="text-xs md:text-sm font-black text-stone-800">متجر إرث أجيال التراثي المستقل (/store)</span>
               <span className="w-2.5 h-2.5 bg-amber-500 rounded-full animate-ping"></span>
             </div>
           </div>
 
           {/* Standalone Store Hero Header */}
-          <div className="bg-gradient-to-r from-[#0B3A60] via-primary to-emerald-900 text-white p-8 md:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
+          <div className="bg-gradient-to-r from-[#174F3E] via-primary to-emerald-900 text-white p-8 md:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
             <div className="absolute top-0 right-0 w-80 h-80 bg-accent opacity-15 rounded-full blur-3xl -mr-24 -mt-24"></div>
             
             <div className="relative z-10 space-y-4 max-w-3xl">
@@ -1301,7 +1316,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                     onClick={() => setSelectedCatFilter(tab.id)}
                     className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       selectedCatFilter === tab.id
-                        ? 'bg-[#0B3A60] text-white shadow-sm'
+                        ? 'bg-[#174F3E] text-white shadow-sm'
                         : 'bg-stone-50 text-stone-600 hover:bg-stone-100 border border-stone-200'
                     }`}
                   >
@@ -1331,7 +1346,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
               }).map((prod) => (
                 <div 
                   key={prod.id}
-                  className="border border-stone-200 hover:border-[#0B3A60] bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all group flex flex-col justify-between"
+                  className="border border-stone-200 hover:border-[#174F3E] bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all group flex flex-col justify-between"
                 >
                   <div className="relative h-48 overflow-hidden bg-stone-100">
                     <img 
@@ -1340,7 +1355,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       referrerPolicy="no-referrer"
                     />
-                    <span className="absolute top-3 right-3 bg-white/90 backdrop-blur-md text-[#0B3A60] font-black text-[10px] px-2.5 py-1 rounded-lg border border-stone-200 shadow-xs">
+                    <span className="absolute top-3 right-3 bg-white/90 backdrop-blur-md text-[#174F3E] font-black text-[10px] px-2.5 py-1 rounded-lg border border-stone-200 shadow-xs">
                       {prod.categoryLabel}
                     </span>
                   </div>
@@ -1348,7 +1363,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                   {/* Product Details */}
                   <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                     <div className="space-y-1.5 text-right">
-                      <h4 className="font-extrabold text-stone-800 text-xs md:text-sm group-hover:text-[#0B3A60] transition-colors">
+                      <h4 className="font-extrabold text-stone-800 text-xs md:text-sm group-hover:text-[#174F3E] transition-colors">
                         {prod.name}
                       </h4>
                       <div className="flex items-center justify-between">
@@ -1376,7 +1391,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                     <div className="pt-2 border-t border-stone-200/50 flex items-center justify-between">
                       <div className="text-right">
                         <span className="text-[10px] text-stone-400 block font-light">السعر الفوري</span>
-                        <span className="text-sm font-black font-mono text-[#0B3A60]">{prod.price} ر.س</span>
+                        <span className="text-sm font-black font-mono text-[#174F3E]">{prod.price} ر.س</span>
                       </div>
                       
                       <button
@@ -1386,7 +1401,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                           setPurchaseSuccess(false);
                           setPurchaseError('');
                         }}
-                        className="bg-[#0B3A60] hover:bg-[#0B3A60]/95 text-white font-black text-[10px] sm:text-xs px-3.5 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1 cursor-pointer"
+                        className="bg-[#174F3E] hover:bg-[#174F3E]/95 text-white font-black text-[10px] sm:text-xs px-3.5 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1 cursor-pointer"
                       >
                         <span>شراء سريع 🛒</span>
                       </button>
@@ -1417,7 +1432,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
               className="bg-white rounded-3xl max-w-lg w-full border border-stone-200 shadow-2xl overflow-hidden text-right flex flex-col max-h-[90vh]"
             >
               {/* Modal Header */}
-              <div className="bg-[#0B3A60] p-4 text-white flex items-center justify-between">
+              <div className="bg-[#174F3E] p-4 text-white flex items-center justify-between">
                 <button 
                   type="button"
                   onClick={() => {
@@ -1452,7 +1467,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                         referrerPolicy="no-referrer"
                       />
                       <div className="space-y-0.5 flex-1 text-right">
-                        <span className="text-[10px] bg-[#EBF1FA] text-[#0B3A60] px-2 py-0.5 rounded-full font-bold">
+                        <span className="text-[10px] bg-[#EBF1FA] text-[#174F3E] px-2 py-0.5 rounded-full font-bold">
                           {selectedProduct.categoryLabel}
                         </span>
                         <h5 className="font-bold text-stone-800 text-xs md:text-sm">{selectedProduct.name}</h5>
@@ -1484,7 +1499,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                             placeholder="مثال: عبدالرحمن مكي"
                             value={orderName}
                             onChange={(e) => setOrderName(e.target.value)}
-                            className="w-full p-2.5 rounded-xl border border-stone-200 text-xs focus:ring-1 focus:ring-primary focus:border-[#0B3A60] outline-none text-right"
+                            className="w-full p-2.5 rounded-xl border border-stone-200 text-xs focus:ring-1 focus:ring-primary focus:border-[#174F3E] outline-none text-right"
                           />
                         </div>
                         <div className="space-y-1">
@@ -1494,7 +1509,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                             placeholder="مثال: 050XXXXXXX"
                             value={orderPhone}
                             onChange={(e) => setOrderPhone(e.target.value)}
-                            className="w-full p-2.5 rounded-xl border border-stone-200 text-xs focus:ring-1 focus:ring-primary focus:border-[#0B3A60] outline-none text-left"
+                            className="w-full p-2.5 rounded-xl border border-stone-200 text-xs focus:ring-1 focus:ring-primary focus:border-[#174F3E] outline-none text-left"
                           />
                         </div>
                       </div>
@@ -1506,7 +1521,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                           placeholder="مثال: فندق هيلتون مكة، البرج الغربي، غرفة 402"
                           value={orderAddress}
                           onChange={(e) => setOrderAddress(e.target.value)}
-                          className="w-full p-2.5 rounded-xl border border-stone-200 text-xs focus:ring-1 focus:ring-primary focus:border-[#0B3A60] outline-none text-right"
+                          className="w-full p-2.5 rounded-xl border border-stone-200 text-xs focus:ring-1 focus:ring-primary focus:border-[#174F3E] outline-none text-right"
                         />
                       </div>
 
@@ -1547,12 +1562,12 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                       </div>
 
                       {/* Total Calculation */}
-                      <div className="bg-[#0B3A60]/5 p-3 rounded-2xl border border-[#0B3A60]/10 flex items-center justify-between text-right">
+                      <div className="bg-[#174F3E]/5 p-3 rounded-2xl border border-[#174F3E]/10 flex items-center justify-between text-right">
                         <div>
                           <span className="text-[10px] text-stone-500 font-medium block">الإجمالي الكلي المباشر:</span>
                           <span className="text-xs text-stone-400 font-light">(شامل الضريبة المضافة والتوصيل الفندقي)</span>
                         </div>
-                        <span className="text-base font-black font-mono text-[#0B3A60]">
+                        <span className="text-base font-black font-mono text-[#174F3E]">
                           {(selectedProduct.price * orderQuantity) + 15} ر.س
                         </span>
                       </div>
@@ -1578,7 +1593,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                         });
                         setTimeout(() => setSimulationToast(null), 7000);
                       }}
-                      className="w-full bg-[#0B3A60] hover:bg-[#0B3A60]/95 text-white font-black py-3 rounded-xl text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer mt-2"
+                      className="w-full bg-[#174F3E] hover:bg-[#174F3E]/95 text-white font-black py-3 rounded-xl text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer mt-2"
                     >
                       <span>تأكيد الطلب والشراء المباشر الفوري 🛍️</span>
                     </button>
@@ -1603,7 +1618,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                     <div className="bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-2 text-right text-xs">
                       <div className="flex justify-between border-b border-stone-200 pb-1.5 font-mono">
                         <span className="text-stone-400">رقم الفاتورة:</span>
-                        <span className="font-bold text-[#0B3A60]">{orderInvoice}</span>
+                        <span className="font-bold text-[#174F3E]">{orderInvoice}</span>
                       </div>
                       <div className="flex justify-between border-b border-stone-200 pb-1.5">
                         <span className="text-stone-400">المنتج المطلوبة:</span>
@@ -1629,7 +1644,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                         setSelectedProduct(null);
                         setPurchaseSuccess(false);
                       }}
-                      className="bg-[#0B3A60] text-white hover:bg-[#0B3A60]/90 font-black py-2.5 px-8 rounded-xl text-xs transition-all cursor-pointer"
+                      className="bg-[#174F3E] text-white hover:bg-[#174F3E]/90 font-black py-2.5 px-8 rounded-xl text-xs transition-all cursor-pointer"
                     >
                       فهمت ذلك ومتابعة التصفح
                     </button>
@@ -1645,10 +1660,10 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
           <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            className="fixed bottom-5 left-5 md:left-8 z-[9999] max-w-sm w-full bg-white/95 backdrop-blur-md border-2 border-[#B49A5A] rounded-2xl shadow-2xl p-4 text-right flex items-start gap-3.5"
+            className="fixed bottom-5 left-5 md:left-8 z-[9999] max-w-sm w-full bg-white/95 backdrop-blur-md border-2 border-[#C8A96B] rounded-2xl shadow-2xl p-4 text-right flex items-start gap-3.5"
             id="simulation-toast-alert"
           >
-            <div className="bg-[#B49A5A] text-white p-2.5 rounded-xl flex-shrink-0 flex items-center justify-center shadow-md">
+            <div className="bg-[#C8A96B] text-white p-2.5 rounded-xl flex-shrink-0 flex items-center justify-center shadow-md">
               <Sparkles className="w-5 h-5 animate-pulse" />
             </div>
             <div className="space-y-1 flex-grow">
@@ -1664,7 +1679,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <h4 className="font-extrabold text-[#0B3A60] text-xs leading-relaxed pt-0.5">{simulationToast.title}</h4>
+              <h4 className="font-extrabold text-[#174F3E] text-xs leading-relaxed pt-0.5">{simulationToast.title}</h4>
               <p className="text-[10px] text-stone-500 font-light leading-relaxed">{simulationToast.desc}</p>
             </div>
           </motion.div>
@@ -1675,783 +1690,180 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
 
   return (
     <div className="space-y-10 text-right pb-16 md:pb-8" id="landing-container">
-      {/* 🟢 Top Sticky Header Bar */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 py-3 px-4 sm:px-8 shadow-xs -mx-4 sm:-mx-6 lg:-mx-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          {/* Right: Logo & Title */}
-          <a 
-            href="#/" 
-            onClick={(e) => {
-              e.preventDefault();
-              setLandingView('options');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="flex items-center gap-2.5 cursor-pointer group"
-          >
-            {renderWarathLogo("w-9 h-9 sm:w-10 sm:h-10 text-base sm:text-lg")}
-            <div className="text-right">
-              <h1 className="text-sm sm:text-base md:text-lg font-black text-stone-900 leading-tight group-hover:text-primary transition-colors">
-                منصة ورث أجيال
-              </h1>
-              <p className="text-[10px] text-stone-500 font-medium">تمكين الأسر المنتجة والحرف والضيافة</p>
-            </div>
-          </a>
 
-          {/* Center: Nav Links */}
-          <nav className="hidden md:flex items-center gap-6 text-xs font-bold text-stone-700">
-            <button 
-              onClick={() => { setLandingView('options'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className="hover:text-primary transition-colors cursor-pointer text-primary font-black"
-            >
-              الرئيسية
-            </button>
-            <button 
-              onClick={() => { setLandingView('standalone_store'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className="hover:text-primary transition-colors cursor-pointer"
-            >
-              المتجر
-            </button>
-            <a 
-              href="#choose-your-journey" 
-              className="hover:text-primary transition-colors cursor-pointer"
-            >
-              رحلتي
-            </a>
-            <button 
-              onClick={() => { 
-                const el = document.getElementById('packages-preview');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="hover:text-primary transition-colors cursor-pointer flex items-center gap-1"
-            >
-              <span>الباقات</span>
-              <span className="bg-amber-100 text-amber-900 text-[9px] px-1.5 py-0.2 rounded font-extrabold">متميزة</span>
-            </button>
-            <button 
-              onClick={() => { setLandingView('standalone_about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className="hover:text-primary transition-colors cursor-pointer"
-            >
-              من نحن
-            </button>
-            <button 
-              onClick={() => { setShowSupport(true); }}
-              className="hover:text-primary transition-colors cursor-pointer"
-            >
-              الدعم
-            </button>
-          </nav>
-
-          {/* Left: Language & Admin Login */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Language Toggle */}
-            <button
-              onClick={onToggleLanguage}
-              className="bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold px-3 py-1.5 rounded-xl transition-all border border-stone-200 flex items-center gap-1.5 cursor-pointer"
-              title="تغيير اللغة"
-            >
-              <Globe className="w-3.5 h-3.5 text-stone-600" />
-              <span>{lang === 'ar' ? 'English 🇬🇧' : 'العربية 🇸🇦'}</span>
-            </button>
-
-            {/* Discrete Admin Link */}
-            <button
-              onClick={() => {
-                setLandingView('unified_login');
-                setSelectedRole('admin');
-                setLoginIdentifier('admin');
-                setLoginPassword('123');
-                setError('');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className="bg-stone-900 hover:bg-stone-800 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer border border-stone-700"
-              title="دخول المشرفين والكادر الإداري"
-            >
-              <Lock className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">دخول المشرفين</span>
-            </button>
-          </div>
-        </div>
-      </header>
 
       {/* 🔴 Section 1: القسم الرئيسي Hero Header */}
       <div 
-        className={`text-white p-8 md:p-14 rounded-3xl relative overflow-hidden text-center shadow-xl border border-stone-200 transition-all duration-700 ${
-          selectedSeason === 'founding' ? 'bg-[#5C3A21]' :
-          selectedSeason === 'national' ? 'bg-[#004D25]' :
-          selectedSeason === 'ramadan' ? 'bg-[#0F1E36]' : 'bg-primary'
-        }`} 
+        className="bg-gradient-to-bl from-[#022c22] via-[#064e3b] to-[#0f5132] text-white p-6 md:p-12 lg:p-14 rounded-3xl relative overflow-hidden shadow-2xl border border-amber-500/20 text-right dir-rtl" 
         id="hero-banner"
       >
-        <div className="absolute top-0 right-0 w-80 h-80 bg-accent opacity-15 rounded-full blur-3xl -mr-24 -mt-24"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent opacity-10 rounded-full blur-3xl -ml-40 -mb-40"></div>
+        <div className="absolute top-0 left-0 w-96 h-96 bg-[#c59b27]/15 rounded-full blur-3xl -ml-20 -mt-20 pointer-events-none"></div>
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl -mr-20 -mb-20 pointer-events-none"></div>
 
-        {/* TND Badge */}
-        <div className="flex justify-center mb-6">
-          <a 
-            href="https://tnd.sa" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/20 hover:border-accent/40 px-5 py-2.5 rounded-2xl transition-all group shadow-sm hover:shadow-md"
-          >
-            {renderThinkingLogo("w-8 h-8 text-[8px]")}
-            <div className="text-right">
-              <span className="text-[10px] text-accent font-bold block">مبادرة تمكين الأسر المنتجة والحرفيين 🇸🇦</span>
-              <span className="text-xs font-bold text-white group-hover:text-accent transition-colors flex items-center gap-1">
-                مؤسسة التفكير والنماء للاستشارات الإدارية TND.SA ↗
-              </span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+          {/* Right Column: Hero Copy & Search & Buttons */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="inline-flex items-center gap-2.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 px-4 py-1.5 rounded-full text-xs font-black shadow-xs">
+              <span>🇸🇦 {t('hero.badge')}</span>
             </div>
-          </a>
-        </div>
 
-        {/* Main Titles */}
-        <div className="max-w-3xl mx-auto space-y-4 relative z-10">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white leading-tight tracking-tight">
-            نصل إرث الأجيال بفرص المستقبل
-          </h1>
-          <p className="text-stone-100 text-xs sm:text-sm md:text-base font-medium leading-relaxed max-w-2xl mx-auto opacity-95">
-            منصة رقمية لتمكين الأسر المنتجة والحرفيين ورواد الأعمال في الضيافة وفنون الطهي والحرف اليدوية، وربطهم بالأسواق والعملاء والفرص.
-          </p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight tracking-tight">
+              {t('hero.title')}
+            </h1>
 
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-6">
-            <a
-              href="#choose-your-journey"
-              className="bg-accent hover:bg-accent/90 text-primary font-black py-3.5 px-8 rounded-2xl text-xs sm:text-sm transition-all shadow-lg hover:scale-105 cursor-pointer flex items-center gap-2"
-            >
-              <span>ابدأ رحلتك 🚀</span>
-            </a>
-            <a
-              href="#what-we-offer"
-              className="bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 px-8 rounded-2xl text-xs sm:text-sm transition-all backdrop-blur-md border border-white/25 cursor-pointer flex items-center gap-2"
-            >
-              <span>اكتشف المنصة ✨</span>
-            </a>
-          </div>
-        </div>
+            <p className="text-amber-100/90 text-sm sm:text-base md:text-lg font-medium leading-relaxed max-w-2xl">
+              {t('hero.subtitle')}
+            </p>
 
-        {/* Live Search Bar Autocomplete inside Hero (Visual/Functional Enhancement) */}
-        <div className="max-w-xl mx-auto my-8 relative">
-          <div className="bg-white/10 backdrop-blur-md p-2 rounded-2xl border border-white/20 flex items-center">
-            <span className="p-2 text-stone-300">🔍</span>
-            <input 
-              type="text" 
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setShowSearchDropdown(true);
-              }}
-              onFocus={() => setShowSearchDropdown(true)}
-              placeholder="ابحث عن أكلة شعبية أو هدية تراثية (مثال: جريش، كليجا، سدو، قهوة)..." 
-              className="w-full bg-transparent text-white placeholder-white/60 text-xs focus:outline-none px-2 py-1"
-            />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                className="text-[10px] bg-white/20 hover:bg-white/30 text-white px-2 py-1 rounded-lg ml-2"
+            {/* Primary Entry Gateway Doors (الأسر المنتجة vs العميل) - Mobile Optimized */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 pt-2">
+              {/* Door 1: رائدات ورواد العمل الحر والمشاريع الصغيرة */}
+              <button
+                onClick={() => {
+                  window.location.hash = '#/portal/families';
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="bg-amber-400 hover:bg-amber-300 text-[#174F3E] font-black p-2.5 sm:p-3 rounded-2xl text-xs sm:text-sm transition-all shadow-lg hover:scale-[1.02] cursor-pointer flex items-center justify-between border-2 border-amber-200 text-right"
               >
-                مسح
-              </button>
-            )}
-          </div>
-
-          {/* Autocomplete dropdown results */}
-          {showSearchDropdown && searchQuery && (
-            <div className="absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-stone-200 text-right p-3 z-50 text-stone-800 space-y-2 max-h-60 overflow-y-auto">
-              <div className="text-[10px] text-stone-400 font-bold border-b pb-1.5 flex justify-between items-center">
-                <span>نتائج البحث الفوري بالذكاء الاصطناعي:</span>
-                <button onClick={() => setShowSearchDropdown(false)} className="text-red-500 hover:underline">إغلاق</button>
-              </div>
-              {filteredSearch.length > 0 ? (
-                filteredSearch.map((item, idx) => (
-                  <div 
-                    key={idx} 
-                    onClick={() => {
-                      setSearchQuery(item.title);
-                      setShowSearchDropdown(false);
-                    }}
-                    className="p-2 hover:bg-stone-50 rounded-xl cursor-pointer flex justify-between items-center transition-all"
-                  >
-                    <div>
-                      <span className="text-xs font-bold text-stone-800 block">{item.title}</span>
-                      <span className="text-[9px] text-stone-400 font-light">من إعداد الأسرة المنتجة: {item.family}</span>
-                    </div>
-                    <span className="text-[9px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full">{item.cat}</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-500/20 text-[#174F3E] flex items-center justify-center text-base sm:text-lg shrink-0">
+                    👩‍🍳
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-4 text-xs text-stone-400 font-light">
-                  لا توجد نتائج مطابقة، جرّب كتابة "جريش" أو "كليجا" لتظهر لك ميزة الفلترة!
+                  <div>
+                    <span className="block font-black text-stone-900 leading-tight">بوابة رائدات ورواد العمل الحر والمشاريع الصغيرة</span>
+                    <span className="block text-[9px] sm:text-[10px] text-stone-700 font-bold">التأهيل والتمكين والمبيعات</span>
+                  </div>
+                </div>
+                <ChevronLeft className={`w-4 h-4 text-[#174F3E] shrink-0 ${isEn ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Door 2: العميل (مشتري • سائح • معتمر) */}
+              <button
+                onClick={() => {
+                  window.location.hash = '#/portal/customer';
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="bg-white hover:bg-stone-100 text-[#174F3E] font-black p-2.5 sm:p-3 rounded-2xl text-xs sm:text-sm transition-all shadow-lg hover:scale-[1.02] cursor-pointer flex items-center justify-between border-2 border-emerald-300 text-right"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-600/15 text-emerald-800 flex items-center justify-center text-base sm:text-lg shrink-0">
+                    🛍️
+                  </div>
+                  <div>
+                    <span className="block font-black text-stone-900 leading-tight">بوابة العميل الشاملة</span>
+                    <span className="block text-[9px] sm:text-[10px] text-emerald-800 font-bold">المشتري • السائح • المعتمر</span>
+                  </div>
+                </div>
+                <ChevronLeft className={`w-4 h-4 text-[#174F3E] shrink-0 ${isEn ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+
+            {/* Search Bar Autocomplete inside Hero */}
+            <div className="max-w-xl relative pt-3">
+              <div className="bg-white/10 backdrop-blur-md p-2 rounded-2xl border border-white/20 flex items-center shadow-inner">
+                <span className="p-2 text-amber-300">🔍</span>
+                <input 
+                  type="text" 
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setShowSearchDropdown(true);
+                  }}
+                  onFocus={() => setShowSearchDropdown(true)}
+                  placeholder="ابحث عن أكلة شعبية أو هدية تراثية (مثال: جريش، كليجا، سدو، قهوة)..." 
+                  className="w-full bg-transparent text-white placeholder-white/60 text-xs focus:outline-none px-2 py-1"
+                />
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery('')}
+                    className="text-[10px] bg-white/20 hover:bg-white/30 text-white px-2 py-1 rounded-lg ml-2 cursor-pointer"
+                  >
+                    مسح
+                  </button>
+                )}
+              </div>
+
+              {/* Autocomplete dropdown results */}
+              {showSearchDropdown && searchQuery && (
+                <div className="absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-stone-200 text-right p-3 z-50 text-stone-800 space-y-2 max-h-60 overflow-y-auto">
+                  <div className="text-[10px] text-stone-400 font-bold border-b pb-1.5 flex justify-between items-center">
+                    <span>نتائج البحث الفوري بالذكاء الاصطناعي:</span>
+                    <button onClick={() => setShowSearchDropdown(false)} className="text-red-500 hover:underline">إغلاق</button>
+                  </div>
+                  {filteredSearch.length > 0 ? (
+                    filteredSearch.map((item, idx) => (
+                      <div 
+                        key={idx} 
+                        onClick={() => {
+                          setSearchQuery(item.title);
+                          setShowSearchDropdown(false);
+                        }}
+                        className="p-2 hover:bg-stone-50 rounded-xl cursor-pointer flex justify-between items-center transition-all"
+                      >
+                        <div>
+                          <span className="text-xs font-bold text-stone-800 block">{item.title}</span>
+                          <span className="text-[9px] text-stone-400 font-light">من إعداد الأسرة المنتجة: {item.family}</span>
+                        </div>
+                        <span className="text-[9px] bg-emerald-100 text-emerald-900 font-bold px-2 py-0.5 rounded-full">{item.cat}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-4 text-xs text-stone-400 font-light">
+                      لا توجد نتائج مطابقة، جرّب كتابة "جريش" أو "كليجا" لتظهر لك ميزة الفلترة!
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
-        </div>
+          </div>
 
-        <div className="flex flex-wrap justify-center gap-4">
-          <a 
-            href="/store"
-            onClick={(e) => {
-              e.preventDefault();
-              setLandingView('standalone_store');
-              window.location.hash = '/store';
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="bg-[#B49A5A] hover:bg-[#A3894A] text-stone-900 font-black px-8 py-3.5 rounded-2xl text-sm transition-all shadow-md inline-flex items-center gap-2 cursor-pointer border-2 border-stone-100/20"
-            id="start-onboarding-wizard-btn"
-          >
-            <span>🛍️ تسوّق المأكولات والهدايا التراثية (المتجر)</span>
-            <ChevronLeft className="w-4 h-4 text-stone-900" />
-          </a>
+          {/* Left Column: Rich Saudi Heritage Visual Card */}
+          <div className="lg:col-span-5 relative">
+            <div className="relative rounded-3xl overflow-hidden border-2 border-amber-400/30 shadow-2xl bg-stone-900 group">
+              <img 
+                src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=900" 
+                alt="ضيافة ومنتجات إرث أجيال" 
+                className="w-full h-[320px] sm:h-[380px] object-cover group-hover:scale-105 transition-transform duration-700 opacity-90"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent"></div>
+              
+              <div className="absolute bottom-4 right-4 left-4 p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 text-white space-y-1">
+                <div className="flex items-center justify-between text-xs font-bold text-amber-300">
+                  <span>☕ ضيافة وحرف سعودية أصيلة</span>
+                  <span className="bg-amber-400 text-stone-950 text-[10px] font-black px-2 py-0.5 rounded-full">جودة معتمدة</span>
+                </div>
+                <p className="text-[11px] text-stone-200 font-light">
+                  منتجات منزلية، وجبات حجازية طازجة، هدايا تراثية، وتجارب حية صُنعت بأيدٍ سعودية.
+                </p>
+              </div>
+            </div>
 
-          <button 
-            type="button"
-            onClick={() => {
-              setLandingView('family_landing');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="bg-stone-900 hover:bg-stone-800 text-amber-300 font-bold px-7 py-3.5 rounded-2xl text-sm transition-all shadow-md inline-flex items-center gap-2 cursor-pointer border border-stone-700"
-          >
-            <span>👩‍🍳 بوابة الأسر المنتجة والحرفيين ↗</span>
-          </button>
-
-          <a 
-            href="#choose-your-journey" 
-            className="bg-white/10 hover:bg-white/15 text-stone-200 border border-white/20 font-medium px-6 py-3.5 rounded-2xl text-sm transition-all inline-flex items-center gap-2"
-          >
-            <span>اختر مسار رحلتك</span>
-          </a>
+            {/* Floating Trust Badge */}
+            <div className="absolute -bottom-4 -right-4 bg-white text-stone-900 border border-amber-300 p-3 rounded-2xl shadow-xl flex items-center gap-3 font-bold text-xs hidden sm:flex">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-lg font-black">
+                🏅
+              </div>
+              <div>
+                <span className="block font-black text-stone-900">أسر منتجة معتمدة</span>
+                <span className="text-[10px] text-stone-500 font-normal">تمكين اقتصادي وترخيص موثق</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* 🇸🇦 القسم التعريفي لورث أجيال (يظهر فوراً بعد قسم الهيرو) */}
-      <AboutPlatformIntro 
-        onSelectTrack={(track) => {
-          if (onSelectTrack) {
-            onSelectTrack(track);
-            return;
-          }
-          if (track === 'family') {
-            window.location.hash = '#/portal/families';
-          } else if (track === 'pilgrim') {
-            window.location.hash = '#/portal/pilgrims';
-          } else if (track === 'visitor') {
-            window.location.hash = '#/portal/visitors';
-          } else if (track === 'supporter' || track === 'partner') {
-            window.location.hash = '#/portal/partners';
-          }
-        }} 
-      />
 
       {/* Main Pathway Selection and Login Form */}
       <div id="pathway-selection" className="scroll-mt-20">
         {!selectedRole ? (
           <>
           {landingView === 'options' ? (
-            <div className="space-y-12 animate-fade-in" id="landing-sections-wrapper">
-              {/* 🔴 Section 3: قسم ماذا تقدم ورث أجيال؟ (6 بطاقات رئيسية فقط) */}
-              <div className="bg-stone-50 border border-stone-200 p-6 md:p-10 rounded-3xl space-y-8 scroll-mt-24" id="what-we-offer">
-                <div className="text-center space-y-2 max-w-2xl mx-auto">
-                  <span className="text-accent text-xs font-extrabold bg-primary/5 px-3 py-1 rounded-full border border-primary/10">
-                    المنظومة والخدمات الأساسية
-                  </span>
-                  <h2 className="font-black text-stone-900 text-2xl md:text-3xl">
-                    ماذا تقدم منصة ورث أجيال؟
-                  </h2>
-                  <p className="text-stone-500 text-xs md:text-sm font-light">
-                    منظومة رقمية وتأهيلية شاملة لدعم الاقتصاد التراثي والتمكين المستدام
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="bg-white border border-stone-200 p-6 rounded-2xl space-y-3 hover:border-primary/30 transition-all shadow-2xs">
-                    <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-xl font-bold">🎓</div>
-                    <h3 className="font-extrabold text-stone-900 text-base">التدريب والتأهيل</h3>
-                    <p className="text-stone-600 text-xs font-light leading-relaxed">
-                      دورات وحقائب معتمدة لرفع مهارات الطهي والتغليف وإدارة المشاريع المنزلية للتحول إلى مطابخ احترافية.
-                    </p>
-                  </div>
-
-                  <div className="bg-white border border-stone-200 p-6 rounded-2xl space-y-3 hover:border-primary/30 transition-all shadow-2xs">
-                    <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center text-xl font-bold">📊</div>
-                    <h3 className="font-extrabold text-stone-900 text-base">تقييم الجاهزية</h3>
-                    <p className="text-stone-600 text-xs font-light leading-relaxed">
-                      تشخيص آلي لإمكانات الأسرة الجسدية والإنتاجية وتحديد مسار الدعم والتمكين المناسب بدقة.
-                    </p>
-                  </div>
-
-                  <div className="bg-white border border-stone-200 p-6 rounded-2xl space-y-3 hover:border-primary/30 transition-all shadow-2xs">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-xl font-bold">🛍️</div>
-                    <h3 className="font-extrabold text-stone-900 text-base">المتجر الرقمي</h3>
-                    <p className="text-stone-600 text-xs font-light leading-relaxed">
-                      نافذة بيع رقمية تعرض معروضات الأسر من المأكولات الشعبية الطازجة والحرف اليدوية الأصيلة للجمهور.
-                    </p>
-                  </div>
-
-                  <div className="bg-white border border-stone-200 p-6 rounded-2xl space-y-3 hover:border-primary/30 transition-all shadow-2xs">
-                    <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center text-xl font-bold">💰</div>
-                    <h3 className="font-extrabold text-stone-900 text-base">التمويل والتمكين</h3>
-                    <p className="text-stone-600 text-xs font-light leading-relaxed">
-                      تسهيل الحصول على تمويل العمل الحر بدون كفيل بالشراكة الرسمية مع بنك التنمية الاجتماعية.
-                    </p>
-                  </div>
-
-                  <div className="bg-white border border-stone-200 p-6 rounded-2xl space-y-3 hover:border-primary/30 transition-all shadow-2xs">
-                    <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center text-xl font-bold">🤝</div>
-                    <h3 className="font-extrabold text-stone-900 text-base">الربط بالأسواق</h3>
-                    <p className="text-stone-600 text-xs font-light leading-relaxed">
-                      التوصيل المباشر لوفود المعتمرين والسياح والفنادق بمكة والمدينة بعقود توريد مجدولة.
-                    </p>
-                  </div>
-
-                  <div className="bg-white border border-stone-200 p-6 rounded-2xl space-y-3 hover:border-primary/30 transition-all shadow-2xs">
-                    <div className="w-10 h-10 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center text-xl font-bold">🏆</div>
-                    <h3 className="font-extrabold text-stone-900 text-base">الاعتماد وضمان الجودة</h3>
-                    <p className="text-stone-600 text-xs font-light leading-relaxed">
-                      توثيق الشهادات الصحية والبلدية ورخص العمل الحر لضمان أعلى معايير السلامة والأمان.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* 🔴 Section 4: قسم المتجر الرقمي (عرض عينة) */}
-              <div className="bg-white border border-stone-200 p-6 md:p-10 rounded-3xl space-y-8 scroll-mt-24" id="featured-store-preview">
-                <div className="text-center space-y-2 max-w-2xl mx-auto">
-                  <span className="text-accent text-xs font-extrabold bg-primary/5 px-3 py-1 rounded-full border border-primary/10">
-                    معرض المنتجات التراثية
-                  </span>
-                  <h2 className="font-black text-stone-900 text-2xl md:text-3xl">
-                    المتجر الرقمي للمأكولات والحرف التراثية
-                  </h2>
-                  <p className="text-stone-500 text-xs md:text-sm font-light">
-                    استكشف منتجات الأسر المنتجة والحرفيين من المأكولات الشعبية الطازجة للهدايا التراثية الأصيلة
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  {HERITAGE_PRODUCTS.slice(0, 3).map((prod) => (
-                    <div 
-                      key={prod.id}
-                      className="bg-stone-50 border border-stone-200 rounded-2xl overflow-hidden hover:shadow-md transition-all flex flex-col justify-between group"
-                    >
-                      <div className="relative h-44 overflow-hidden bg-stone-200">
-                        <img 
-                          src={prod.image} 
-                          alt={prod.title} 
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                        />
-                        <span className="absolute top-3 right-3 bg-stone-900/80 backdrop-blur-xs text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-lg">
-                          {prod.category === 'culinary' || prod.category === 'food' ? '🍲 طهي تراثي' : '🏺 حرفة يدوية'}
-                        </span>
-                      </div>
-                      <div className="p-4 space-y-2 flex-grow flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-center justify-between text-[11px] text-stone-500 mb-1">
-                            <span>👩‍🍳 {prod.family}</span>
-                            <span className="text-amber-600 font-bold">⭐ {prod.rating}</span>
-                          </div>
-                          <h3 className="font-bold text-stone-900 text-sm">{prod.title}</h3>
-                          <p className="text-stone-500 text-[11px] line-clamp-2 mt-1 font-light">{prod.desc}</p>
-                        </div>
-                        <div className="pt-3 border-t border-stone-200/80 flex items-center justify-between mt-3">
-                          <span className="font-black text-primary text-sm font-mono">{prod.price} ريال</span>
-                          <button
-                            onClick={() => setSelectedProduct(prod)}
-                            className="bg-primary hover:bg-primary/90 text-accent font-bold px-3 py-1.5 rounded-xl text-xs transition-colors cursor-pointer"
-                          >
-                            طلب سريع 🛒
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="text-center pt-2">
-                  <button
-                    onClick={() => {
-                      setLandingView('standalone_store');
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    className="bg-stone-900 hover:bg-stone-800 text-white font-black py-3.5 px-8 rounded-2xl text-xs sm:text-sm transition-all shadow-md inline-flex items-center gap-2 cursor-pointer hover:scale-105"
-                  >
-                    <span>استكشف المتجر الكامل 🛍️</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* 🔴 Section 5: قسم التدريب والتأهيل والتقييم الذاتي */}
-              <div className="bg-stone-50 border border-stone-200 p-6 md:p-10 rounded-3xl space-y-8 scroll-mt-24" id="training-readiness">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                  <div className="space-y-4">
-                    <span className="text-accent text-xs font-extrabold bg-primary/5 px-3 py-1 rounded-full border border-primary/10">
-                      التأهيل العلمي والمهني
-                    </span>
-                    <h2 className="font-black text-stone-900 text-2xl md:text-3xl leading-snug">
-                      تطوير القدرات والانتقال من العمل العشوائي إلى الجاهزية الاستثمارية
-                    </h2>
-                    <p className="text-stone-600 text-xs md:text-sm font-light leading-relaxed">
-                      توفر المنصة مسارات تدريبية وتأهيلية موجهة للأسر المنتجة والحرفيين، تركز على معايير سلامة الأغذية، جودة التغليف والتعبئة، والتسعير العادل لتلبية احتياجات سوق الضيافة والعمرة.
-                    </p>
-                    <div className="space-y-3 pt-2">
-                      <div className="flex items-start gap-3 bg-white p-3.5 rounded-xl border border-stone-200">
-                        <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <h4 className="font-extrabold text-stone-800 text-xs">تقييم الجاهزية الآلي</h4>
-                          <p className="text-stone-500 text-[11px] font-light">اختبار تفاعلي يقيس الجاهزية الفنية والصحية والإنتاجية للأسرة.</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3 bg-white p-3.5 rounded-xl border border-stone-200">
-                        <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <h4 className="font-extrabold text-stone-800 text-xs">شهادة الجاهزية المعتمدة</h4>
-                          <p className="text-stone-500 text-[11px] font-light">إصدار شهادة موثقة تمكن الأسرة من رفع منتجاتها وتلقي طلبيات العمرة.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white border border-stone-200 p-6 md:p-8 rounded-3xl shadow-xs space-y-6 text-center">
-                    <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center text-3xl mx-auto">
-                      📋
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="font-black text-stone-900 text-lg">هل ترغب في قياس جاهزية مشروعك؟</h3>
-                      <p className="text-stone-500 text-xs font-light leading-relaxed">
-                        ابدأ التقييم التفاعلي السريع الآن للتعرف على نقاط القوة والدعم المطلوب لمشروعك
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setLandingView('family_landing');
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                      className="w-full bg-primary hover:bg-primary/90 text-accent font-black py-3 px-6 rounded-xl text-xs transition-all shadow-xs cursor-pointer"
-                    >
-                      <span>ابدأ تقييم الجاهزية الآن 🚀</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* 🔴 Section 6: قسم بنك التنمية الاجتماعية والتمويل */}
-              <div className="bg-gradient-to-r from-primary to-[#1E3D34] text-white p-6 md:p-10 rounded-3xl space-y-8 relative overflow-hidden shadow-lg scroll-mt-24" id="sdb-financing">
-                <div className="absolute top-0 left-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center relative z-10">
-                  <div className="lg:col-span-2 space-y-4">
-                    <span className="text-accent text-xs font-extrabold bg-white/10 px-3 py-1 rounded-full border border-accent/20">
-                      الشراكة الاستراتيجية للتمكين
-                    </span>
-                    <h2 className="font-black text-2xl md:text-3xl leading-snug">
-                      تمويل العمل الحر بدون فوائد وبدون كفيل
-                    </h2>
-                    <p className="text-stone-200 text-xs md:text-sm font-light leading-relaxed">
-                      بالشراكة مع بنك التنمية الاجتماعية ومؤسسة التفكير والنماء TND، تتيح المنصة مسارًا ميسرًا للتمويل المالي بدون فوائد لدعم الأسر المنتجة والحرفيين في شراء المعدات وتوسيع الإنتاج.
-                    </p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2">
-                      <div className="bg-white/10 border border-white/15 p-3.5 rounded-2xl text-center">
-                        <span className="block font-black text-amber-300 text-lg sm:text-xl">0%</span>
-                        <span className="text-[11px] text-stone-200 font-light">فوائد تمويلية</span>
-                      </div>
-                      <div className="bg-white/10 border border-white/15 p-3.5 rounded-2xl text-center">
-                        <span className="block font-black text-amber-300 text-lg sm:text-xl">بدون</span>
-                        <span className="text-[11px] text-stone-200 font-light">اشتراط كفيل</span>
-                      </div>
-                      <div className="bg-white/10 border border-white/15 p-3.5 rounded-2xl text-center col-span-2 sm:col-span-1">
-                        <span className="block font-black text-amber-300 text-lg sm:text-xl">50,000</span>
-                        <span className="text-[11px] text-stone-200 font-light">ريال سقف التمويل</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white text-stone-900 p-6 rounded-2xl space-y-4 shadow-md text-center">
-                    <h3 className="font-black text-base text-stone-800">تقديم طلب التمويل</h3>
-                    <p className="text-stone-500 text-xs font-light leading-relaxed">
-                      يمكن للأسر المؤهلة بعد إتمام التدريب تقديم طلب التمويل مباشرة المربوط ببنك التنمية.
-                    </p>
-                    <button
-                      onClick={() => {
-                        setLandingView('family_landing');
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                      className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-black py-3 px-4 rounded-xl text-xs transition-all cursor-pointer"
-                    >
-                      <span>الاطلاع على شروط التمويل 💰</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* 🔴 Section 7: قسم خدمة المعتمرين والضيوف */}
-              <div className="bg-white border border-stone-200 p-6 md:p-10 rounded-3xl space-y-8 scroll-mt-24" id="pilgrim-services">
-                <div className="text-center space-y-2 max-w-2xl mx-auto">
-                  <span className="text-accent text-xs font-extrabold bg-primary/5 px-3 py-1 rounded-full border border-primary/10">
-                    ضيوف الرحمن والسياح
-                  </span>
-                  <h2 className="font-black text-stone-900 text-2xl md:text-3xl">
-                    خدمة الوجبات المجدولة والتوصيل للفنادق
-                  </h2>
-                  <p className="text-stone-500 text-xs md:text-sm font-light">
-                    تجارب ضيافة سعودية أصيلة تصل مباشرة لمقر إقامتك في مكة المكرمة والمدينة المنورة
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-stone-50 border border-stone-200 p-6 rounded-2xl space-y-3 text-center">
-                    <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-900 flex items-center justify-center text-2xl font-bold mx-auto">
-                      📅
-                    </div>
-                    <h3 className="font-black text-stone-900 text-base">جدولة الوجبات اليومية</h3>
-                    <p className="text-stone-600 text-xs font-light leading-relaxed">
-                      اختر وجبات الفطور والغداء والعشاء طوال فترة إقامتك بمكة والمدينة وأكد مواعيد الاستلام.
-                    </p>
-                  </div>
-
-                  <div className="bg-stone-50 border border-stone-200 p-6 rounded-2xl space-y-3 text-center">
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-900 flex items-center justify-center text-2xl font-bold mx-auto">
-                      🏨
-                    </div>
-                    <h3 className="font-black text-stone-900 text-base">التوصيل المباشر للفندق</h3>
-                    <p className="text-stone-600 text-xs font-light leading-relaxed">
-                      وصول الوجبات طازجة في أواني آمنة وحافظات حرارية موثقة بضوابط الصحة والسلامة.
-                    </p>
-                  </div>
-
-                  <div className="bg-stone-50 border border-stone-200 p-6 rounded-2xl space-y-3 text-center">
-                    <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-900 flex items-center justify-center text-2xl font-bold mx-auto">
-                      🎁
-                    </div>
-                    <h3 className="font-black text-stone-900 text-base">الهدايا والتذكارات التراثية</h3>
-                    <p className="text-stone-600 text-xs font-light leading-relaxed">
-                      اقتناء الحرف اليدوية والقطع التراثية المصنوعة بأيدي حرفيين وطنيين كهدايا تذكارية قيمة.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* 🔴 Section 8: قسم الميزات الأساسية والتمكين الرقمي */}
-              <div className="bg-stone-50 border border-stone-200 p-6 md:p-10 rounded-3xl space-y-8 scroll-mt-24" id="platform-features">
-                <div className="text-center space-y-2 max-w-2xl mx-auto">
-                  <span className="text-accent text-xs font-extrabold bg-primary/5 px-3 py-1 rounded-full border border-primary/10">
-                    مميزات المنصة
-                  </span>
-                  <h2 className="font-black text-stone-900 text-2xl md:text-3xl">
-                    منظومة تقنية وحوكمة عالية الشفافية
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                  <div className="bg-white p-5 rounded-2xl border border-stone-200 space-y-2">
-                    <Shield className="w-6 h-6 text-emerald-600" />
-                    <h3 className="font-extrabold text-stone-900 text-sm">إشراف مؤسسي معتمد</h3>
-                    <p className="text-stone-500 text-xs font-light">تدقيق ومتابعة مباشرة من مؤسسة التفكير والنماء TND.</p>
-                  </div>
-                  <div className="bg-white p-5 rounded-2xl border border-stone-200 space-y-2">
-                    <Award className="w-6 h-6 text-amber-600" />
-                    <h3 className="font-extrabold text-stone-900 text-sm">رخصة عمل حر مجانية</h3>
-                    <p className="text-stone-500 text-xs font-light">مساعدة الأسر في استخراج وثائق العمل الحر الرسمية.</p>
-                  </div>
-                  <div className="bg-white p-5 rounded-2xl border border-stone-200 space-y-2">
-                    <Sparkles className="w-6 h-6 text-purple-600" />
-                    <h3 className="font-extrabold text-stone-900 text-sm">مستشار ذكاء اصطناعي</h3>
-                    <p className="text-stone-500 text-xs font-light">تحليل واقتراح مسارات التطوير وتحسين الجودة تلقائيًا.</p>
-                  </div>
-                  <div className="bg-white p-5 rounded-2xl border border-stone-200 space-y-2">
-                    <Users className="w-6 h-6 text-blue-600" />
-                    <h3 className="font-extrabold text-stone-900 text-sm">حس مجتمعي مستدام</h3>
-                    <p className="text-stone-500 text-xs font-light">تمكين اقتصادي ينعكس على جودة حياة الأسرة الوطنية.</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* 🔴 Section 9: قسم الشركاء والجهات الداعمة */}
-              <div className="bg-white border border-stone-200 p-6 md:p-8 rounded-3xl space-y-6 text-center scroll-mt-24" id="partners-section">
-                <span className="text-accent text-xs font-extrabold bg-primary/5 px-3 py-1 rounded-full border border-primary/10">
-                  الشركاء والداعمون
-                </span>
-                <h2 className="font-black text-stone-900 text-xl md:text-2xl">
-                  تكامل قطاعي مع الجهات الوطنية الرائدة
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 items-center justify-center max-w-4xl mx-auto pt-2">
-                  <div className="bg-stone-50 border border-stone-200 p-4 rounded-2xl font-bold text-stone-700 text-xs flex flex-col items-center gap-1.5">
-                    <span className="text-2xl">🏛️</span>
-                    <span>بنك التنمية الاجتماعية</span>
-                  </div>
-                  <div className="bg-stone-50 border border-stone-200 p-4 rounded-2xl font-bold text-stone-700 text-xs flex flex-col items-center gap-1.5">
-                    <span className="text-2xl">🏢</span>
-                    <span>مؤسسة التفكير والنماء TND</span>
-                  </div>
-                  <div className="bg-stone-50 border border-stone-200 p-4 rounded-2xl font-bold text-stone-700 text-xs flex flex-col items-center gap-1.5">
-                    <span className="text-2xl">🌴</span>
-                    <span>وزارة الثقافة - هيئة التراث</span>
-                  </div>
-                  <div className="bg-stone-50 border border-stone-200 p-4 rounded-2xl font-bold text-stone-700 text-xs flex flex-col items-center gap-1.5">
-                    <span className="text-2xl">🕋</span>
-                    <span>برنامج خدمة ضيوف الرحمن</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 🔴 Section 10: قسم الأسئلة الشائعة */}
-              <div className="bg-stone-50 border border-stone-200 p-6 md:p-10 rounded-3xl space-y-8 scroll-mt-24" id="faq-section">
-                <div className="text-center space-y-2 max-w-2xl mx-auto">
-                  <span className="text-accent text-xs font-extrabold bg-primary/5 px-3 py-1 rounded-full border border-primary/10">
-                    الأسئلة الشائعة
-                  </span>
-                  <h2 className="font-black text-stone-900 text-2xl md:text-3xl">
-                    إجابات عن الأستفسارات الأكثر تكرارًا
-                  </h2>
-                </div>
-
-                <div className="max-w-3xl mx-auto space-y-4">
-                  <div className="bg-white border border-stone-200 p-5 rounded-2xl space-y-2">
-                    <h3 className="font-extrabold text-stone-900 text-sm">كيف يمكن للأسرة الانضمام لمنصة ورث أجيال؟</h3>
-                    <p className="text-stone-600 text-xs font-light leading-relaxed">
-                      يمكن التسجيل المباشر عبر زر "أنا أسرة منتجة"، وإجراء تقييم الجاهزية الرقمي لتبدأ رحلة التدريب وتحديد المسار المناسب.
-                    </p>
-                  </div>
-
-                  <div className="bg-white border border-stone-200 p-5 rounded-2xl space-y-2">
-                    <h3 className="font-extrabold text-stone-900 text-sm">هل يتطلب الحصول على التمويل كفيلًا غارمًا؟</h3>
-                    <p className="text-stone-600 text-xs font-light leading-relaxed">
-                      لا، التمويل المقدم بالشراكة مع بنك التنمية الاجتماعية يتاح بدون كفيل للأنشطة المعتمدة بعد اجتياز متطلبات التأهيل.
-                    </p>
-                  </div>
-
-                  <div className="bg-white border border-stone-200 p-5 rounded-2xl space-y-2">
-                    <h3 className="font-extrabold text-stone-900 text-sm">كيف يتم ضمان سلامة الوجبات المقدمة للمعتمرين؟</h3>
-                    <p className="text-stone-600 text-xs font-light leading-relaxed">
-                      تخضع كافة المطابخ والمنتجات للتدقيق الصحي والتأهيل الميداني وحصول الأسرة على الشهادات الصحية اللازمة قبل العرض.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* 🔴 Section 10: قسم قصص النجاح والتجارب الملهمة */}
-              <div className="bg-white border border-stone-200 p-6 md:p-10 rounded-3xl space-y-8 scroll-mt-24" id="success-stories">
-                <div className="text-center space-y-2 max-w-2xl mx-auto">
-                  <span className="text-accent text-xs font-extrabold bg-primary/5 px-3 py-1 rounded-full border border-primary/10">
-                    قصص ملهمة
-                  </span>
-                  <h2 className="font-black text-stone-900 text-2xl md:text-3xl">
-                    قصص نجاح من أسر ورث أجيال
-                  </h2>
-                  <p className="text-stone-500 text-xs md:text-sm font-light">
-                    نماذج حية لأسر وطنية وحرفيين تحولت مهاراتهم التراثية إلى مشاريع مستدامة
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                  <div className="bg-stone-50 border border-stone-200 p-6 rounded-2xl space-y-4 relative">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-900 flex items-center justify-center font-bold text-xl">
-                        👩‍🍳
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-stone-900 text-sm">أم أحمد (مطبخ التراث الحجازي)</h3>
-                        <p className="text-stone-500 text-xs">مكة المكرمة • تمكين وتوريد للمعتمرين</p>
-                      </div>
-                    </div>
-                    <p className="text-stone-600 text-xs leading-relaxed font-light italic">
-                      "بفضل التأهيل والاعتماد الصحي عبر ورث أجيال، تحول شغفي بالطهي التراثي إلى عقد توريد شهري لخدمة ضيوف الرحمن وفنادق المنطقة المركزية بمكة المكرمة."
-                    </p>
-                    <div className="flex items-center justify-between text-[11px] text-amber-700 font-bold pt-2 border-t border-stone-200">
-                      <span>النمو الإنتاجي: +180%</span>
-                      <span>⭐ 4.9/5 تقييم العملاء</span>
-                    </div>
-                  </div>
-
-                  <div className="bg-stone-50 border border-stone-200 p-6 rounded-2xl space-y-4 relative">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-900 flex items-center justify-center font-bold text-xl">
-                        🏺
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-stone-900 text-sm">أبو فهد (حرفة الخزف والسيراميك)</h3>
-                        <p className="text-stone-500 text-xs">المدينة المنورة • هدايا وتذكارات تراثية</p>
-                      </div>
-                    </div>
-                    <p className="text-stone-600 text-xs leading-relaxed font-light italic">
-                      "فتحت لي المنصة متجرًا رقميًا موثقًا وصل بمنتجاتي الحرفية إلى الزوار والمعتمرين من مختلف دول العالم، مما ضمن لي دخلاً مستدامًا وتطويراً مستمراً للقطع."
-                    </p>
-                    <div className="flex items-center justify-between text-[11px] text-emerald-700 font-bold pt-2 border-t border-stone-200">
-                      <span>المبيعات الشهرية: +120 قطعة</span>
-                      <span>⭐ 5.0/5 تقييم الزوار</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 🔴 Section 11: دعوة للعمل والانضمام */}
-              <div className="bg-gradient-to-r from-primary to-primary/90 text-accent p-8 md:p-12 rounded-3xl space-y-6 text-center shadow-lg my-8">
-                <div className="max-w-2xl mx-auto space-y-3">
-                  <span className="bg-accent/10 text-accent px-4 py-1 rounded-full text-xs font-extrabold border border-accent/20 inline-block">
-                    ابدأ رحلة التمكين اليوم
-                  </span>
-                  <h2 className="font-black text-2xl md:text-3xl text-stone-900">
-                    هل أنت أسرة منتجة أو حرفي تسعى لتطوير مشروعك؟
-                  </h2>
-                  <p className="text-stone-700 text-xs sm:text-sm font-medium leading-relaxed">
-                    انضم إلى منظومة ورث أجيال واستفد من برامج التأهيل، الاعتماد، التسويق المباشر، وفرص التمكين التمويلية الميسرة.
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-                  <button
-                    onClick={() => {
-                      setLandingView('family_landing');
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    className="bg-stone-900 hover:bg-stone-800 text-white font-black py-3.5 px-8 rounded-2xl text-xs sm:text-sm transition-all shadow-md cursor-pointer hover:scale-105"
-                  >
-                    انضم كـ أسرة منتجة الآن 👩‍🍳
-                  </button>
-                  <button
-                    onClick={() => {
-                      setLandingView('standalone_store');
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    className="bg-white/80 hover:bg-white text-stone-900 font-extrabold py-3.5 px-8 rounded-2xl text-xs sm:text-sm transition-all border border-stone-300 cursor-pointer"
-                  >
-                    تصفح المتجر الرقمي 🛍️
-                  </button>
-                </div>
-              </div>
-
-              {/* 🔴 Section 12: الفوتر والشريط السفلي */}
-              <footer className="bg-stone-900 text-white p-8 md:p-12 rounded-3xl space-y-8 mt-12 border border-stone-800" id="platform-footer">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-stone-800 text-right">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl">🇸🇦</span>
-                      <span className="font-black text-lg text-amber-300">منصة ورث أجيال</span>
-                    </div>
-                    <p className="text-stone-400 text-xs font-light leading-relaxed">
-                      منظومة تمكين وطنية لتأهيل الأسر المنتجة والحرفيين وربطهم بسوق الضيافة والعمرة برعاية مؤسسة التفكير والنماء.
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <h4 className="font-bold text-stone-200 text-sm mb-3">روابط سريعة</h4>
-                    <ul className="space-y-2 text-xs text-stone-400 font-light">
-                      <li><a href="#choose-your-journey" className="hover:text-amber-300 transition-colors">مسارات المنصة</a></li>
-                      <li><a href="#what-we-offer" className="hover:text-amber-300 transition-colors">ماذا تقدم ورث أجيال</a></li>
-                      <li><a href="#featured-store-preview" className="hover:text-amber-300 transition-colors">المتجر الرقمي</a></li>
-                      <li><a href="#faq-section" className="hover:text-amber-300 transition-colors">الأسئلة الشائعة</a></li>
-                    </ul>
-                  </div>
-
-                  <div className="space-y-2">
-                    <h4 className="font-bold text-stone-200 text-sm mb-3">التواصل والإشراف</h4>
-                    <p className="text-stone-400 text-xs font-light">مؤسسة التفكير والنماء TND للاستشارات الإدارية</p>
-                    <p className="text-stone-400 text-xs font-mono">info@tnd.sa | المملكة العربية السعودية</p>
-                  </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500 font-light">
-                  <p>© {new Date().getFullYear()} منصة ورث أجيال - جميع الحقوق محفوظة لـ مؤسسة التفكير والنماء TND</p>
-                  <p className="text-[11px]">تصميم وتطوير متوافق مع رؤية المملكة 2030</p>
-                </div>
-              </footer>
-            </div>
+            <MainLandingSections 
+              setLandingView={setLandingView}
+              setSelectedProduct={setSelectedProduct}
+              setShowSupport={setShowSupport}
+              setSupportInitialInfo={setSupportInitialInfo}
+            />
           ) : landingView === 'family_landing' ? (
             /* Dedicated Standalone Landing Page for Productive Families & Artisans */
             <div className="max-w-5xl mx-auto space-y-8 text-right animate-fade-in py-4" id="family-dedicated-landing">
@@ -2468,18 +1880,18 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                   <span>← العودة إلى الرئيسية (بوابة المعتمرين والسياح)</span>
                 </button>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-black text-stone-800">بوابة الأسر المنتجة والحرفيين</span>
+                  <span className="text-xs font-black text-stone-800">بوابة رائدات ورواد العمل الحر والمشاريع الصغيرة</span>
                   <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
                 </div>
               </div>
 
               {/* Hero Header for Productive Families */}
-              <div className="bg-gradient-to-r from-[#B49A5A] via-[#9E8447] to-[#7D6732] text-white p-8 md:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/40">
+              <div className="bg-gradient-to-r from-[#C8A96B] via-[#9E8447] to-[#7D6732] text-white p-8 md:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/40">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-accent opacity-15 rounded-full blur-3xl -mr-24 -mt-24"></div>
                 
                 <div className="relative z-10 space-y-4 max-w-3xl">
                   <span className="text-accent text-xs font-black bg-white/10 border border-accent/30 px-3.5 py-1.5 rounded-full inline-block">
-                    برنامج ورث أجيال لتمكين الأسر المنتجة والحرفية 🇸🇦
+                    برنامج إرث أجيال لتمكين رائدات ورواد العمل الحر والمشاريع الصغيرة 🇸🇦
                   </span>
                   <h1 className="text-2xl md:text-4xl font-black tracking-tight text-white leading-tight">
                     من التأهيل والتدريب إلى التمكين المالي والتمويل بدون كفيل
@@ -2529,7 +1941,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                     💡 مميزات البرنامج والتمكين المالي
                   </span>
                   <h2 className="font-black text-stone-800 text-xl md:text-2xl">
-                    لماذا تنضم إلى برنامج "ورث أجيال" للأسر المنتجة؟
+                    لماذا تنضم إلى برنامج "إرث أجيال" للأسر المنتجة؟
                   </h2>
                   <p className="text-stone-500 text-xs font-light">
                     منظومة متكاملة تدعمك في التمويل والتدريب والاعتماد الرسمي والربط المباشر مع السوق.
@@ -2568,7 +1980,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                   </div>
 
                   <div className="bg-stone-50 border border-stone-200 p-5 rounded-2xl space-y-2.5">
-                    <div className="w-10 h-10 rounded-xl bg-[#EBF1FA] text-[#0B3A60] flex items-center justify-center text-xl font-bold">
+                    <div className="w-10 h-10 rounded-xl bg-[#EBF1FA] text-[#174F3E] flex items-center justify-center text-xl font-bold">
                       📜
                     </div>
                     <h3 className="font-bold text-stone-800 text-sm">التراخيص ووثيقة العمل الحر</h3>
@@ -2578,9 +1990,6 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                   </div>
                 </div>
               </div>
-
-              {/* 📊 حاسبة الأرباح التقديرية (تظهر فقط لمسار الأسرة المنتجة) */}
-              <ProfitCalculator />
 
               {/* Section 2: Requirements & Joining Conditions (شروط واشتراطات الانضمام) */}
               <div className="bg-stone-50 border border-stone-200 p-6 md:p-8 rounded-3xl space-y-6">
@@ -2687,7 +2096,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                       const el = document.getElementById('pathway-selection');
                       if (el) el.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="w-full sm:w-auto bg-[#0B3A60] hover:bg-[#0B3A60]/90 text-white font-black py-3.5 px-8 rounded-2xl text-xs sm:text-sm transition-all shadow-md cursor-pointer"
+                    className="w-full sm:w-auto bg-[#174F3E] hover:bg-[#174F3E]/90 text-white font-black py-3.5 px-8 rounded-2xl text-xs sm:text-sm transition-all shadow-md cursor-pointer"
                   >
                     🔐 دخول الأسر المسجلة (لوحة التحكم)
                   </button>
@@ -2724,13 +2133,13 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                   <span>← العودة إلى الصفحة الرئيسية</span>
                 </button>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-black text-stone-800">متجر ورث أجيال التراثي المستقل (/store)</span>
+                  <span className="text-xs font-black text-stone-800">متجر إرث أجيال التراثي المستقل (/store)</span>
                   <span className="w-2.5 h-2.5 bg-amber-500 rounded-full animate-ping"></span>
                 </div>
               </div>
 
               {/* Standalone Store Hero Header */}
-              <div className="bg-gradient-to-r from-[#0B3A60] via-primary to-emerald-900 text-white p-8 md:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
+              <div className="bg-gradient-to-r from-[#174F3E] via-primary to-emerald-900 text-white p-8 md:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-accent opacity-15 rounded-full blur-3xl -mr-24 -mt-24"></div>
                 
                 <div className="relative z-10 space-y-4 max-w-3xl">
@@ -2793,7 +2202,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                         onClick={() => setSelectedCatFilter(tab.id)}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                           selectedCatFilter === tab.id
-                            ? 'bg-[#0B3A60] text-white shadow-sm'
+                            ? 'bg-[#174F3E] text-white shadow-sm'
                             : 'bg-stone-50 text-stone-600 hover:bg-stone-100 border border-stone-200'
                         }`}
                       >
@@ -2812,7 +2221,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                       placeholder="ابحث عن منتج مخصص..."
                       value={productsSearch}
                       onChange={(e) => setProductsSearch(e.target.value)}
-                      className="w-full pl-3 pr-9 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-primary focus:border-[#0B3A60] text-right"
+                      className="w-full pl-3 pr-9 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-primary focus:border-[#174F3E] text-right"
                     />
                   </div>
                 </div>
@@ -2826,7 +2235,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                   }).map((prod) => (
                     <div 
                       key={prod.id}
-                      className="bg-stone-50 rounded-2xl border border-stone-200/60 overflow-hidden flex flex-col hover:shadow-lg hover:border-[#0B3A60]/35 transition-all group"
+                      className="bg-stone-50 rounded-2xl border border-stone-200/60 overflow-hidden flex flex-col hover:shadow-lg hover:border-[#174F3E]/35 transition-all group"
                     >
                       {/* Product Image */}
                       <div className="relative h-44 overflow-hidden bg-stone-100">
@@ -2836,7 +2245,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           referrerPolicy="no-referrer"
                         />
-                        <span className="absolute top-2.5 right-2.5 bg-[#0B3A60] text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-sm">
+                        <span className="absolute top-2.5 right-2.5 bg-[#174F3E] text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-sm">
                           {prod.categoryLabel}
                         </span>
                         <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-xs px-2 py-0.5 rounded text-[10px] text-stone-100 font-light">
@@ -2847,7 +2256,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                       {/* Product Details */}
                       <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                         <div className="space-y-1.5 text-right">
-                          <h4 className="font-extrabold text-stone-800 text-xs md:text-sm group-hover:text-[#0B3A60] transition-colors">
+                          <h4 className="font-extrabold text-stone-800 text-xs md:text-sm group-hover:text-[#174F3E] transition-colors">
                             {prod.name}
                           </h4>
                           <div className="flex items-center justify-between">
@@ -2875,7 +2284,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                         <div className="pt-2 border-t border-stone-200/50 flex items-center justify-between">
                           <div className="text-right">
                             <span className="text-[10px] text-stone-400 block font-light">السعر الفوري</span>
-                            <span className="text-sm font-black font-mono text-[#0B3A60]">{prod.price} ر.س</span>
+                            <span className="text-sm font-black font-mono text-[#174F3E]">{prod.price} ر.س</span>
                           </div>
                           
                           <button
@@ -2885,7 +2294,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                               setPurchaseSuccess(false);
                               setPurchaseError('');
                             }}
-                            className="bg-[#0B3A60] hover:bg-[#0B3A60]/95 text-white font-black text-[10px] sm:text-xs px-3.5 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1 cursor-pointer"
+                            className="bg-[#174F3E] hover:bg-[#174F3E]/95 text-white font-black text-[10px] sm:text-xs px-3.5 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1 cursor-pointer"
                           >
                             <span>شراء سريع 🛒</span>
                           </button>
@@ -2943,9 +2352,9 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                 {[
                   {
                     id: 'beneficiary',
-                    label: 'أسر منتجة / مستفيد',
+                    label: 'رائدات العمل الحر / مستفيد',
                     desc: 'بناء الجدارة والتأهيل والتمكين',
-                    detail: 'للأسر المنتجة والحرفيين الراغبين في بناء جاهزية مشاريعهم واجتياز برامج التأهيل الصحي، والحصول على شهادة ملاءمة للتمويل الفوري بدون كفيل غارم.',
+                    detail: 'لرائدات العمل الحر والمشاريع الصغيرة والحرفيين الراغبين في بناء جاهزية مشاريعهم واجتياز برامج التأهيل الصحي، والحصول على شهادة ملاءمة للتمويل الفوري بدون كفيل غارم.',
                     features: [
                       '✓ استبيان تقييم الجاهزية الآلي',
                       '✓ مسارات تدريبية وحقائب معتمدة',
@@ -2966,9 +2375,9 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                       '✓ مطابخ أسر مرخصة وموثقة صحياً',
                       '✓ توصيل آمن ومباشر للفنادق'
                     ],
-                    bg: 'border-amber-100 hover:border-[#B49A5A] bg-white hover:shadow-xl',
+                    bg: 'border-amber-100 hover:border-[#C8A96B] bg-white hover:shadow-xl',
                     accentColor: 'text-[#8C7338] bg-amber-50',
-                    buttonStyle: 'bg-[#B49A5A] hover:bg-[#9E8447] text-white',
+                    buttonStyle: 'bg-[#C8A96B] hover:bg-[#9E8447] text-white',
                     icon: Compass
                   },
                   {
@@ -3044,7 +2453,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
               <div className="flex items-center gap-3">
                 <div className={`p-3 rounded-2xl text-white shadow-sm ${
                   selectedRole === 'beneficiary' ? 'bg-primary' :
-                  selectedRole === 'pilgrim' ? 'bg-[#B49A5A]' :
+                  selectedRole === 'pilgrim' ? 'bg-[#C8A96B]' :
                   selectedRole === 'visitor' ? 'bg-amber-600' : 'bg-slate-700'
                 }`}>
                   {selectedRole === 'beneficiary' && <User className="w-6 h-6" />}
@@ -3213,7 +2622,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <p className="text-center text-[10px] text-stone-400 font-medium leading-relaxed">
-                    🛡️ بوابة ورث أجيال محمية وموثقة من قبل الجهات الاستراتيجية التمويلية
+                    🛡️ بوابة إرث أجيال محمية وموثقة من قبل الجهات الاستراتيجية التمويلية
                   </p>
                 </div>
               </motion.form>
@@ -3879,7 +3288,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
           </div>
 
           <div className="border-t border-stone-100 pt-4 text-center">
-            <span className="text-[10px] text-stone-400 font-light">بوابة ورث أجيال محمية وموثقة من قبل الجهات الاستراتيجية التمويلية</span>
+            <span className="text-[10px] text-stone-400 font-light">بوابة إرث أجيال محمية وموثقة من قبل الجهات الاستراتيجية التمويلية</span>
           </div>
         </div>
 
@@ -4031,294 +3440,14 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
   )}
 </div>
 
-      {/* Platform Real-World Metrics Row */}
-      <div className="bg-stone-50 border border-stone-200 p-6 md:p-8 rounded-3xl" id="impact-statistics">
-        <div className="text-center space-y-2 mb-8">
-          <span className="text-accent text-sm font-extrabold bg-primary/5 px-3 py-1 rounded-full">أرقام وإنجازات ورث أجيال</span>
-          <h3 className="font-black text-stone-800 text-lg md:text-xl">الأثر الاقتصادي والتنموي المتحقق في المملكة</h3>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5 text-center">
-          <div className="space-y-1">
-            <span className="text-2xl md:text-3xl font-black text-primary block font-mono">4,500+</span>
-            <span className="text-stone-500 text-xs font-bold block">مستفيد وأسرة منتجة</span>
-          </div>
-          <div className="space-y-1 border-r border-stone-200">
-            <span className="text-2xl md:text-3xl font-black text-primary block font-mono">18+</span>
-            <span className="text-stone-500 text-xs font-bold block">برنامج تأهيلي معتمد</span>
-          </div>
-          <div className="space-y-1 border-r border-stone-200">
-            <span className="text-2xl md:text-3xl font-black text-primary block font-mono">240K+</span>
-            <span className="text-stone-500 text-xs font-bold block">مبيعات تراكمية بالريال</span>
-          </div>
-          <div className="space-y-1 border-r border-stone-200">
-            <span className="text-2xl md:text-3xl font-black text-primary block font-mono">92%</span>
-            <span className="text-stone-500 text-xs font-bold block">معدل الاستدامة والتمكين</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Platform Roadmap Timeline (5 steps from Onboarding to Funding) */}
-      <div className="bg-white border border-stone-200 p-6 md:p-8 rounded-3xl space-y-6" id="platform-roadmap">
-        <div className="text-center space-y-2">
-          <span className="text-accent text-xs font-extrabold bg-primary/5 px-3 py-1 rounded-full">رحلتك في ورث أجيال</span>
-          <h3 className="font-black text-stone-800 text-lg md:text-xl">مسار التمكين والتمويل البديل للكفيل في 5 خطوات</h3>
-          <p className="text-stone-500 text-xs max-w-xl mx-auto font-light">
-            مخطط تفصيلي يوضح كيف ننقلك من مجرد فكرة أو مهارة منزلية بسيطة إلى مشروع ناضج ومرخص وممول من الجهات الشريكة.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative" id="roadmap-flow-grid">
-          {[
-            { step: '1', title: 'التسجيل وبناء السجل', desc: 'تأسيس ملف الأسرة المهني الرقمي ورفع التجهيزات الحالية.' },
-            { step: '2', title: 'التقييم الذكي (AI)', desc: 'تحليل الجاهزية التشغيلية والمالية وإعطاء تقرير الجدارة.' },
-            { step: '3', title: 'التأهيل والتدريب', desc: 'اجتياز حقائب الضيافة وسلامة الغذاء واستلام شهادة المهارة.' },
-            { step: '4', title: 'التسويق والمبيعات', desc: 'الاندماج مع باقات الوفود والمعتمرين لضمان دخل شهري مستمر.' },
-            { step: '5', title: 'التمويل بدون كفيل', desc: 'الحصول على موافقة تمويل بنك التنمية (نفاذ) لتوفر معايير الجدارة.' }
-          ].map((item, idx) => (
-            <div key={idx} className="bg-stone-50 border border-stone-200 p-4 rounded-2xl relative space-y-2 hover:border-primary/20 transition-all">
-              <div className="w-8 h-8 rounded-full bg-primary text-accent font-black text-xs flex items-center justify-center">
-                {item.step}
-              </div>
-              <h4 className="font-extrabold text-stone-800 text-xs md:text-sm">{item.title}</h4>
-              <p className="text-stone-500 text-[10px] leading-relaxed font-light">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Interactive Cost & Earnings Calculator */}
-      <div className="bg-[#FAF9F5] border border-stone-200 p-6 md:p-8 rounded-3xl grid grid-cols-1 md:grid-cols-12 gap-6" id="earnings-calculator">
-        <div className="md:col-span-7 space-y-4 text-right">
-          <div className="space-y-1">
-            <span className="text-[10px] bg-primary/10 text-primary font-bold px-2.5 py-0.5 rounded-full border border-primary/20">حاسبة الأرباح التقديرية</span>
-            <h3 className="font-black text-stone-800 text-lg">احسب أرباحك وجاهزية سداد تمويل العمل الحر</h3>
-            <p className="text-stone-500 text-xs font-light leading-relaxed">
-              مرر الأشرطة أدناه لتحديد عدد الوجبات المتوقع بيعها يومياً عبر اشتراكات المعتمرين والزوار وسعر الوجبة لمعرفة العائد الشهري التقريبي.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <div className="space-y-1">
-              <div className="flex justify-between items-center text-xs font-bold text-stone-700">
-                <span>عدد الوجبات المباعة يومياً:</span>
-                <span className="text-primary font-mono">{dailyMeals} وجبة</span>
-              </div>
-              <input 
-                type="range" 
-                min="5" 
-                max="100" 
-                value={dailyMeals} 
-                onChange={(e) => setDailyMeals(Number(e.target.value))}
-                className="w-full accent-primary bg-stone-200 h-1.5 rounded-lg appearance-none cursor-pointer"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <div className="flex justify-between items-center text-xs font-bold text-stone-700">
-                <span>سعر الوجبة المقترح (ريال):</span>
-                <span className="text-primary font-mono">{mealPrice} ريال</span>
-              </div>
-              <input 
-                type="range" 
-                min="15" 
-                max="80" 
-                value={mealPrice} 
-                onChange={(e) => setMealPrice(Number(e.target.value))}
-                className="w-full accent-primary bg-stone-200 h-1.5 rounded-lg appearance-none cursor-pointer"
-              />
-            </div>
-          </div>
-
-          <div className="bg-white p-3 rounded-xl border border-stone-200/60 flex items-center gap-2 text-[10px] text-stone-600">
-            <span>💡</span>
-            <span>القسط الشهري لتمويل العمل الحر (40,000 ريال) هو حوالي <strong>833 ريال</strong> فقط، مغطى بالكامل من عوائد مشروعك التقديرية!</span>
-          </div>
-        </div>
-
-        {/* Output Column */}
-        <div className="md:col-span-5 bg-primary text-accent p-6 rounded-2xl flex flex-col justify-between space-y-4 text-center md:text-right shadow-md">
-          <div className="space-y-2">
-            <span className="text-[10px] uppercase tracking-wider text-stone-300 block">العائد الشهري التقديري</span>
-            <span className="text-2xl md:text-3xl font-black font-mono block text-white">
-              {(dailyMeals * mealPrice * 26).toLocaleString()} ريال
-            </span>
-            <p className="text-[10px] text-stone-300 font-light leading-normal">
-              (معدل العمل: 26 يوماً في الشهر مع استبعاد أيام العطل والتنظيف والتحضير الدوري).
-            </p>
-          </div>
-
-          <div className="border-t border-white/10 pt-4 space-y-2 text-right">
-            <div className="flex justify-between text-[11px]">
-              <span className="text-stone-300">تكلفة المواد التقريبية (35%):</span>
-              <span className="font-mono font-bold text-white">{(dailyMeals * mealPrice * 26 * 0.35).toLocaleString()} ريال</span>
-            </div>
-            <div className="flex justify-between text-[11px] border-b border-white/5 pb-2">
-              <span className="text-emerald-300 font-bold">صافي الربح الشهري المتوقع:</span>
-              <span className="font-mono font-black text-emerald-300">{(dailyMeals * mealPrice * 26 * 0.65).toLocaleString()} ريال</span>
-            </div>
-            <span className="text-[9px] text-stone-300 leading-tight block font-light">
-              *هذه الأرقام استرشادية مبنية على متوسط الطلبات الفعلي في باقات وفود العمرة المعتمدة.
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Interactive Testimonial Slider Carousel */}
-      <div className="bg-white border border-stone-200 p-6 md:p-8 rounded-3xl space-y-6" id="testimonials">
-        <div className="text-center space-y-1">
-          <span className="text-accent text-xs font-bold bg-primary/5 px-2.5 py-1 rounded-full">قصص واقعية ملهمة</span>
-          <h3 className="font-black text-stone-800 text-lg md:text-xl">أصوات من موروثنا.. قصص نجاح الأسر المنتجة</h3>
-        </div>
-
-        {/* Dynamic testimonial block */}
-        <div className="max-w-2xl mx-auto bg-stone-50 border border-stone-200 p-6 rounded-2xl relative">
-          {[
-            {
-              quote: "بفضل ورث أجيال، تمكنت من صياغة ملف مهني رقمي أثبت للجميع جودة طبخي الشعبي. لم يسألني أحد عن كفيل غارم، وحصلت على تمويل 40 ألف ريال من بنك التنمية الاجتماعية لشراء الأفران والبدء فوراً بتقديم الوجبات لوفود المعتمرين من تركيا وأندونيسيا بشكل منظم ومربح.",
-              author: "أم أحمد (منيرة السديري)",
-              role: "مشروع الجريش والضيافة التراثية بمكة",
-              verified: "حائزة على رخصة البلدية وموثقة بنسبة 98%"
-            },
-            {
-              quote: "كنت أصنع السدو في بيتي ولا أعرف كيف أصل للسياح والزوار. المنصة قامت بربط منتجاتي الحرفية مباشرة بوفود الفنادق كعروض هدايا تذكارية وتراثية. مبيعاتي تضاعفت 4 مرات، وحصلت عائلتي على تمكين اقتصادي مستدام دون أي عقبات مادية.",
-              author: "نورة العتيبي",
-              role: "حرفية نقش السدو التراثي بالرياض",
-              verified: "رخصة العمل الحر رقم 9981-A"
-            }
-          ].map((item, idx) => {
-            if (idx !== testimonialIndex) return null;
-            return (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="space-y-4"
-              >
-                <p className="text-stone-600 text-xs md:text-sm leading-relaxed italic text-justify">
-                  " {item.quote} "
-                </p>
-                <div className="border-t border-stone-200 pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div>
-                    <h5 className="font-bold text-stone-800 text-xs md:text-sm">{item.author}</h5>
-                    <span className="text-stone-400 text-[10px] font-light block">{item.role}</span>
-                  </div>
-                  <span className="bg-emerald-50 text-emerald-700 text-[9px] font-bold px-2 py-0.5 rounded border border-emerald-100">
-                    ✓ {item.verified}
-                  </span>
-                </div>
-              </motion.div>
-            );
-          })}
-
-          <div className="flex justify-center gap-2 mt-4">
-            <button 
-              onClick={() => setTestimonialIndex(0)}
-              className={`w-2.5 h-2.5 rounded-full transition-all ${testimonialIndex === 0 ? 'bg-primary scale-125' : 'bg-stone-300'}`}
-            />
-            <button 
-              onClick={() => setTestimonialIndex(1)}
-              className={`w-2.5 h-2.5 rounded-full transition-all ${testimonialIndex === 1 ? 'bg-primary scale-125' : 'bg-stone-300'}`}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Interactive FAQ Section with Accordion */}
-      <div className="bg-stone-50 border border-stone-200 p-6 md:p-8 rounded-3xl space-y-6" id="faq-section">
-        <div className="text-center space-y-2">
-          <span className="text-accent text-xs font-bold bg-primary/5 px-2.5 py-1 rounded-full">الأسئلة الشائعة حول المنظومة</span>
-          <h3 className="font-black text-stone-800 text-lg md:text-xl">تساؤلات تهم أصحاب الحرف والطهي التراثي</h3>
-        </div>
-
-        <div className="max-w-3xl mx-auto space-y-2.5 text-right" id="faq-accordion-grid">
-          {[
-            {
-              q: "هل تشترط المنصة وجود كفيل غارم للحصول على تمويل بنك التنمية الاجتماعية؟",
-              a: "لا على الإطلاق! هذه هي الرؤية الجوهرية لمنصتنا. نحن نستبدل شرط الكفيل التقليدي بـ 'حوكمة المهارة والجدارة الائتمانية والتدريبية'. عند اجتيازك التقييم الذكي وحقائب التأهيل وسلامة الغذاء بنجاح، يُصدر لك النظام شهادة ملاءمة فنية معتمدة تضمن تقديمك المباشر في بنك التنمية دون كفيل."
-            },
-            {
-              q: "كيف تضمن المنصة تدفق المبيعات والطلبات للأسر المنتجة؟",
-              a: "نحن نربط الأسر المنتجة والحرفية مباشرة بشركائنا من الفنادق، ومنظمي الرحلات السياحية، وحملات الحج والعمرة. يستطيع المعتمرون حجز وجباتهم اليومية المجدولة مسبقاً وتلقي الأطعمة الطازجة، كما يتم عرض الهدايا الحرفية كعروض تذكارية مؤمنة في غرف النزلاء."
-            },
-            {
-              q: "ما هي تكلفة الاشتراك للأسر في منصة ورث أجيال؟",
-              a: "هناك ثلاث باقات ميسرة تبدأ بباقة البداية الأساسية [49 ريال شهرياً] للأسر الصغيرة، وباقة النمو [149 ريال شهرياً] للأسر النشطة، وباقة الاحتراف [299 ريال شهرياً] للمطابخ الكبيرة لتوفر ميزات الذكاء الاصطناعي والربط مع شركات التوصيل كـ جاهز وهنقرستيشن."
-            },
-            {
-              q: "هل تشترط المنصة رخصاً معينة للبدء بالطهي والبيع المباشر؟",
-              a: "نعم، لسلامة طعام ضيوف الرحمن، تتطلب المنصة رخصة العمل الحر وشهادة صحية سارية المفعول من البلدية. وإذا لم تكن متوفرة لديك، فنحن نساعدك ونرشدك عبر مسار التأهيل والتدريب خطوة بخطوة للحصول عليها فورياً ومن هاتفك."
-            }
-          ].map((item, idx) => {
-            const isOpen = activeFaq === idx;
-            return (
-              <div key={idx} className="bg-white border border-stone-200 rounded-xl overflow-hidden transition-all">
-                <button
-                  onClick={() => setActiveFaq(isOpen ? null : idx)}
-                  className="w-full p-4 text-right font-extrabold text-stone-800 text-xs md:text-sm flex items-center justify-between gap-4 hover:bg-stone-50 transition-all"
-                >
-                  <span>{item.q}</span>
-                  <span className="text-primary font-bold text-lg">{isOpen ? '−' : '+'}</span>
-                </button>
-                {isOpen && (
-                  <div className="p-4 bg-stone-50/50 border-t border-stone-100 text-xs text-stone-500 font-light leading-relaxed text-justify">
-                    {item.a}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* 👩‍🍳 Dedicated Bottom Section / Footer Banner for Productive Families & Artisans */}
-      <div className="bg-gradient-to-r from-[#B49A5A] via-[#9E8447] to-[#7D6732] text-white p-8 md:p-10 rounded-3xl shadow-2xl relative overflow-hidden text-right space-y-6 my-8 border border-accent/40" id="family-portal-bottom-banner">
-        <div className="absolute top-0 left-0 w-80 h-80 bg-accent/10 rounded-full blur-3xl -ml-20 -mt-20"></div>
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
-          <div className="space-y-3 max-w-2xl">
-            <span className="text-accent text-xs font-black bg-white/10 border border-accent/30 px-3.5 py-1.5 rounded-full inline-flex items-center gap-2">
-              <span>👩‍🍳 بوابة الأسر المنتجة والحرفيين</span>
-              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-ping"></span>
-            </span>
-            <h3 className="font-black text-xl md:text-3xl leading-tight text-white">
-              هل أنتِ من رائدات الطهي التراثي أو الحرف اليدوية؟
-            </h3>
-            <p className="text-emerald-100 text-xs md:text-sm font-light leading-relaxed">
-              انضمي الآن لبرنامج "ورث أجيال" لتمكين الأسر المنتجة. احصلي على الدعم، التمويل بدون كفيل حتى 50,000 ريال، التدريب المعتمد، والربط المباشر بمبيعات المعتمرين والسياح بمكة والمدينة!
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto flex-shrink-0">
-            <button
-              type="button"
-              onClick={() => {
-                setLandingView('family_landing');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className="bg-accent hover:bg-accent/90 text-primary font-black py-3.5 px-6 rounded-2xl text-xs sm:text-sm transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer hover:scale-105"
-            >
-              <span>انضم كـ أسرة منتجة / حرفي 👩‍🍳 ↗</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setLandingView('join_portals');
-                setSelectedRole('beneficiary');
-                setAuthMode('join');
-                const el = document.getElementById('pathway-selection');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 px-6 rounded-2xl text-xs border border-white/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <span>التسجيل الفوري للأسرة ✨</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Smart Technical Support Modal */}
       {showSupport && (
         <SmartSupportModal 
-          onClose={() => setShowSupport(false)} 
+          onClose={() => {
+            setShowSupport(false);
+            setSupportInitialInfo(undefined);
+          }} 
+          initialInfo={supportInitialInfo}
         />
       )}
 
@@ -4331,7 +3460,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
             className="bg-white rounded-3xl max-w-lg w-full border border-stone-200 shadow-2xl overflow-hidden text-right flex flex-col max-h-[90vh]"
           >
             {/* Modal Header */}
-            <div className="bg-[#0B3A60] p-4 text-white flex items-center justify-between">
+            <div className="bg-[#174F3E] p-4 text-white flex items-center justify-between">
               <button 
                 type="button"
                 onClick={() => {
@@ -4366,7 +3495,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                       referrerPolicy="no-referrer"
                     />
                     <div className="space-y-0.5 flex-1 text-right">
-                      <span className="text-[10px] bg-[#EBF1FA] text-[#0B3A60] px-2 py-0.5 rounded-full font-bold">
+                      <span className="text-[10px] bg-[#EBF1FA] text-[#174F3E] px-2 py-0.5 rounded-full font-bold">
                         {selectedProduct.categoryLabel}
                       </span>
                       <h5 className="font-bold text-stone-800 text-xs md:text-sm">{selectedProduct.name}</h5>
@@ -4398,7 +3527,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                           placeholder="مثال: عبدالرحمن مكي"
                           value={orderName}
                           onChange={(e) => setOrderName(e.target.value)}
-                          className="w-full p-2.5 rounded-xl border border-stone-200 text-xs focus:ring-1 focus:ring-primary focus:border-[#0B3A60] outline-none text-right"
+                          className="w-full p-2.5 rounded-xl border border-stone-200 text-xs focus:ring-1 focus:ring-primary focus:border-[#174F3E] outline-none text-right"
                         />
                       </div>
                       <div className="space-y-1">
@@ -4408,7 +3537,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                           placeholder="مثال: 050XXXXXXX"
                           value={orderPhone}
                           onChange={(e) => setOrderPhone(e.target.value)}
-                          className="w-full p-2.5 rounded-xl border border-stone-200 text-xs focus:ring-1 focus:ring-primary focus:border-[#0B3A60] outline-none text-left"
+                          className="w-full p-2.5 rounded-xl border border-stone-200 text-xs focus:ring-1 focus:ring-primary focus:border-[#174F3E] outline-none text-left"
                         />
                       </div>
                     </div>
@@ -4420,7 +3549,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                         placeholder="مثال: فندق هيلتون مكة، البرج الغربي، غرفة 402"
                         value={orderAddress}
                         onChange={(e) => setOrderAddress(e.target.value)}
-                        className="w-full p-2.5 rounded-xl border border-stone-200 text-xs focus:ring-1 focus:ring-primary focus:border-[#0B3A60] outline-none text-right"
+                        className="w-full p-2.5 rounded-xl border border-stone-200 text-xs focus:ring-1 focus:ring-primary focus:border-[#174F3E] outline-none text-right"
                       />
                     </div>
 
@@ -4451,7 +3580,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                         <select
                           value={orderPayment}
                           onChange={(e: any) => setOrderPayment(e.target.value)}
-                          className="w-full p-2.5 rounded-xl border border-stone-200 text-xs focus:ring-1 focus:ring-primary focus:border-[#0B3A60] outline-none text-right bg-white"
+                          className="w-full p-2.5 rounded-xl border border-stone-200 text-xs focus:ring-1 focus:ring-primary focus:border-[#174F3E] outline-none text-right bg-white"
                         >
                           <option value="cod">💵 الدفع عند الاستلام</option>
                           <option value="mada">💳 مدى (تأكيد فوري)</option>
@@ -4472,7 +3601,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                       <span>توصيل فوري مخصص للفندق/السكن:</span>
                       <span className="font-mono font-bold text-stone-800">15 ر.س</span>
                     </div>
-                    <div className="flex justify-between text-xs font-black text-[#0B3A60] border-t border-dashed pt-2">
+                    <div className="flex justify-between text-xs font-black text-[#174F3E] border-t border-dashed pt-2">
                       <span>الإجمالي الكلي المطلوب:</span>
                       <span className="font-mono">{selectedProduct.price * orderQuantity + 15} ر.س</span>
                     </div>
@@ -4482,7 +3611,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                   <button
                     type="button"
                     onClick={handleConfirmPurchase}
-                    className="w-full bg-[#0B3A60] hover:bg-[#0B3A60]/95 text-white font-black py-3 rounded-2xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer mt-4"
+                    className="w-full bg-[#174F3E] hover:bg-[#174F3E]/95 text-white font-black py-3 rounded-2xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer mt-4"
                   >
                     <span>🧾 تأكيد طلب الشراء المباشر</span>
                   </button>
@@ -4511,7 +3640,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                         {orderPayment === 'cod' ? 'الدفع عند الاستلام' : orderPayment === 'mada' ? 'مدى' : 'Apple Pay'}
                       </span>
                     </div>
-                    <div className="flex justify-between text-xs font-black text-[#0B3A60] border-t border-dashed pt-2">
+                    <div className="flex justify-between text-xs font-black text-[#174F3E] border-t border-dashed pt-2">
                       <span>القيمة المدفوعة:</span>
                       <span className="font-mono">{selectedProduct.price * orderQuantity + 15} ر.س</span>
                     </div>
@@ -4527,7 +3656,7 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                       setSelectedProduct(null);
                       setPurchaseSuccess(false);
                     }}
-                    className="bg-[#0B3A60] text-white hover:bg-[#0B3A60]/90 font-black py-2.5 px-8 rounded-xl text-xs transition-all cursor-pointer"
+                    className="bg-[#174F3E] text-white hover:bg-[#174F3E]/90 font-black py-2.5 px-8 rounded-xl text-xs transition-all cursor-pointer"
                   >
                     فهمت ذلك ومتابعة التصفح
                   </button>
@@ -4543,10 +3672,10 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
         <motion.div
           initial={{ opacity: 0, y: 50, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          className="fixed bottom-5 left-5 md:left-8 z-[9999] max-w-sm w-full bg-white/95 backdrop-blur-md border-2 border-[#B49A5A] rounded-2xl shadow-2xl p-4 text-right flex items-start gap-3.5"
+          className="fixed bottom-5 left-5 md:left-8 z-[9999] max-w-sm w-full bg-white/95 backdrop-blur-md border-2 border-[#C8A96B] rounded-2xl shadow-2xl p-4 text-right flex items-start gap-3.5"
           id="simulation-toast-alert"
         >
-          <div className="bg-[#B49A5A] text-white p-2.5 rounded-xl flex-shrink-0 flex items-center justify-center shadow-md">
+          <div className="bg-[#C8A96B] text-white p-2.5 rounded-xl flex-shrink-0 flex items-center justify-center shadow-md">
             <Sparkles className="w-5 h-5 animate-pulse" />
           </div>
           <div className="space-y-1 flex-grow">
@@ -4562,63 +3691,13 @@ export default function LandingPage({ onLogin, warathLogo, thinkingLogo, activeT
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <h4 className="font-extrabold text-[#0B3A60] text-xs leading-relaxed pt-0.5">{simulationToast.title}</h4>
+            <h4 className="font-extrabold text-[#174F3E] text-xs leading-relaxed pt-0.5">{simulationToast.title}</h4>
             <p className="text-[10px] text-stone-500 font-light leading-relaxed">{simulationToast.desc}</p>
           </div>
         </motion.div>
       )}
 
-      {/* 🔴 Floating Mobile Navigation Bar (الشريط السفلي الثابت للجوال) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-stone-900/95 backdrop-blur-md border-t border-stone-800 p-3 z-50 flex items-center justify-around shadow-2xl">
-        <a 
-          href="#choose-your-journey" 
-          className="flex flex-col items-center gap-1 text-stone-300 hover:text-amber-300 text-[10px] font-bold transition-colors"
-        >
-          <span className="text-base">🧭</span>
-          <span>المسارات</span>
-        </a>
-        <a 
-          href="#what-we-offer" 
-          className="flex flex-col items-center gap-1 text-stone-300 hover:text-amber-300 text-[10px] font-bold transition-colors"
-        >
-          <span className="text-base">✨</span>
-          <span>الخدمات</span>
-        </a>
-        <button 
-          onClick={() => {
-            setLandingView('standalone_store');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }} 
-          className="flex flex-col items-center gap-1 text-stone-300 hover:text-amber-300 text-[10px] font-bold transition-colors cursor-pointer"
-        >
-          <span className="text-base">🛍️</span>
-          <span>المتجر</span>
-        </button>
-        <button 
-          onClick={() => {
-            setLandingView('family_landing');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }} 
-          className="flex flex-col items-center gap-1 text-amber-300 text-[10px] font-black transition-colors bg-white/10 px-2.5 py-1 rounded-xl border border-amber-300/30 cursor-pointer"
-        >
-          <span className="text-base">👩‍🍳</span>
-          <span>أسرة منتجة</span>
-        </button>
-        <button 
-          onClick={() => {
-            setLandingView('unified_login');
-            setSelectedRole('pilgrim');
-            setLoginIdentifier('pilgrim_demo');
-            setLoginPassword('123');
-            setError('');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }} 
-          className="flex flex-col items-center gap-1 text-stone-300 hover:text-amber-300 text-[10px] font-bold transition-colors cursor-pointer"
-        >
-          <span className="text-base">🕋</span>
-          <span>دخول المعتمر</span>
-        </button>
-      </div>
+
 
     </div>
   );
@@ -4642,7 +3721,7 @@ export const SUGGESTIONS_LOGIN = [
   },
   {
     id: 4,
-    title: "تسجيل دخول: مدير ورث أجيال (المدير الإداري)",
+    title: "تسجيل دخول: مدير إرث أجيال (المدير الإداري)",
     desc: "مراقبة وإدارة ملفات التمويل، جولات التفتيش الصحي، وتقارير الأداء."
   },
   {
@@ -4685,8 +3764,8 @@ export const SUGGESTIONS_FEATURES = [
   },
   {
     id: 12,
-    title: "الذهاب لحاسبة الأرباح والمبيعات",
-    desc: "عرض الحاسبة التقديرية للأسر بمبيعات متوقعة عالية تبرز الجدوى."
+    title: "عرض برامج التمكين والتأهيل",
+    desc: "استكشف برامج التدريب والتأهيل المعتمدة لرائدات ورواد العمل الحر."
   },
   {
     id: 13,

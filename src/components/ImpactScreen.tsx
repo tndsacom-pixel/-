@@ -57,7 +57,7 @@ export default function ImpactScreen({ stats, challenges }: ImpactScreenProps) {
 
         <h2 className="text-2xl md:text-3xl font-extrabold text-stone-100">مؤشرات قياس الأثر والتمكين المستدام</h2>
         <p className="text-stone-300 max-w-xl mx-auto text-xs md:text-sm font-light mt-2 leading-relaxed">
-          نحن في ورث أجيال نقيس نجاحنا بمستوى نضج واستدامة مشاريع أسرنا المنتجة، وحجم الفرص الاقتصادية التي نفتحها لهم في سوق العمل السعودي.
+          نحن في إرث أجيال نقيس نجاحنا بمستوى نضج واستدامة مشاريع أسرنا المنتجة، وحجم الفرص الاقتصادية التي نفتحها لهم في سوق العمل السعودي.
         </p>
       </div>
 
@@ -157,8 +157,8 @@ export default function ImpactScreen({ stats, challenges }: ImpactScreenProps) {
                   <AreaChart data={salesData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorSalesGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#0B3A60" stopOpacity={0.4}/>
-                        <stop offset="95%" stopColor="#0B3A60" stopOpacity={0.0}/>
+                        <stop offset="5%" stopColor="#174F3E" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="#174F3E" stopOpacity={0.0}/>
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#F1F0EC" vertical={false} />
@@ -178,7 +178,7 @@ export default function ImpactScreen({ stats, challenges }: ImpactScreenProps) {
                     <Area 
                       type="monotone" 
                       dataKey="sales" 
-                      stroke="#0B3A60" 
+                      stroke="#174F3E" 
                       strokeWidth={3}
                       fillOpacity={1} 
                       fill="url(#colorSalesGrad)" 
@@ -219,7 +219,7 @@ export default function ImpactScreen({ stats, challenges }: ImpactScreenProps) {
         <div className="border-2 border-dashed border-accent/50 bg-stone-50/50 p-6 md:p-8 rounded-3xl space-y-6" id="concluding-scene">
           <div className="text-center space-y-2">
             <span className="text-accent text-2xl font-black block">✨ المشهد الختامي ✨</span>
-            <h3 className="font-extrabold text-primary text-lg md:text-xl">تأثير ورث أجيال: تحول التحديات إلى تمكين وازدهار</h3>
+            <h3 className="font-extrabold text-primary text-lg md:text-xl">تأثير إرث أجيال: تحول التحديات إلى تمكين وازدهار</h3>
             <p className="text-stone-500 text-xs md:text-sm max-w-xl mx-auto font-light leading-relaxed">
               اختر إحدى الحالات الدراسية لترى كيف تحولت التحديات المعقدة والصعوبات التي واجهتهم في البداية إلى بطاقات نجاح وتمكين اقتصادي مستدام.
             </p>
@@ -296,7 +296,7 @@ export default function ImpactScreen({ stats, challenges }: ImpactScreenProps) {
           {/* Slogan */}
           <div className="text-center pt-8 border-t border-stone-200 space-y-3" id="final-slogan">
             <h3 className="text-xl md:text-2xl font-black text-primary uppercase tracking-wider">
-              ورث أجيال… من التأهيل إلى التمكين
+              إرث أجيال… من التأهيل إلى التمكين
             </h3>
             <p className="text-xs text-stone-500 font-light max-w-md mx-auto leading-relaxed">
               معاً نحول طاقة الأسر الإبداعية والطهي والحرف التراثية إلى رافد اقتصادي واعد يحافظ على هويتنا ويصنع مستقبلاً زاهراً للجميع.

@@ -152,7 +152,7 @@ export default function SystemInfrastructurePanel() {
     <div className="space-y-8 text-right font-sans">
       
       {/* Top Banner & Infrastructure Status Overview */}
-      <div className="bg-gradient-to-l from-[#003B6F] via-[#002D54] to-[#0B3A60] rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-l from-[#174F3E] via-[#0D3B2E] to-[#174F3E] rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
         {/* Background Decorative Grid */}
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
 
@@ -273,7 +273,7 @@ export default function SystemInfrastructurePanel() {
               <Gauge className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-extrabold text-[#0B3A60] text-base md:text-lg">
+              <h3 className="font-extrabold text-[#174F3E] text-base md:text-lg">
                 نظام اختبارات الضغط والحمل المباشر (k6 / JMeter High-Concurrency Load Tester)
               </h3>
               <p className="text-stone-500 text-xs">
@@ -319,13 +319,13 @@ export default function SystemInfrastructurePanel() {
                 onClick={() => setSelectedScenario(sc.id as any)}
                 className={`p-4 rounded-2xl border text-right transition-all cursor-pointer relative overflow-hidden ${
                   isSelected
-                    ? 'border-[#003B6F] bg-[#EBF1FA]/60 shadow-sm ring-2 ring-[#003B6F]/30'
+                    ? 'border-[#174F3E] bg-[#EBF1FA]/60 shadow-sm ring-2 ring-[#174F3E]/30'
                     : 'border-stone-200 bg-stone-50/50 hover:bg-stone-100/80 hover:border-stone-300'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-extrabold text-sm text-[#0B3A60]">{sc.title}</span>
-                  {isSelected && <CheckCircle2 className="w-5 h-5 text-[#003B6F]" />}
+                  <span className="font-extrabold text-sm text-[#174F3E]">{sc.title}</span>
+                  {isSelected && <CheckCircle2 className="w-5 h-5 text-[#174F3E]" />}
                 </div>
                 <div className="text-xs font-mono font-bold text-amber-700 mb-1">{sc.vus}</div>
                 <p className="text-[11px] text-stone-500 leading-relaxed font-light">{sc.desc}</p>
@@ -403,7 +403,7 @@ export default function SystemInfrastructurePanel() {
                 <Database className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-extrabold text-[#0B3A60] text-sm md:text-base">
+                <h3 className="font-extrabold text-[#174F3E] text-sm md:text-base">
                   1️⃣ قواعد البيانات والـ Caching (Database Indexing & Redis)
                 </h3>
                 <p className="text-stone-500 text-[11px]">منع مشاكل N+1 وتفعيل الفهارس الذكية للاستعلامات المباشرة</p>
@@ -439,7 +439,7 @@ export default function SystemInfrastructurePanel() {
               ].map((idx) => (
                 <div key={idx.name} className="p-3 bg-stone-50/50 flex items-center justify-between gap-2">
                   <div className="space-y-0.5">
-                    <span className="font-mono font-bold text-[#0B3A60] block text-[11px]">{idx.name}</span>
+                    <span className="font-mono font-bold text-[#174F3E] block text-[11px]">{idx.name}</span>
                     <span className="text-[10px] text-stone-500">جدول: {idx.table} ({idx.impact})</span>
                   </div>
                   <div className="text-left font-mono">
@@ -462,7 +462,7 @@ export default function SystemInfrastructurePanel() {
                 <Globe className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-extrabold text-[#0B3A60] text-sm md:text-base">
+                <h3 className="font-extrabold text-[#174F3E] text-sm md:text-base">
                   2️⃣ الشبكة وتسليم وسائط الوسائط (Cloudflare CDN & WebP Pipeline)
                 </h3>
                 <p className="text-stone-500 text-[11px]">توصيل المحتوى من أقرب سيرفر بمكة والمدينة وحماية DDoS</p>
@@ -504,7 +504,7 @@ export default function SystemInfrastructurePanel() {
                 <Layers className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-extrabold text-[#0B3A60] text-sm md:text-base">
+                <h3 className="font-extrabold text-[#174F3E] text-sm md:text-base">
                   3️⃣ الطوابير وإدارة الاتصالات (Message Queue & Connection Pooling)
                 </h3>
                 <p className="text-stone-500 text-[11px]">معالجة لا-تزامنية لرسائل الـ OTP لمنع حجز المتصفح</p>
@@ -529,7 +529,7 @@ export default function SystemInfrastructurePanel() {
             <div className="p-3.5 bg-stone-50 rounded-2xl border border-stone-200/80 space-y-2">
               <div className="flex items-center justify-between text-xs font-bold">
                 <span className="text-stone-700">مجمع اتصالات قواعد البيانات (pgBouncer Pool):</span>
-                <span className="text-[#0B3A60] font-mono">Transaction Mode Active</span>
+                <span className="text-[#174F3E] font-mono">Transaction Mode Active</span>
               </div>
               <p className="text-[11px] text-stone-500 leading-relaxed font-light">
                 إعادة استخدام اتصالات قاعدة البيانات بكفاءة تمنع ظاهرة استنزاف الاتصالات (Connection Exhaustion) حتى عند توافد عشرات الآلاف.
@@ -546,7 +546,7 @@ export default function SystemInfrastructurePanel() {
                 <Activity className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-extrabold text-[#0B3A60] text-sm md:text-base">
+                <h3 className="font-extrabold text-[#174F3E] text-sm md:text-base">
                   4️⃣ المراقبة اللحظية والسجلات (APM & Sentry / Datadog Logs)
                 </h3>
                 <p className="text-stone-500 text-[11px]">تنبيهات فورية ومتابعة الأداء اللحظي للسيرفرات</p>
@@ -579,7 +579,7 @@ export default function SystemInfrastructurePanel() {
 
       {/* Official Sign-off Footer */}
       <div className="bg-stone-100 rounded-2xl p-4 text-center text-xs text-stone-600 font-bold border border-stone-200">
-        ✅ تم فحص واعتماد هذه الإعدادات للبنية التحتية لضمان الاستقرار الكلي والجاهزية التامة لاستقبال بعثات ضيوف الرحمن وزوار ورث أجيال.
+        ✅ تم فحص واعتماد هذه الإعدادات للبنية التحتية لضمان الاستقرار الكلي والجاهزية التامة لاستقبال بعثات ضيوف الرحمن وزوار إرث أجيال.
       </div>
 
     </div>

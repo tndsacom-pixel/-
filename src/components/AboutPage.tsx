@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { useLanguage } from '../context/LanguageContext';
 import { 
   Building2, 
   ArrowRight, 
@@ -11,6 +12,7 @@ import {
   Globe, 
   ExternalLink 
 } from 'lucide-react';
+import { RiskManagementSection } from './RiskManagementSection';
 
 interface AboutPageProps {
   onBackToHome: () => void;
@@ -18,8 +20,9 @@ interface AboutPageProps {
 }
 
 export default function AboutPage({ onBackToHome, onOpenSupport }: AboutPageProps) {
+  const { t, isEn } = useLanguage();
   return (
-    <div className="max-w-7xl mx-auto space-y-8 text-right p-4 sm:p-6 font-sans" id="standalone-about-page">
+    <div className={`max-w-7xl mx-auto space-y-8 p-4 sm:p-6 font-sans ${isEn ? 'text-left' : 'text-right'}`} id="standalone-about-page">
       {/* Top Navigation */}
       <div className="flex items-center justify-between bg-white border border-stone-200 p-4 rounded-2xl shadow-xs">
         <button
@@ -27,8 +30,8 @@ export default function AboutPage({ onBackToHome, onOpenSupport }: AboutPageProp
           onClick={onBackToHome}
           className="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer"
         >
-          <ArrowRight className="w-4 h-4" />
-          <span>العودة إلى الرئيسية</span>
+          <ArrowRight className={`w-4 h-4 ${isEn ? 'rotate-180' : ''}`} />
+          <span>{t('portal.backToHome')}</span>
         </button>
 
         <div className="flex items-center gap-2">
@@ -38,7 +41,7 @@ export default function AboutPage({ onBackToHome, onOpenSupport }: AboutPageProp
       </div>
 
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-[#0B3A60] via-primary to-emerald-950 text-white p-8 sm:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
+      <div className="bg-gradient-to-r from-[#174F3E] via-primary to-emerald-950 text-white p-8 sm:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
         <div className="relative z-10 max-w-3xl space-y-4">
           <a
             href="https://tnd.sa"
@@ -51,7 +54,7 @@ export default function AboutPage({ onBackToHome, onOpenSupport }: AboutPageProp
           </a>
 
           <h1 className="text-2xl sm:text-4xl font-black text-white leading-tight">
-            ورث أجيال: منصة التمكين الاقتصادي للأسر المنتجة والحرفيين
+            إرث أجيال: منصة التمكين الاقتصادي للأسر المنتجة والحرفيين
           </h1>
 
           <p className="text-stone-200 text-xs sm:text-sm font-light leading-relaxed">
@@ -127,8 +130,11 @@ export default function AboutPage({ onBackToHome, onOpenSupport }: AboutPageProp
         </div>
       </div>
 
+      {/* Risk Management Section */}
+      <RiskManagementSection />
+
       {/* Partner Banner */}
-      <div className="bg-[#0B3A60] text-white p-8 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg">
+      <div className="bg-[#1E3D34] text-white p-8 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg">
         <div className="space-y-2 text-right">
           <span className="text-accent text-xs font-bold bg-white/10 px-3 py-1 rounded-full inline-block">
             الشريك المُمكّن والراعي الاستشاري

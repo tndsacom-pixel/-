@@ -24,13 +24,25 @@ interface ProducerPublicProfileProps {
   producer: ProducerFamily;
   onBack: () => void;
   onAddToCart?: (product: Product) => void;
+  onOpenSupportModal?: (info?: { familyName?: string; familyCode?: string; productName?: string }) => void;
   renderWarathLogo?: (sizeClass?: string) => ReactNode;
   renderThinkingLogo?: (sizeClass?: string) => ReactNode;
 }
 
-export default function ProducerPublicProfile({ producer, onBack, onAddToCart }: ProducerPublicProfileProps) {
+export default function ProducerPublicProfile({ producer, onBack, onAddToCart, onOpenSupportModal }: ProducerPublicProfileProps) {
   const [activeSection, setActiveSection] = useState<'products' | 'story' | 'reviews' | 'packages' | 'qr'>('products');
   const [copiedLink, setCopiedLink] = useState(false);
+
+  const familyCode = producer.familyCode || `ERG-000${producer.id}`;
+
+  const handleSupportPlatform = () => {
+    if (onOpenSupportModal) {
+      onOpenSupportModal({
+        familyName: producer.brandName,
+        familyCode: familyCode,
+      });
+    }
+  };
 
   // Generate QR Code URL using public QR API based on unique producer ID link
   const producerPageUrl = `${window.location.origin}/#/producer/${producer.id}`;
@@ -60,7 +72,7 @@ export default function ProducerPublicProfile({ producer, onBack, onAddToCart }:
           </head>
           <body>
             <div class="card">
-              <span class="badge">منصة ورث أجيال • أسرة معتمدة</span>
+              <span class="badge">منصة إرث أجيال • أسرة معتمدة</span>
               <h1>${producer.brandName}</h1>
               <p>امسح الكود للتسوق والاطلاع على منتجات الأسرة ومأكولاتها الأصيلة</p>
               <img src="${qrImageUrl}" alt="QR Code" />
@@ -77,7 +89,7 @@ export default function ProducerPublicProfile({ producer, onBack, onAddToCart }:
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900 pb-20 dir-rtl" id={`producer-profile-${producer.id}`}>
+    <div className="min-h-screen bg-[#FAF9F6] text-stone-900 pb-20 dir-rtl" id={`producer-profile-${producer.id}`}>
       {/* Top Header Bar */}
       <div className="bg-primary text-white py-4 px-4 sm:px-8 border-b border-accent/20 sticky top-0 z-40 shadow-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -132,6 +144,9 @@ export default function ProducerPublicProfile({ producer, onBack, onAddToCart }:
               <div className="text-right">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-xl md:text-2xl font-black text-stone-900">{producer.brandName}</h1>
+                  <span className="bg-amber-100 text-amber-900 font-mono text-[11px] font-black px-2.5 py-1 rounded-full border border-amber-300">
+                    رمز الأسرة: {familyCode}
+                  </span>
                   {producer.qualityVerified && (
                     <span className="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
@@ -159,23 +174,13 @@ export default function ProducerPublicProfile({ producer, onBack, onAddToCart }:
               </div>
             </div>
 
-            {/* Quick Action Badges */}
+            {/* Quick Support & Assistance Actions */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
-              <a
-                href={`https://wa.me/966${producer.phone.substring(1)}`}
-                target="_blank"
-                rel="noreferrer"
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
-              >
-                <Phone className="w-4 h-4" />
-                <span>تواصل مع الأسرة مباشرة</span>
-              </a>
               <button
-                onClick={() => setActiveSection('qr')}
-                className="bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-200 px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
+                onClick={handleSupportPlatform}
+                className="bg-primary hover:bg-primary/95 text-accent px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
               >
-                <QrCode className="w-4 h-4 text-primary" />
-                <span>عرض الباركود</span>
+                <span>المساعدة والدعم الفني للمتجر 🎧</span>
               </button>
             </div>
           </div>
@@ -338,7 +343,7 @@ export default function ProducerPublicProfile({ producer, onBack, onAddToCart }:
           {activeSection === 'reviews' && (
             <div className="py-6 space-y-4 text-right">
               <div className="flex items-center justify-between border-b border-stone-100 pb-3">
-                <h3 className="font-black text-stone-900 text-sm">تقييمات زوار ورث أجيال والمعتمرين</h3>
+                <h3 className="font-black text-stone-900 text-sm">تقييمات زوار إرث أجيال والمعتمرين</h3>
                 <span className="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
                   متوسط التقييم: {producer.rating} من 5 ⭐
                 </span>
@@ -396,7 +401,7 @@ export default function ProducerPublicProfile({ producer, onBack, onAddToCart }:
           {/* Tab 5: Dedicated QR Code */}
           {activeSection === 'qr' && (
             <div className="py-8 text-center space-y-6 max-w-lg mx-auto">
-              <div className="bg-stone-50 border-2 border-[#B49A5A] p-8 rounded-3xl shadow-lg space-y-4">
+              <div className="bg-stone-50 border-2 border-[#C8A96B] p-8 rounded-3xl shadow-lg space-y-4">
                 <span className="bg-amber-50 text-amber-900 text-xs font-black px-4 py-1.5 rounded-full border border-amber-200 inline-block">
                   باركود QR الخاص بالأسرة 🔳
                 </span>

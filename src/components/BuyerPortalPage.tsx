@@ -1,5 +1,6 @@
 import { useState, ReactNode } from 'react';
 import { motion } from 'motion/react';
+import { useLanguage } from '../context/LanguageContext';
 import { 
   ShoppingBag, 
   Search, 
@@ -34,6 +35,7 @@ export default function BuyerPortalPage({
   renderWarathLogo,
   renderThinkingLogo
 }: BuyerPortalPageProps) {
+  const { t, isEn } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -51,41 +53,32 @@ export default function BuyerPortalPage({
   });
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900 dir-rtl" id="portal-buyers">
-      {/* Header */}
-      <header className="bg-primary text-white border-b border-accent/20 sticky top-0 z-40 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            {renderWarathLogo('w-10 h-10 text-lg')}
-            {renderThinkingLogo('w-10 h-10 text-[10px]')}
-            <div className="text-right hidden sm:block border-r border-accent/20 pr-3 mr-1">
-              <h1 className="font-extrabold text-sm leading-tight text-accent">بوابة المشتري والتسوق 🛒</h1>
-              <p className="text-[10px] text-stone-300">منتجات الأسر المنتجة والحرفية مباشرة</p>
+    <div className="min-h-screen bg-[#FAF9F6] text-stone-900 w-full max-w-full overflow-x-hidden" id="portal-buyers">
+      {/* Buyer Portal Context Sub-Bar */}
+      <div className="bg-[#174F3E] text-white border-b border-[#C8A96B]/20 py-2.5 px-3 sm:px-6 shadow-sm w-full" id="portal-buyers-bar">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 w-full">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-base shrink-0">🛒</span>
+            <div className={`min-w-0 ${isEn ? 'text-left' : 'text-right'}`}>
+              <h1 className="font-extrabold text-xs sm:text-sm text-[#C8A96B] truncate">{t('portal.buyerTitle')}</h1>
+              <p className="text-[10px] text-stone-300 hidden md:block truncate">{t('portal.buyerDesc')}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center flex-wrap gap-1.5 sm:gap-2">
             <button
               onClick={onNavigateHome}
-              className="bg-white/10 hover:bg-white/20 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+              className="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer"
             >
-              <ArrowRight className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">الرئيسية</span>
-            </button>
-
-            <button
-              onClick={onNavigateLogin}
-              className="bg-accent text-primary hover:bg-amber-400 font-black px-4 py-1.5 rounded-xl text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>دخول المشتري</span>
+              <ArrowRight className="w-3 h-3 shrink-0" />
+              <span>الرئيسية</span>
             </button>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Hero */}
-      <section className="bg-gradient-to-r from-stone-900 via-primary to-stone-900 text-white py-12 px-4 sm:px-8">
+      <section className="bg-gradient-to-r from-stone-900 via-primary to-stone-900 text-white py-10 sm:py-12 px-4 sm:px-8 w-full">
         <div className="max-w-4xl mx-auto text-center space-y-4">
           <span className="bg-accent/20 text-accent text-xs font-black px-3.5 py-1 rounded-full border border-accent/30 inline-block">
             دعم مباشر لاقتصاد الأسر المحليّة 🇸🇦

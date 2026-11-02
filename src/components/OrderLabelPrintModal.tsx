@@ -49,8 +49,8 @@ export default function OrderLabelPrintModal({
 
         {/* Modal Title */}
         <div className="flex items-center gap-2 border-b border-stone-100 pb-3">
-          <Printer className="w-5 h-5 text-[#003B6F]" />
-          <h3 className="font-extrabold text-[#0B3A60] text-base">
+          <Printer className="w-5 h-5 text-[#174F3E]" />
+          <h3 className="font-extrabold text-[#174F3E] text-base">
             طباعة ملصق الوجبة المعتمد (One-Click Printable Label)
           </h3>
         </div>
@@ -61,10 +61,10 @@ export default function OrderLabelPrintModal({
           {/* Label Header */}
           <div className="flex items-center justify-between border-b border-stone-200 pb-3">
             <div>
-              <div className="text-[10px] text-amber-800 font-extrabold font-mono">ورث أجيال • منصة الأسر المنتجة بمكة</div>
-              <h4 className="font-black text-sm text-[#0B3A60]">{familyName}</h4>
+              <div className="text-[10px] text-amber-800 font-extrabold font-mono">إرث أجيال • منصة الأسر المنتجة بمكة</div>
+              <h4 className="font-black text-sm text-[#174F3E]">{familyName}</h4>
             </div>
-            <div className="bg-[#003B6F] text-white font-mono text-[10px] font-bold px-2.5 py-1 rounded-lg">
+            <div className="bg-[#174F3E] text-white font-mono text-[10px] font-bold px-2.5 py-1 rounded-lg">
               {orderId}
             </div>
           </div>
@@ -142,7 +142,7 @@ export default function OrderLabelPrintModal({
           <button
             type="button"
             onClick={handlePrint}
-            className="flex-1 bg-[#003B6F] hover:bg-[#002D54] text-white font-black py-3.5 px-4 rounded-2xl text-xs md:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="flex-1 bg-[#174F3E] hover:bg-[#0D3B2E] text-white font-black py-3.5 px-4 rounded-2xl text-xs md:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <Printer className="w-4 h-4 text-amber-300" />
             <span>طباعة ملصق الوجبة الآن (Print Label)</span>

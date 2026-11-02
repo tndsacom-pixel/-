@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { ShoppingBag, ArrowLeftCircle, Check, Tag, Sparkles, MessageSquare, Truck, HelpCircle, Landmark, ShieldAlert, Award, Compass, Heart, Calculator, Printer, Wand2, ShieldCheck, QrCode, FileText, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, ArrowLeftCircle, Check, Tag, Sparkles, MessageSquare, Truck, HelpCircle, Landmark, ShieldAlert, Award, Compass, Heart, Printer, Wand2, ShieldCheck, QrCode, FileText, CheckCircle2 } from 'lucide-react';
 import { BeneficiaryProfile, SubscriptionState, StorePackageId, PilgrimPackageId, Product } from '../types';
 
-import SmartCostCalculator from './SmartCostCalculator';
 import CreditScoringEngine from './CreditScoringEngine';
 import OrderLabelPrintModal from './OrderLabelPrintModal';
 import AiDescriptionGeneratorModal from './AiDescriptionGeneratorModal';
@@ -16,7 +15,7 @@ interface StoreManagerProps {
 }
 
 export default function StoreManager({ profile, subscription, onUpdateSubscription }: StoreManagerProps) {
-  const [activeTab, setActiveTab] = useState<'store_view' | 'productive_packages' | 'pilgrim_packages' | 'calculator' | 'financing'>('productive_packages');
+  const [activeTab, setActiveTab] = useState<'store_view' | 'productive_packages' | 'pilgrim_packages' | 'financing'>('productive_packages');
 
   // Modals States
   const [isPrintLabelOpen, setIsPrintLabelOpen] = useState(false);
@@ -195,16 +194,7 @@ export default function StoreManager({ profile, subscription, onUpdateSubscripti
               activeTab === 'productive_packages' ? 'bg-accent text-primary' : 'text-stone-200 hover:text-white'
             }`}
           >
-            باقات الأسر المنتجة
-          </button>
-          <button
-            onClick={() => setActiveTab('calculator')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
-              activeTab === 'calculator' ? 'bg-amber-400 text-stone-900' : 'text-stone-200 hover:text-white'
-            }`}
-          >
-            <Calculator className="w-3.5 h-3.5" />
-            <span>حاسبة الأرباح الذكية</span>
+            باقات رائدات العمل الحر
           </button>
           <button
             onClick={() => setActiveTab('financing')}
@@ -506,16 +496,7 @@ export default function StoreManager({ profile, subscription, onUpdateSubscripti
           </div>
         )}
 
-        {/* TAB 4: SMART COST & PROFIT CALCULATOR */}
-        {activeTab === 'calculator' && (
-          <div className="space-y-6">
-            <SmartCostCalculator onApplyPrice={(suggestedPrice) => {
-              console.log('Applied suggested price:', suggestedPrice);
-            }} />
-          </div>
-        )}
-
-        {/* TAB 5: FINANCING & ALTERNATIVE SCORING */}
+        {/* TAB 4: FINANCING & ALTERNATIVE SCORING */}
         {activeTab === 'financing' && (
           <div className="space-y-6">
             <CreditScoringEngine 
@@ -534,7 +515,7 @@ export default function StoreManager({ profile, subscription, onUpdateSubscripti
                     <ShieldCheck className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="font-extrabold text-[#0B3A60] text-base md:text-lg">
+                    <h3 className="font-extrabold text-[#174F3E] text-base md:text-lg">
                       آلية السداد الآلي من المبيعات (Auto-Deduction Repayment Mechanism)
                     </h3>
                     <p className="text-stone-500 text-xs">
@@ -609,7 +590,7 @@ export default function StoreManager({ profile, subscription, onUpdateSubscripti
                 <button
                   type="button"
                   onClick={() => setIsPrintLabelOpen(true)}
-                  className="bg-[#003B6F] hover:bg-[#002D54] text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  className="bg-[#174F3E] hover:bg-[#0D3B2E] text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-xs"
                 >
                   <Printer className="w-4 h-4 text-amber-300" />
                   <span>طباعة ملصق الوجبة (Label)</span>

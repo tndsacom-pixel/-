@@ -3,6 +3,7 @@ import { ProducerFamily } from './types';
 export const INITIAL_PRODUCERS: ProducerFamily[] = [
   {
     id: 'producer-1',
+    familyCode: 'ERG-0001',
     brandName: 'أم أحمد للطهي التراثي الحجازي',
     ownerName: 'فاطمة أحمد الزهراني',
     phone: '0501234567',
@@ -11,7 +12,7 @@ export const INITIAL_PRODUCERS: ProducerFamily[] = [
     projectType: 'culinary',
     specialty: 'مأكولات حجازية وتراثية ووجبات المعتمرين',
     description: 'مطبخ منزلي معتمد متخصص في إعداد الوجبات التراثية الحجازية الكلاسيكية، وتوفير الضيافة اليومية للمعتمرين وزوار مكة المكرمة بأجود المكونات المحلية.',
-    story: 'بدأت الرحلة قبل ١٢ عاماً من مطبخ منزلنا الصغير بمدينة مكة المكرمة، وبفضل الله ثم دعم برنامج «ورث أجيال» بمؤسسة التفكير والنماء، نجحنا في تطوير مطبخنا وفق أعلى معايير سلامة الأغذية وخدمة آلاف المعتمرين يومياً.',
+    story: 'بدأت الرحلة قبل ١٢ عاماً من مطبخ منزلنا الصغير بمدينة مكة المكرمة، وبفضل الله ثم دعم برنامج «إرث أجيال» بمؤسسة التفكير والنماء، نجحنا في تطوير مطبخنا وفق أعلى معايير سلامة الأغذية وخدمة آلاف المعتمرين يومياً.',
     experience: '١٢ عاماً في الطهي التراثي الحجازي',
     status: 'approved',
     rating: 4.9,
@@ -22,7 +23,7 @@ export const INITIAL_PRODUCERS: ProducerFamily[] = [
       'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&auto=format&fit=crop&q=80'
     ],
-    licenses: ['شهادة السلامة الغذائية SFDA-8821', 'وثيقة العمل الحر FL-90412', 'اعتماد ورث أجيال 🏅'],
+    licenses: ['شهادة السلامة الغذائية SFDA-8821', 'وثيقة العمل الحر FL-90412', 'اعتماد إرث أجيال 🏅'],
     joinedDate: '2024-01-15',
     totalSales: 84500,
     qualityVerified: true,
@@ -65,6 +66,7 @@ export const INITIAL_PRODUCERS: ProducerFamily[] = [
   },
   {
     id: 'producer-2',
+    familyCode: 'ERG-0002',
     brandName: 'ورشة سارة العتيبي لنسج السدو',
     ownerName: 'سارة العتيبي',
     phone: '0559876543',
@@ -115,6 +117,7 @@ export const INITIAL_PRODUCERS: ProducerFamily[] = [
   },
   {
     id: 'producer-3',
+    familyCode: 'ERG-0003',
     brandName: 'أم نورة للضيافة العربية والقهوة',
     ownerName: 'نورة الدوسري',
     phone: '0543210987',
@@ -162,6 +165,7 @@ export const INITIAL_PRODUCERS: ProducerFamily[] = [
   },
   {
     id: 'producer-4',
+    familyCode: 'ERG-0004',
     brandName: 'فاطمة الحربي (كليجا وخيرات القصيم)',
     ownerName: 'فاطمة سليم الحربي',
     phone: '0567891234',
@@ -198,6 +202,7 @@ export const INITIAL_PRODUCERS: ProducerFamily[] = [
   },
   {
     id: 'producer-5',
+    familyCode: 'ERG-0005',
     brandName: 'خديجة المكية (عطور ومباخر التراث)',
     ownerName: 'خديجة محمد الهوساوي',
     phone: '0512349876',

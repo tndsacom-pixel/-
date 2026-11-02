@@ -192,7 +192,7 @@ apiRouter.post('/auth/forgot-password', async (req: Request, res: Response) => {
     if (user) {
       await sendEmail({
         to: user.email,
-        subject: 'إعادة تعيين كلمة المرور - منصة ورث أجيال',
+        subject: 'إعادة تعيين كلمة المرور - منصة إرث أجيال',
         html: `<p>عزيزي ${user.name}، اضغط على الرابط التالي لإعادة تعيين كلمة المرور الخاصة بك.</p>`,
       });
     }
@@ -745,7 +745,7 @@ apiRouter.post('/orders', authenticateToken, async (req: AuthenticatedRequest, r
     await createUserNotification({
       userId: req.user!.id,
       title: `تم إنشاء الطلب ${orderNum} بنجاح`,
-      message: 'شكراً لشرائك من منصة ورث أجيال. طلبك قيد التجهيز الآن.',
+      message: 'شكراً لشرائك من منصة إرث أجيال. طلبك قيد التجهيز الآن.',
       type: 'success',
     });
 

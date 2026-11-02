@@ -93,7 +93,7 @@ export default function SmartJourney({ profile, subscription, onUpdateSubscripti
   const [customHotelText, setCustomHotelText] = useState<string>('');
   const [chatOpen, setChatOpen] = useState<boolean>(false);
   const [chatMessages, setChatMessages] = useState<Array<{ sender: 'user' | 'bot', text: string }>>([
-    { sender: 'bot', text: 'مرحباً بك ضيف الرحمن! أنا مرشدك الغذائي الذكي من ورث أجيال. هل لديك أي استفسار حول المكونات التراثية أو الحساسية أو الوجبات المخصصة؟' }
+    { sender: 'bot', text: 'مرحباً بك ضيف الرحمن! أنا مرشدك الغذائي الذكي من إرث أجيال. هل لديك أي استفسار حول المكونات التراثية أو الحساسية أو الوجبات المخصصة؟' }
   ]);
   const [chatInput, setChatInput] = useState<string>('');
   const [mealPlanType, setMealPlanType] = useState<'weekly' | 'monthly'>('weekly');
@@ -355,7 +355,7 @@ export default function SmartJourney({ profile, subscription, onUpdateSubscripti
         </div>
 
         {/* User Pilgrim Status */}
-        <div className="bg-white/10 border border-white/15 p-3.5 rounded-2xl text-xs space-y-1 text-center md:text-right min-w-[200px]">
+        <div className="bg-white/10 border border-white/15 p-3.5 rounded-2xl text-xs space-y-1 text-center md:text-right w-full md:w-auto shrink-0">
           <div className="flex items-center justify-between gap-4">
             <span className="text-stone-300">نوع عضويتك التراثية:</span>
             <span className="font-extrabold text-accent">العضوية الذهبية 👑</span>
@@ -475,7 +475,7 @@ export default function SmartJourney({ profile, subscription, onUpdateSubscripti
             </div>
 
             {/* Week days selector */}
-            <div className="flex justify-between gap-1 overflow-x-auto pb-2" id="days-selector-grid">
+            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-2 w-full" id="days-selector-grid">
               {daysOfWeek.map((day) => {
                 const isSelected = selectedDay === day;
                 const dayMeal = mealCalendar[day];
@@ -485,7 +485,7 @@ export default function SmartJourney({ profile, subscription, onUpdateSubscripti
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, day)}
                     onClick={() => handleDayClickToSwap(day)}
-                    className={`flex-1 py-3 px-2 rounded-xl text-center text-xs font-bold transition-all border flex flex-col items-center gap-1 min-w-[75px] cursor-pointer relative ${
+                    className={`flex-1 min-w-[70px] sm:min-w-0 py-2.5 sm:py-3 px-1.5 sm:px-2 rounded-xl text-center text-xs font-bold transition-all border flex flex-col items-center gap-1 shrink-0 sm:shrink cursor-pointer relative ${
                       isSelected
                         ? 'bg-primary text-accent border-primary shadow-md scale-105'
                         : selectedAltDish
@@ -1042,7 +1042,7 @@ export default function SmartJourney({ profile, subscription, onUpdateSubscripti
                 <span>الفلترة الصحية وتفضيلات السلامة للوفود</span>
               </h3>
               <p className="text-stone-500 text-xs font-light leading-relaxed">
-                تقوم منصة ورث أجيال بمواءمة الأطعمة والوجبات المصنعة منزلياً لتتوافق بدقة مع الحالة الطبية أو الأهداف الغذائية لزوار الرحمن لضمان طعام صحي، لذيذ، ومطابق للاشتراطات الفنية والبلدية.
+                تقوم منصة إرث أجيال بمواءمة الأطعمة والوجبات المصنعة منزلياً لتتوافق بدقة مع الحالة الطبية أو الأهداف الغذائية لزوار الرحمن لضمان طعام صحي، لذيذ، ومطابق للاشتراطات الفنية والبلدية.
               </p>
             </div>
 
@@ -1141,7 +1141,7 @@ export default function SmartJourney({ profile, subscription, onUpdateSubscripti
               <div className="space-y-2 text-right">
                 <h3 className="font-extrabold text-white text-base md:text-lg">ضيافة وبوفيهات حملات الحج والعمرة التراثية</h3>
                 <p className="text-stone-300 text-xs font-light leading-relaxed">
-                  هل تدير حملة حج وعمرة أو وفداً سياحياً لبيت الله الحرام؟ تتيح لك منصة ورث أجيال توفير وجبات وبوفيهات شعبية مجهزة بالكامل من قبل الأسر المنتجة المدربة والمحكومة صحياً، لتجربة موروثية ساحرة لضيوف الرحمن.
+                  هل تدير حملة حج وعمرة أو وفداً سياحياً لبيت الله الحرام؟ تتيح لك منصة إرث أجيال توفير وجبات وبوفيهات شعبية مجهزة بالكامل من قبل الأسر المنتجة المدربة والمحكومة صحياً، لتجربة موروثية ساحرة لضيوف الرحمن.
                 </p>
               </div>
               <div className="bg-accent text-primary px-4 py-2 rounded-2xl font-black text-xs text-center whitespace-nowrap">

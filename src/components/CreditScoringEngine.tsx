@@ -72,7 +72,7 @@ export default function CreditScoringEngine({
               <Sparkles className="w-3 h-3 text-emerald-700" />
               <span>مؤشر الجدارة الائتمانية البديل (Alternative Credit Scoring Engine)</span>
             </div>
-            <h3 className="font-extrabold text-[#0B3A60] text-lg">
+            <h3 className="font-extrabold text-[#174F3E] text-lg">
               تقييم استحقاق التمويل بدون كفيل غارم (Sponsorless Financing Eligibility)
             </h3>
             <p className="text-stone-500 text-xs">
@@ -91,7 +91,7 @@ export default function CreditScoringEngine({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
         
         {/* Score Radial Card */}
-        <div className="bg-gradient-to-br from-[#003B6F] to-[#0B3A60] text-white p-6 rounded-3xl text-center space-y-4 shadow-md relative overflow-hidden">
+        <div className="bg-gradient-to-br from-[#174F3E] to-[#174F3E] text-white p-6 rounded-3xl text-center space-y-4 shadow-md relative overflow-hidden">
           <span className="text-xs text-amber-300 font-extrabold block">مؤشر الجدارة التراكمي للأسرة:</span>
           
           <div className="relative inline-flex items-center justify-center">

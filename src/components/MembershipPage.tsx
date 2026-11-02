@@ -22,7 +22,7 @@ export default function MembershipPage({ onBackToHome, onOpenSupport }: Membersh
       id: 'silver',
       name: 'العضوية الفضية الحرفية 🥈',
       price: 'مجانية بالكامل',
-      desc: 'مخصصة للورش الناشئة والأسر الراغبة ببدء عرض منتجاتها التراثية وتوثيق هويتها بالمتجر المستقل.',
+      desc: 'مخصصة للورش الناشئة ورائدات العمل الحر الراغبات ببدء عرض منتجاتهن التراثية وتوثيق هويتهن بالمتجر المستقل.',
       features: [
         'إنشاء ملف مهني رقمي بمتجر المنصة',
         'عرض حتى 5 منتجات طهي أو حرفية',
@@ -50,7 +50,7 @@ export default function MembershipPage({ onBackToHome, onOpenSupport }: Membersh
       id: 'diamond',
       name: 'عضوية حاضنات الأعمال والشركاء 💎',
       price: 'للجمعيات والمؤسسات',
-      desc: 'عضوية مؤسسية مخصصة للجمعيات الأهلية والقطاع الثالث لرعاية وتأهيل مجموعات الأسر المنتجة.',
+      desc: 'عضوية مؤسسية مخصصة للجمعيات الأهلية والقطاع الثالث لرعاية وتأهيل مجموعات رائدات العمل الحر.',
       features: [
         'لوحة حوكمة وإدارة متابعة شاملة',
         'تقارير قياس الأثر التنموي والمالي',
@@ -82,7 +82,7 @@ export default function MembershipPage({ onBackToHome, onOpenSupport }: Membersh
       </div>
 
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-[#0B3A60] via-primary to-emerald-950 text-white p-8 sm:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
+      <div className="bg-gradient-to-r from-[#174F3E] via-primary to-emerald-950 text-white p-8 sm:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-accent/30">
         <div className="relative z-10 max-w-3xl space-y-4">
           <span className="text-accent text-xs font-black bg-white/10 border border-accent/30 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-accent animate-spin" />
@@ -90,7 +90,7 @@ export default function MembershipPage({ onBackToHome, onOpenSupport }: Membersh
           </span>
 
           <h1 className="text-2xl sm:text-4xl font-black text-white leading-tight">
-            اختر الباقة المناسبة لتنمية مشروعات الأسر المنتجة
+            اختر الباقة المناسبة لتنمية مشروعات رائدات العمل الحر
           </h1>
 
           <p className="text-stone-200 text-xs sm:text-sm font-light leading-relaxed">
@@ -130,7 +130,7 @@ export default function MembershipPage({ onBackToHome, onOpenSupport }: Membersh
                 <span className="text-[10px] font-black text-amber-800 bg-amber-100 px-3 py-1 rounded-full">
                   {plan.badge}
                 </span>
-                <span className="font-mono text-sm font-extrabold text-[#0B3A60]">{plan.price}</span>
+                <span className="font-mono text-sm font-extrabold text-[#174F3E]">{plan.price}</span>
               </div>
 
               <div>
@@ -151,7 +151,7 @@ export default function MembershipPage({ onBackToHome, onOpenSupport }: Membersh
             <button
               type="button"
               onClick={() => setSelectedPlan(plan.name)}
-              className="w-full bg-[#0B3A60] hover:bg-[#0B3A60]/90 text-white font-extrabold py-3 rounded-xl text-xs transition-all shadow-xs cursor-pointer hover:scale-[1.02]"
+              className="w-full bg-[#174F3E] hover:bg-[#174F3E]/90 text-white font-extrabold py-3 rounded-xl text-xs transition-all shadow-xs cursor-pointer hover:scale-[1.02]"
             >
               {plan.buttonText}
             </button>

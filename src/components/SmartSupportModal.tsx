@@ -24,6 +24,12 @@ import {
 interface SmartSupportModalProps {
   onClose: () => void;
   lang?: 'ar' | 'en';
+  initialInfo?: {
+    familyName?: string;
+    familyCode?: string;
+    productName?: string;
+    orderNumber?: string;
+  };
 }
 
 interface OptionNode {
@@ -68,7 +74,7 @@ const SUPPORT_DECISION_TREE: OptionNode[] = [
   },
   {
     id: 'services',
-    label: '💼 ما خدمات ورث أجيال ومؤسسة التفكير والنماء؟',
+    label: '💼 ما خدمات إرث أجيال ومؤسسة التفكير والنماء؟',
     response: 'نقدم منظومة متكاملة لتمكين الأسر المنتجة ورعاة الحرف والطهي التراثي. تشمل خدماتنا الرئيسية:\n\n1️⃣ الأكاديمية والتدريب الحرفي الرقمي.\n2️⃣ المتجر التراثي المستقل للبيع المباشر.\n3️⃣ التمويل التمكيني الخالي من الفوائد حتى 50,000 ر.س.\n4️⃣ الاستشارات والتوجيه المهني.\n5️⃣ العضويات الذهبية وبرامج الدعم المستمر.',
     subOptions: [
       {
@@ -178,23 +184,33 @@ const SUPPORT_DECISION_TREE: OptionNode[] = [
   {
     id: 'escalate_human',
     label: '👤 التواصل المباشر مع موظف الدعم البشري',
-    response: 'أهلاً بك! سيتم تحويلك فوراً إلى أحد ممثلي خدمة العملاء والدعم الفني بمؤسسة التفكير والنماء ورث أجيال. يسعدنا تقديم العون الفوري لك.'
+    response: 'أهلاً بك! سيتم تحويلك فوراً إلى أحد ممثلي خدمة العملاء والدعم الفني بمؤسسة التفكير والنماء إرث أجيال. يسعدنا تقديم العون الفوري لك.'
   }
 ];
 
-export default function SmartSupportModal({ onClose, lang = 'ar' }: SmartSupportModalProps) {
+export default function SmartSupportModal({ onClose, lang = 'ar', initialInfo }: SmartSupportModalProps) {
   // Navigation stack in decision tree
   const [history, setHistory] = useState<OptionNode[]>([]);
   const [currentNode, setCurrentNode] = useState<OptionNode | null>(null);
   
   // Custom text input
   const [inputQuery, setInputQuery] = useState('');
-  const [chatMessages, setChatMessages] = useState<Array<{ sender: 'bot' | 'user'; text: string; actionLink?: { label: string; url: string } }>>([
-    {
-      sender: 'bot',
-      text: 'أهلاً بك في الدعم الفني الذكي لمنصة ورث أجيال ومؤسسة التفكير والنماء! 🌴\nكيف يمكنني مساعدتك اليوم؟ يمكنك اختيار إحدى الخيارات الجاهزة أدناه أو كتابة استفسارك مباشرة.'
+  const [chatMessages, setChatMessages] = useState<Array<{ sender: 'bot' | 'user'; text: string; actionLink?: { label: string; url: string } }>>(() => {
+    if (initialInfo && (initialInfo.familyName || initialInfo.familyCode || initialInfo.orderNumber)) {
+      return [
+        {
+          sender: 'bot',
+          text: `أهلاً بك في دعم منصة إرث أجيال! 🎧\n\nتم فتح طلب المساعدة الخاص بالمتجر:\n• الأسرة: ${initialInfo.familyName || 'غير محدد'}\n• رمز الأسرة الداخلي: ${initialInfo.familyCode || 'غير محدد'}\n• المنتج: ${initialInfo.productName || 'غير محدد'}\n• رقم الطلب: ${initialInfo.orderNumber || 'لا يوجد طلب حتى الآن'}\n\nفريق الدعم الفني جاهز لمساعدتك وحل أي استفسار فوراً.`
+        }
+      ];
     }
-  ]);
+    return [
+      {
+        sender: 'bot',
+        text: 'أهلاً بك في الدعم الفني الذكي لمنصة إرث أجيال ومؤسسة التفكير والنماء! 🌴\nكيف يمكنني مساعدتك اليوم؟ يمكنك اختيار إحدى الخيارات الجاهزة أدناه أو كتابة استفسارك مباشرة.'
+      }
+    ];
+  });
   const [isTyping, setIsTyping] = useState(false);
   const [humanEscalated, setHumanEscalated] = useState(false);
   const [ticketNumber, setTicketNumber] = useState<string | null>(null);
@@ -300,7 +316,7 @@ export default function SmartSupportModal({ onClose, lang = 'ar' }: SmartSupport
       } else if (qLower.includes('تمويل') || qLower.includes('دعم') || qLower.includes('مبلغ')) {
         replyText = 'برنامج التمويل التمكيني يمنح دراسات جدوى ودعماً بدون فوائد وبدون كفيل غارم بناءً على تقييم الجدارات بالمنصة.';
       } else if (qLower.includes('من نحن') || qLower.includes('المؤسسة') || qLower.includes('رؤية')) {
-        replyText = 'ورث أجيال ومؤسسة التفكير والنماء هي منظومة وطنية تهدف لتمكين الأسر المنتجة ورعاة الأعمال الحرفية.';
+        replyText = 'إرث أجيال ومؤسسة التفكير والنماء هي منظومة وطنية تهدف لتمكين الأسر المنتجة ورعاة الأعمال الحرفية.';
         actLink = { label: 'عن المؤسسة ورؤيتنا 🌟', url: '/about' };
       }
 
@@ -326,7 +342,7 @@ export default function SmartSupportModal({ onClose, lang = 'ar' }: SmartSupport
         id="smart-support-modal-container"
       >
         {/* Header Bar */}
-        <div className="bg-[#0B3A60] p-4 text-white flex items-center justify-between shadow-md flex-shrink-0">
+        <div className="bg-[#174F3E] p-4 text-white flex items-center justify-between shadow-md flex-shrink-0">
           <button
             type="button"
             onClick={onClose}
@@ -344,7 +360,7 @@ export default function SmartSupportModal({ onClose, lang = 'ar' }: SmartSupport
                 <h3 className="font-black text-sm md:text-base text-white">الدعم الفني الذكي 💬</h3>
               </div>
               <p className="text-[10px] text-accent/90 font-light mt-0.5">
-                مساعد ورث أجيال والتفكير والنماء التفاعلي المباشر
+                مساعد إرث أجيال والتفكير والنماء التفاعلي المباشر
               </p>
             </div>
             <div className="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-accent shadow-inner">
@@ -363,7 +379,7 @@ export default function SmartSupportModal({ onClose, lang = 'ar' }: SmartSupport
                 className="bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 px-3 py-1 rounded-xl text-[11px] font-bold flex items-center gap-1 transition-all shadow-xs cursor-pointer"
                 id="support-back-prev-btn"
               >
-                <CornerUpLeft className="w-3.5 h-3.5 text-[#0B3A60]" />
+                <CornerUpLeft className="w-3.5 h-3.5 text-[#174F3E]" />
                 <span>↩ العودة للقائمة السابقة</span>
               </button>
             )}
@@ -375,7 +391,7 @@ export default function SmartSupportModal({ onClose, lang = 'ar' }: SmartSupport
                 className="bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 px-3 py-1 rounded-xl text-[11px] font-bold flex items-center gap-1 transition-all shadow-xs cursor-pointer"
                 id="support-back-home-btn"
               >
-                <Home className="w-3.5 h-3.5 text-[#0B3A60]" />
+                <Home className="w-3.5 h-3.5 text-[#174F3E]" />
                 <span>🏠 القائمة الرئيسية</span>
               </button>
             )}
@@ -400,7 +416,7 @@ export default function SmartSupportModal({ onClose, lang = 'ar' }: SmartSupport
                 <div
                   className={`max-w-[88%] p-3.5 rounded-2xl text-xs leading-relaxed text-right shadow-xs ${
                     isUser
-                      ? 'bg-[#0B3A60] text-white rounded-tl-none font-medium'
+                      ? 'bg-[#174F3E] text-white rounded-tl-none font-medium'
                       : 'bg-white border border-stone-200 text-stone-800 rounded-tr-none'
                   }`}
                 >
@@ -420,7 +436,7 @@ export default function SmartSupportModal({ onClose, lang = 'ar' }: SmartSupport
                           window.dispatchEvent(new CustomEvent('hashchange'));
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
-                        className="inline-flex items-center gap-1.5 bg-[#0B3A60] hover:bg-[#0B3A60]/90 text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-xs transition-all hover:scale-105 cursor-pointer"
+                        className="inline-flex items-center gap-1.5 bg-[#174F3E] hover:bg-[#174F3E]/90 text-white text-[10px] font-black px-3 py-1.5 rounded-xl shadow-xs transition-all hover:scale-105 cursor-pointer"
                       >
                         <span>{msg.actionLink.label}</span>
                       </a>
@@ -441,9 +457,9 @@ export default function SmartSupportModal({ onClose, lang = 'ar' }: SmartSupport
               <div className="bg-white border border-stone-200 px-3.5 py-2 rounded-2xl rounded-tr-none text-stone-500 text-[11px] flex items-center gap-2">
                 <span className="font-bold text-[10px]">المساعد الذكي يجهز الإجابة</span>
                 <span className="flex gap-1">
-                  <span className="w-1.5 h-1.5 bg-[#0B3A60] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                  <span className="w-1.5 h-1.5 bg-[#0B3A60] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                  <span className="w-1.5 h-1.5 bg-[#0B3A60] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                  <span className="w-1.5 h-1.5 bg-[#174F3E] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                  <span className="w-1.5 h-1.5 bg-[#174F3E] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                  <span className="w-1.5 h-1.5 bg-[#174F3E] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                 </span>
               </div>
             </motion.div>
@@ -476,7 +492,7 @@ export default function SmartSupportModal({ onClose, lang = 'ar' }: SmartSupport
                 key={opt.id}
                 type="button"
                 onClick={() => handleSelectOption(opt)}
-                className="w-full text-right bg-white hover:bg-[#0B3A60] text-stone-800 hover:text-white border border-stone-200 hover:border-[#0B3A60] p-2.5 rounded-xl text-[11px] font-bold transition-all shadow-xs flex items-center justify-between group cursor-pointer"
+                className="w-full text-right bg-white hover:bg-[#174F3E] text-stone-800 hover:text-white border border-stone-200 hover:border-[#174F3E] p-2.5 rounded-xl text-[11px] font-bold transition-all shadow-xs flex items-center justify-between group cursor-pointer"
               >
                 <span className="leading-snug">{opt.label}</span>
                 <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-white group-hover:-translate-x-0.5 transition-transform flex-shrink-0 mr-1" />
@@ -485,14 +501,16 @@ export default function SmartSupportModal({ onClose, lang = 'ar' }: SmartSupport
 
             {/* Escalate button option if not at top or not escalated */}
             {!humanEscalated && (
-              <button
-                type="button"
-                onClick={handleHumanEscalation}
-                className="w-full text-right bg-emerald-50 hover:bg-emerald-600 text-emerald-800 hover:text-white border border-emerald-200 hover:border-emerald-600 p-2.5 rounded-xl text-[11px] font-black transition-all shadow-xs flex items-center justify-between group cursor-pointer"
-              >
-                <span>👤 التواصل المباشر مع موظف الدعم البشري</span>
-                <Headphones className="w-4 h-4 text-emerald-600 group-hover:text-white flex-shrink-0" />
-              </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                <button
+                  type="button"
+                  onClick={handleHumanEscalation}
+                  className="w-full text-right bg-primary hover:bg-primary/95 text-accent border border-primary p-3 rounded-xl text-xs font-black transition-all shadow-xs flex items-center justify-between group cursor-pointer"
+                >
+                  <span>👤 تحويل الطلب لموظف الدعم المباشر منصة إرث أجيال</span>
+                  <Headphones className="w-4 h-4 text-accent flex-shrink-0" />
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -502,7 +520,7 @@ export default function SmartSupportModal({ onClose, lang = 'ar' }: SmartSupport
           <button
             type="button"
             onClick={handleSendQuery}
-            className="bg-[#0B3A60] hover:bg-[#0B3A60]/90 text-white p-2.5 rounded-xl shadow-sm transition-all cursor-pointer hover:scale-105 flex-shrink-0"
+            className="bg-[#174F3E] hover:bg-[#174F3E]/90 text-white p-2.5 rounded-xl shadow-sm transition-all cursor-pointer hover:scale-105 flex-shrink-0"
             title="إرسال"
             id="smart-support-send-btn"
           >
@@ -519,7 +537,7 @@ export default function SmartSupportModal({ onClose, lang = 'ar' }: SmartSupport
               }
             }}
             placeholder="اكتب استفسارك بحرية هنا..."
-            className="flex-grow bg-stone-50 border border-stone-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#0B3A60] text-right font-medium"
+            className="flex-grow bg-stone-50 border border-stone-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#174F3E] text-right font-medium"
             id="smart-support-text-input"
           />
         </div>

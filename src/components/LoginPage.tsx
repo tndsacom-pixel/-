@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
+import { useLanguage } from '../context/LanguageContext';
 import { User, Lock, Mail, KeyRound, AlertCircle, CheckCircle, ShieldCheck, RefreshCw, ChevronRight, Sparkles, Award, MapPin, Building2, Phone, CreditCard, DollarSign, Package, HeartHandshake, Check, Utensils, Globe, FileText } from 'lucide-react';
 import { sendVerificationEmail, hashPassword } from '../services/emailService';
 import { UserAccount, UserRole } from '../types';
@@ -12,6 +13,7 @@ interface LoginPageProps {
 }
 
 export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, warathLogo }: LoginPageProps) {
+  const { t, isEn, toggleLanguage, lang } = useLanguage();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   
   // Login fields
@@ -97,15 +99,15 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
       return (
         <img 
           src={warathLogo} 
-          alt="شعار ورث أجيال" 
+          alt="شعار إرث أجيال" 
           className={`${sizeClass.split(' ')[0]} ${sizeClass.split(' ')[1]} object-contain rounded-2xl shadow-md border border-accent/20 bg-white`} 
           referrerPolicy="no-referrer" 
         />
       );
     }
     return (
-      <div className={`bg-[#0B3A60] text-amber-300 rounded-2xl flex items-center justify-center shadow-md font-extrabold font-mono text-center px-2 leading-tight ${sizeClass}`}>
-        {warathLogo ? warathLogo.substring(0, 10) : 'ورث أجيال'}
+      <div className={`bg-[#174F3E] text-amber-300 rounded-2xl flex items-center justify-center shadow-md font-extrabold font-mono text-center px-2 leading-tight ${sizeClass}`}>
+        {warathLogo ? warathLogo.substring(0, 10) : 'إرث أجيال'}
       </div>
     );
   };
@@ -371,7 +373,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-4 dir-rtl font-sans select-none" id="standalone-login-page">
+    <div className="min-h-screen bg-[#FAF9F6] flex flex-col items-center justify-center p-4 dir-rtl font-sans select-none" id="standalone-login-page">
       <motion.div 
         initial={{ opacity: 0, scale: 0.96, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -387,11 +389,11 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
           </div>
           
           <div className="space-y-1">
-            <h1 className="text-2xl font-black text-[#0B3A60] tracking-tight">
+            <h1 className="text-2xl font-black text-[#174F3E] tracking-tight">
               {mode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب جديد ✨'}
             </h1>
             <p className="text-stone-500 text-xs font-semibold">
-              منصة «ورث أجيال × مؤسسة التفكير والنماء TND»
+              منصة «إرث أجيال × مؤسسة التفكير والنماء TND»
             </p>
           </div>
 
@@ -400,7 +402,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
             <button
               onClick={() => { setMode('login'); setError(''); setSuccessMsg(''); }}
               className={`flex-1 py-2.5 rounded-xl transition-all cursor-pointer ${
-                mode === 'login' ? 'bg-[#0B3A60] text-amber-300 shadow-sm' : 'text-stone-600 hover:text-stone-900'
+                mode === 'login' ? 'bg-[#174F3E] text-amber-300 shadow-sm' : 'text-stone-600 hover:text-stone-900'
               }`}
             >
               تسجيل الدخول
@@ -408,7 +410,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
             <button
               onClick={() => { setMode('register'); setError(''); setSuccessMsg(''); setRegStep(1); }}
               className={`flex-1 py-2.5 rounded-xl transition-all cursor-pointer ${
-                mode === 'register' ? 'bg-[#0B3A60] text-amber-300 shadow-sm' : 'text-stone-600 hover:text-stone-900'
+                mode === 'register' ? 'bg-[#174F3E] text-amber-300 shadow-sm' : 'text-stone-600 hover:text-stone-900'
               }`}
             >
               حساب جديد ✨
@@ -472,10 +474,10 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                   onChange={(e) => setIdentifier(e.target.value)}
                   placeholder="أدخل اسم المستخدم أو البريد الإلكتروني"
                   required
-                  className="w-full bg-stone-50/80 border border-stone-200 focus:bg-white focus:ring-2 focus:ring-[#0B3A60]/30 focus:border-[#0B3A60] rounded-2xl py-3.5 pr-11 pl-4 text-xs md:text-sm font-bold text-stone-800 outline-none transition-all"
+                  className="w-full bg-stone-50/80 border border-stone-200 focus:bg-white focus:ring-2 focus:ring-[#174F3E]/30 focus:border-[#174F3E] rounded-2xl py-3.5 pr-11 pl-4 text-xs md:text-sm font-bold text-stone-800 outline-none transition-all"
                 />
                 <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-stone-400">
-                  <User className="w-5 h-5 text-[#0B3A60]" />
+                  <User className="w-5 h-5 text-[#174F3E]" />
                 </div>
               </div>
             </div>
@@ -489,7 +491,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                   <button
                     type="button"
                     onClick={onOpenForgotPassword}
-                    className="text-[11px] text-[#0B3A60] hover:underline font-extrabold cursor-pointer"
+                    className="text-[11px] text-[#174F3E] hover:underline font-extrabold cursor-pointer"
                   >
                     هل نسيت كلمة المرور؟ 🔑
                   </button>
@@ -502,10 +504,10 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="أدخل كلمة المرور"
                   required
-                  className="w-full bg-stone-50/80 border border-stone-200 focus:bg-white focus:ring-2 focus:ring-[#0B3A60]/30 focus:border-[#0B3A60] rounded-2xl py-3.5 pr-11 pl-4 text-xs md:text-sm font-bold text-stone-800 outline-none transition-all"
+                  className="w-full bg-stone-50/80 border border-stone-200 focus:bg-white focus:ring-2 focus:ring-[#174F3E]/30 focus:border-[#174F3E] rounded-2xl py-3.5 pr-11 pl-4 text-xs md:text-sm font-bold text-stone-800 outline-none transition-all"
                 />
                 <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-stone-400">
-                  <Lock className="w-5 h-5 text-[#0B3A60]" />
+                  <Lock className="w-5 h-5 text-[#174F3E]" />
                 </div>
               </div>
             </div>
@@ -513,7 +515,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#0B3A60] hover:bg-[#07253E] text-white font-black py-4 px-6 rounded-2xl text-xs md:text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer mt-2 disabled:opacity-50"
+              className="w-full bg-[#174F3E] hover:bg-[#132E25] text-white font-black py-4 px-6 rounded-2xl text-xs md:text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer mt-2 disabled:opacity-50"
             >
               {isLoading ? <span>جاري الدخول... ⏳</span> : <span>تسجيل الدخول ←</span>}
             </button>
@@ -616,14 +618,14 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                     onClick={() => handleRoleChange('buyer')}
                     className={`p-3 rounded-2xl border text-right transition-all cursor-pointer flex flex-col justify-between ${
                       regRole === 'buyer'
-                        ? 'bg-[#0B3A60]/10 border-[#0B3A60] ring-2 ring-[#0B3A60]/30 shadow-xs'
+                        ? 'bg-[#174F3E]/10 border-[#174F3E] ring-2 ring-[#174F3E]/30 shadow-xs'
                         : 'bg-stone-50 border-stone-200 hover:border-stone-300'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-2xl">🛒</span>
                       {regRole === 'buyer' && (
-                        <span className="bg-[#0B3A60] text-amber-300 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black">✓</span>
+                        <span className="bg-[#174F3E] text-amber-300 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black">✓</span>
                       )}
                     </div>
                     <div className="mt-1.5">
@@ -653,7 +655,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
               {/* Progress Line */}
               <div className="w-full bg-stone-200 rounded-full h-2 overflow-hidden">
                 <div 
-                  className="bg-gradient-to-r from-amber-500 via-[#0B3A60] to-emerald-600 h-full transition-all duration-300 rounded-full"
+                  className="bg-gradient-to-r from-amber-500 via-[#174F3E] to-emerald-600 h-full transition-all duration-300 rounded-full"
                   style={{ width: `${(regStep / maxSteps) * 100}%` }}
                 />
               </div>
@@ -673,7 +675,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={regName}
                       onChange={(e) => setRegName(e.target.value)}
                       placeholder={regRole === 'beneficiary' ? 'مثال: أم أحمد للمأكولات التراثية' : regRole === 'pilgrim' ? 'مثال: عبد الرحمن بن فهد' : 'أدخل الاسم الرباعي'}
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
 
@@ -685,7 +687,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={regUsername}
                       onChange={(e) => setRegUsername(e.target.value)}
                       placeholder="مثال: om_ahmad"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
                 </div>
@@ -700,7 +702,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                         value={regEmail}
                         onChange={(e) => setRegEmail(e.target.value)}
                         placeholder="name@example.com"
-                        className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 pr-9 pl-3 text-xs font-bold outline-none"
+                        className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 pr-9 pl-3 text-xs font-bold outline-none"
                       />
                       <Mail className="w-4 h-4 text-stone-400 absolute top-3 right-3" />
                     </div>
@@ -714,7 +716,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={regPhone}
                       onChange={(e) => setRegPhone(e.target.value)}
                       placeholder="مثال: 05XXXXXXXX"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
                 </div>
@@ -728,7 +730,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={regIdOrPassport}
                       onChange={(e) => setRegIdOrPassport(e.target.value)}
                       placeholder="أدخل رقم الهوية أو جواز السفر"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
 
@@ -757,7 +759,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                         value={pilgrimLocation}
                         onChange={(e) => setPilgrimLocation(e.target.value)}
                         placeholder="📍 مكة المكرمة - بطحاء قريش"
-                        className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                        className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                       />
                     </div>
                   )}
@@ -771,7 +773,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                         value={nationality}
                         onChange={(e) => setNationality(e.target.value)}
                         placeholder="مثال: المملكة العربية السعودية / دولة الإمارات"
-                        className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                        className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                       />
                     </div>
                   )}
@@ -804,7 +806,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
                       placeholder="أدخل كلمة مرور الحساب"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
 
@@ -817,7 +819,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={regConfirmPassword}
                       onChange={(e) => setRegConfirmPassword(e.target.value)}
                       placeholder="أعد إدخال كلمة المرور"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
                 </div>
@@ -827,7 +829,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
             {/* STEP 2 FOR BENEFICIARY: Production Capacity & Readiness */}
             {regRole === 'beneficiary' && regStep === 2 && (
               <div className="space-y-3">
-                <h3 className="text-xs font-black text-[#0B3A60] flex items-center gap-1.5">
+                <h3 className="text-xs font-black text-[#174F3E] flex items-center gap-1.5">
                   <Package className="w-4 h-4 text-emerald-600" />
                   <span>الخطوة 2 من 5: نطاق الإنتاج والجاهزية التشغيلية</span>
                 </h3>
@@ -856,7 +858,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={dailyCapacity}
                       onChange={(e) => setDailyCapacity(e.target.value)}
                       placeholder="مثال: 50 وجبة يومياً / 10 قطع حرفية"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
 
@@ -880,7 +882,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={familyMembersCount}
                       onChange={(e) => setFamilyMembersCount(e.target.value)}
                       placeholder="مثال: 3 أفراد من الأسرة"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
                 </div>
@@ -903,7 +905,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={monthlyIncome}
                       onChange={(e) => setMonthlyIncome(e.target.value)}
                       placeholder="مثال: 3,500 ر.س شهرياً"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
 
@@ -914,7 +916,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={fundingAmount}
                       onChange={(e) => setFundingAmount(e.target.value)}
                       placeholder="مثال: 15,000 - 50,000 ر.س"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
                 </div>
@@ -940,7 +942,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                     value={repaymentAbility}
                     onChange={(e) => setRepaymentAbility(e.target.value)}
                     placeholder="مثال: ممتازة - سداد شهري منتظم من أرباح المبيعات"
-                    className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                    className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                   />
                 </div>
               </div>
@@ -949,7 +951,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
             {/* STEP 4 FOR BENEFICIARY: Quality Standards & Thermal Packaging */}
             {regRole === 'beneficiary' && regStep === 4 && (
               <div className="space-y-3">
-                <h3 className="text-xs font-black text-[#0B3A60] flex items-center gap-1.5">
+                <h3 className="text-xs font-black text-[#174F3E] flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
                   <span>الخطوة 4 من 5: معايير الجودة والسلامة والتغليف الحراري</span>
                 </h3>
@@ -962,7 +964,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={thermalContainers}
                       onChange={(e) => setThermalContainers(e.target.value)}
                       placeholder="مثال: متوفرة حافظات حرارية معزولة مع وسيلة نقل مبردة"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
 
@@ -972,8 +974,8 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       type="text"
                       value={packagingCustomization}
                       onChange={(e) => setPackagingCustomization(e.target.value)}
-                      placeholder="مثال: طباعة شعار ورث أجيال ورمز QR التوثيق"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      placeholder="مثال: طباعة شعار إرث أجيال ورمز QR التوثيق"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
 
@@ -995,13 +997,13 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
             {/* STEP 5 FOR BENEFICIARY: Final Verification & Strategic 5 Partners */}
             {regRole === 'beneficiary' && regStep === 5 && (
               <div className="space-y-3">
-                <div className="bg-[#0B3A60] text-white p-4 rounded-2xl space-y-2 text-right">
+                <div className="bg-[#174F3E] text-white p-4 rounded-2xl space-y-2 text-right">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-black text-amber-300">بوابة ورث أجيال محمية وموثقة</span>
+                    <span className="text-xs font-black text-amber-300">بوابة إرث أجيال محمية وموثقة</span>
                     <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded-full text-amber-200">الشركاء الخمسة</span>
                   </div>
                   <p className="text-[11px] text-stone-200 leading-relaxed font-medium">
-                    منظومة التمكين مدعومة بالشراكة الاستراتيجية من: مؤسسة التفكير والنماء (TND)، بنك التنمية الاجتماعية، أمانة العاصمة المقدسة، أوقاف مكة المكرمة، ومنصة ورث أجيال.
+                    منظومة التمكين مدعومة بالشراكة الاستراتيجية من: مؤسسة التفكير والنماء (TND)، بنك التنمية الاجتماعية، أمانة العاصمة المقدسة، أوقاف مكة المكرمة، ومنصة إرث أجيال.
                   </p>
                 </div>
 
@@ -1018,7 +1020,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                     className="w-4 h-4 text-primary rounded-md border-stone-300 mt-0.5"
                   />
                   <span className="text-xs text-stone-800 font-bold leading-relaxed">
-                    أقر بدقة جميع البيانات المدخلة في محرك الجدارة الائتمانية وأتعهد بالالتزام باللوائح والتعليمات المعتمدة لدى منصة ورث أجيال.
+                    أقر بدقة جميع البيانات المدخلة في محرك الجدارة الائتمانية وأتعهد بالالتزام باللوائح والتعليمات المعتمدة لدى منصة إرث أجيال.
                   </span>
                 </label>
               </div>
@@ -1027,7 +1029,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
             {/* PILGRIM STEPS 2 - 6 */}
             {regRole === 'pilgrim' && regStep === 2 && (
               <div className="space-y-3">
-                <h3 className="text-xs font-black text-[#0B3A60] flex items-center gap-1.5">
+                <h3 className="text-xs font-black text-[#174F3E] flex items-center gap-1.5">
                   <Building2 className="w-4 h-4 text-amber-600" />
                   <span>الخطوة 2 من 6: تفاصيل الإقامة وفترة نسك العمرة</span>
                 </h3>
@@ -1040,7 +1042,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={accommodationType}
                       onChange={(e) => setAccommodationType(e.target.value)}
                       placeholder="فندق بالمنطقة المركزية / برج سكني"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
 
@@ -1051,7 +1053,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={residenceDates}
                       onChange={(e) => setResidenceDates(e.target.value)}
                       placeholder="مثال: من 10 إلى 20 رمضان"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
                 </div>
@@ -1063,7 +1065,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                     value={groupCount}
                     onChange={(e) => setGroupCount(e.target.value)}
                     placeholder="مثال: 4 معتمرين"
-                    className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                    className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                   />
                 </div>
               </div>
@@ -1071,7 +1073,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
 
             {regRole === 'pilgrim' && regStep === 3 && (
               <div className="space-y-3">
-                <h3 className="text-xs font-black text-[#0B3A60] flex items-center gap-1.5">
+                <h3 className="text-xs font-black text-[#174F3E] flex items-center gap-1.5">
                   <Utensils className="w-4 h-4 text-amber-600" />
                   <span>الخطوة 3 من 6: التفضيلات الغذائية والتراث الحجازي</span>
                 </h3>
@@ -1109,7 +1111,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
 
             {regRole === 'pilgrim' && regStep === 4 && (
               <div className="space-y-3">
-                <h3 className="text-xs font-black text-[#0B3A60] flex items-center gap-1.5">
+                <h3 className="text-xs font-black text-[#174F3E] flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
                   <span>الخطوة 4 من 6: الاشتراطات الصحية والحساسية الغذائية</span>
                 </h3>
@@ -1145,7 +1147,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
 
             {regRole === 'pilgrim' && regStep === 5 && (
               <div className="space-y-3">
-                <h3 className="text-xs font-black text-[#0B3A60] flex items-center gap-1.5">
+                <h3 className="text-xs font-black text-[#174F3E] flex items-center gap-1.5">
                   <Package className="w-4 h-4 text-amber-600" />
                   <span>الخطوة 5 من 6: نمط التوصيل والضيافة للحرمين</span>
                 </h3>
@@ -1171,7 +1173,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={packagingPreference}
                       onChange={(e) => setPackagingPreference(e.target.value)}
                       placeholder="تغليف حراري صحي صديق للبيئة"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
                 </div>
@@ -1195,7 +1197,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                     className="w-4 h-4 text-primary rounded-md border-stone-300 mt-0.5"
                   />
                   <span className="text-xs text-stone-800 font-bold leading-relaxed">
-                    أقر بدقة التفضيلات الغذائية والموافقة على شروط تقديم الخدمة والضيافة المعتمدة بمنصة ورث أجيال.
+                    أقر بدقة التفضيلات الغذائية والموافقة على شروط تقديم الخدمة والضيافة المعتمدة بمنصة إرث أجيال.
                   </span>
                 </label>
               </div>
@@ -1204,7 +1206,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
             {/* VISITOR / TOURIST STEPS 2 - 4 */}
             {regRole === 'visitor' && regStep === 2 && (
               <div className="space-y-3">
-                <h3 className="text-xs font-black text-[#0B3A60] flex items-center gap-1.5">
+                <h3 className="text-xs font-black text-[#174F3E] flex items-center gap-1.5">
                   <Globe className="w-4 h-4 text-sky-600" />
                   <span>الخطوة 2 من 4: التفضيلات التراثية والحرفية</span>
                 </h3>
@@ -1243,7 +1245,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
 
             {regRole === 'visitor' && regStep === 3 && (
               <div className="space-y-3">
-                <h3 className="text-xs font-black text-[#0B3A60] flex items-center gap-1.5">
+                <h3 className="text-xs font-black text-[#174F3E] flex items-center gap-1.5">
                   <MapPin className="w-4 h-4 text-sky-600" />
                   <span>الخطوة 3 من 4: عناوين الشحن والتوصيل والتغليف</span>
                 </h3>
@@ -1256,7 +1258,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={shippingAddress}
                       onChange={(e) => setShippingAddress(e.target.value)}
                       placeholder="أدخل عنوان السكن أو عنوان الشحن الدولي"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
                 </div>
@@ -1280,7 +1282,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                     className="w-4 h-4 text-primary rounded-md border-stone-300 mt-0.5"
                   />
                   <span className="text-xs text-stone-800 font-bold leading-relaxed">
-                    أقر بالموافقة على الشروط وأحكام الشحن واقتناء القطع التراثية الموثقة لدى منصة ورث أجيال.
+                    أقر بالموافقة على الشروط وأحكام الشحن واقتناء القطع التراثية الموثقة لدى منصة إرث أجيال.
                   </span>
                 </label>
               </div>
@@ -1289,8 +1291,8 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
             {/* BUYER STEPS 2 - 3 */}
             {regRole === 'buyer' && regStep === 2 && (
               <div className="space-y-3">
-                <h3 className="text-xs font-black text-[#0B3A60] flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-[#0B3A60]" />
+                <h3 className="text-xs font-black text-[#174F3E] flex items-center gap-1.5">
+                  <MapPin className="w-4 h-4 text-[#174F3E]" />
                   <span>الخطوة 2 من 3: عنوان التوصيل الرئيسي والأقسام المفضلة</span>
                 </h3>
 
@@ -1302,7 +1304,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                       value={buyerAddress}
                       onChange={(e) => setBuyerAddress(e.target.value)}
                       placeholder="مثال: حي العزيزية - شارع عبدالله عريف - منزل رقم 12"
-                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#0B3A60] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
+                      className="w-full bg-stone-50 border border-stone-200 focus:bg-white focus:border-[#174F3E] rounded-xl py-2.5 px-3 text-xs font-bold outline-none"
                     />
                   </div>
 
@@ -1325,7 +1327,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
 
             {regRole === 'buyer' && regStep === 3 && (
               <div className="space-y-3">
-                <div className="bg-[#0B3A60] text-amber-300 p-4 rounded-2xl text-right space-y-1">
+                <div className="bg-[#174F3E] text-amber-300 p-4 rounded-2xl text-right space-y-1">
                   <h4 className="text-xs font-black">الخطوة 3 من 3: المراجعة وتأكيد حساب المشتري 🛒</h4>
                   <p className="text-[11px] text-stone-200 font-medium leading-relaxed">
                     حسابك جاهز للشراء والتسوق المباشر من الأسر المنتجة والحرفيين في مكة المكرمة ومناطق المملكة.
@@ -1340,7 +1342,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                     className="w-4 h-4 text-primary rounded-md border-stone-300 mt-0.5"
                   />
                   <span className="text-xs text-stone-800 font-bold leading-relaxed">
-                    أقر بدقة البيانات الشراء وأتعهد بالموافقة على سياسة الشراء والتوصيل الشفاف بمنصة ورث أجيال.
+                    أقر بدقة البيانات الشراء وأتعهد بالموافقة على سياسة الشراء والتوصيل الشفاف بمنصة إرث أجيال.
                   </span>
                 </label>
               </div>
@@ -1364,7 +1366,7 @@ export default function LoginPage({ onLogin, onGoHome, onOpenForgotPassword, war
                 <button
                   type="button"
                   onClick={handleNextStep}
-                  className="bg-[#0B3A60] hover:bg-[#07253E] text-amber-300 font-black py-3 px-7 rounded-2xl text-xs transition-all cursor-pointer shadow-md flex items-center gap-2"
+                  className="bg-[#174F3E] hover:bg-[#132E25] text-amber-300 font-black py-3 px-7 rounded-2xl text-xs transition-all cursor-pointer shadow-md flex items-center gap-2"
                 >
                   <span>التالي</span>
                   <ChevronRight className="w-4 h-4 rotate-180" />

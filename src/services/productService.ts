@@ -110,7 +110,7 @@ export async function fetchApprovedProductsFromApi(): Promise<Product[]> {
           imageUrl: (item.images && item.images[0]) || 'https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=600&auto=format&fit=crop',
           category: item.category,
           producerId: item.producerId?.toString() || '1',
-          producerName: item.producerName || 'أسرة منتجة',
+          producerName: item.producerName || 'رائدة عمل حر',
           producerCity: item.producerCity || 'مكة المكرمة',
           status: item.status,
           quantity: item.stock || 10,

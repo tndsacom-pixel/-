@@ -166,7 +166,7 @@ function buildEmailHtml(title: string, contentHtml: string, actionButton?: { tex
   <body>
     <div class="container">
       <div class="header">
-        <h1>منصة ورث أجيال • Warath Ajyal</h1>
+        <h1>منصة إرث أجيال • Erth Ajyal</h1>
         <p>تمكين الأسر المنتجة والحرفيين برعاية مؤسسة التفكير والنماء TND</p>
       </div>
       <div class="content">
@@ -179,7 +179,7 @@ function buildEmailHtml(title: string, contentHtml: string, actionButton?: { tex
         ` : ''}
       </div>
       <div class="footer">
-        <p>وصلتك هذه الرسالة تلقائياً من نظام منصة «ورث أجيال» لحسابك المسجل.</p>
+        <p>وصلتك هذه الرسالة تلقائياً من نظام منصة «إرث أجيال» لحسابك المسجل.</p>
         <p>© 2026 جميع الحقوق محفوظة لمؤسسة التفكير والنماء TND</p>
       </div>
     </div>
@@ -203,7 +203,7 @@ export async function sendVerificationEmail(
   
   const contentHtml = `
     <p>مرحباً <strong>${userName}</strong>،</p>
-    <p>شكراً لتسجيلك في منصة «ورث أجيال». يرجى تأكيد ملكية بريدك الإلكتروني لتفعيل جميع مزايا الحساب والاعتماد الرسمي.</p>
+    <p>شكراً لتسجيلك في منصة «إرث أجيال». يرجى تأكيد ملكية بريدك الإلكتروني لتفعيل جميع مزايا الحساب والاعتماد الرسمي.</p>
     <div class="box">
       <p style="margin: 0; font-size: 12px; color: #57534e;">رمز التحقق السريع الخاص بك:</p>
       <p style="margin: 8px 0 0; font-size: 24px; font-weight: 900; letter-spacing: 4px; color: #1b3d2f; font-family: monospace;">${verificationToken.slice(-6).toUpperCase()}</p>
@@ -220,7 +220,7 @@ export async function sendVerificationEmail(
     id: generateToken('msg'),
     recipient,
     recipientName: userName,
-    subject: 'تأكيد وتوثيق بريدك الإلكتروني في منصة ورث أجيال ✉️',
+    subject: 'تأكيد وتوثيق بريدك الإلكتروني في منصة إرث أجيال ✉️',
     bodyHtml,
     bodyText: `مرحباً ${userName}، رمز تأكيد حسابك هو: ${verificationToken.slice(-6).toUpperCase()} أو عبر الرابط: ${actionUrl}`,
     sentAt: new Date().toISOString(),
@@ -261,7 +261,7 @@ export async function sendPasswordResetEmail(
   const resetUrl = `${window.location.origin}${window.location.pathname}#/reset-password?token=${token}&email=${encodeURIComponent(recipient)}`;
 
   const contentHtml = `
-    <p>تلقينا طلباً لاستعادة كلمة المرور الخاصة بحسابك في منصة ورث أجيال.</p>
+    <p>تلقينا طلباً لاستعادة كلمة المرور الخاصة بحسابك في منصة إرث أجيال.</p>
     <div class="box">
       <p style="margin:0; font-size: 13px; color: #dc2626; font-weight: bold;">⚠️ تنبيه أمان:</p>
       <p style="margin: 5px 0 0; font-size: 12px; color: #57534e;">هذا الرابط مؤقت وصالح لمدة <strong>15 دقيقة فقط</strong> ويُستخدم مرة واحدة لإنشاء كلمة مرور جديدة.</p>
@@ -277,7 +277,7 @@ export async function sendPasswordResetEmail(
   const log: EmailLog = {
     id: generateToken('msg'),
     recipient,
-    subject: 'رابط استعادة كلمة المرور - منصة ورث أجيال 🔐',
+    subject: 'رابط استعادة كلمة المرور - منصة إرث أجيال 🔐',
     bodyHtml,
     bodyText: `رابط استعادة كلمة المرور الخاص بك: ${resetUrl} (ينتهي بعد 15 دقيقة)`,
     sentAt: new Date().toISOString(),
@@ -310,7 +310,7 @@ export async function sendEmailChangeEmail(
 
   const contentHtml = `
     <p>مرحباً <strong>${userName}</strong>،</p>
-    <p>تلقينا طلباً لتغيير بريدك الإلكتروني في منصة ورث أجيال من (<strong>${oldEmail}</strong>) إلى (<strong>${newEmail}</strong>).</p>
+    <p>تلقينا طلباً لتغيير بريدك الإلكتروني في منصة إرث أجيال من (<strong>${oldEmail}</strong>) إلى (<strong>${newEmail}</strong>).</p>
     <div class="box" style="text-align: center;">
       <p style="margin: 0; font-size: 12px; color: #57534e;">رمز تأكيد البريد الجديد:</p>
       <p style="margin: 8px 0 0; font-size: 28px; font-weight: 900; letter-spacing: 6px; color: #d4af37; font-family: monospace;">${verificationCode}</p>
@@ -324,7 +324,7 @@ export async function sendEmailChangeEmail(
     id: generateToken('msg'),
     recipient: newEmail,
     recipientName: userName,
-    subject: 'رمز تأكيد تغيير البريد الإلكتروني - ورث أجيال 🔄',
+    subject: 'رمز تأكيد تغيير البريد الإلكتروني - إرث أجيال 🔄',
     bodyHtml,
     bodyText: `رمز تأكيد بريدك الجديد هو: ${verificationCode}`,
     sentAt: new Date().toISOString(),
@@ -349,7 +349,7 @@ export async function sendOrderStatusEmail(
   const statusLabels: Record<string, { label: string; badge: string; desc: string }> = {
     received: { label: 'تم استلام الطلب', badge: '📝 تم الاستلام', desc: 'تم استلام طلبك بنجاح وجاري المراجعة.' },
     paid: { label: 'تم الدفع بنجاح', badge: '💳 تم الدفع', desc: 'تم تأكيد عملية الدفع وحجز منتجاتك.' },
-    processing: { label: 'قيد التجهيز الطازج', badge: '👩‍🍳 قيد التجهيز', desc: 'تقوم الأسرة المنتجة بإعداد وجباتك/منتجاتك الآن.' },
+    processing: { label: 'قيد التجهيز الطازج', badge: '👩‍🍳 قيد التجهيز', desc: 'تقوم رائدة العمل الحر بإعداد وجباتك/منتجاتك الآن.' },
     delivering: { label: 'قيد التوصيل بالفندق/العنوان', badge: '🚚 قيد التوصيل', desc: 'الطلب في طريقه إليك الآن مع مندوب التوصيل.' },
     delivered: { label: 'تم التسليم بنجاح', badge: '✅ تم التسليم', desc: 'تم تسليم الطلب بنجاح. نتمنى لك تجربة شهية ومباركة!' },
     cancelled: { label: 'تم إلغاء الطلب', badge: '❌ ملغي', desc: 'تم إلغاء الطلب واسترجاع المبلغ للحساب.' }
@@ -519,7 +519,7 @@ export async function sendAccreditationStatusEmail(
     id: generateToken('msg'),
     recipient,
     recipientName: producerName,
-    subject: `${titleMap[status]} - ورث أجيال`,
+    subject: `${titleMap[status]} - إرث أجيال`,
     bodyHtml,
     bodyText: titleMap[status],
     sentAt: new Date().toISOString(),
